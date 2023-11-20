@@ -1,3 +1,4 @@
+import 'package:car_pool_app/Static%20Data/colors.dart';
 import 'package:flutter/material.dart';
 
 class PasswordField extends StatefulWidget {
@@ -74,11 +75,37 @@ class _PasswordFieldState extends State<PasswordField> {
       },
       decoration: InputDecoration(
         labelText: 'Password',
+        labelStyle: const TextStyle(
+          color: Colors.white,
+        ),
+
         hintText: widget.hint,
-        icon: const Icon(Icons.lock),
-        suffix: IconButton(
+        hintStyle: const TextStyle(
+          color: Colors.white38,
+        ),
+
+        counterText: '',
+
+        prefixIcon: const Icon(Icons.lock),
+        prefixIconColor: Colors.white,
+        
+        suffixIcon: IconButton(
           icon: Icon(toggleIcon()),
           onPressed: () {setState( () {} );},// toggle hide and view properties
+        ),
+        suffixIconColor: Colors.white,
+
+        filled: true,
+        fillColor: primaryColor,
+
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(50.0),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(50.0),
+          borderSide: const BorderSide(
+            color: Colors.white,
+          ),
         ),
       ),
     );

@@ -4,24 +4,28 @@ import 'package:car_pool_app/Widgets/email_field.dart';
 import 'package:car_pool_app/Widgets/password_field.dart';
 import 'package:car_pool_app/Widgets/sized_box.dart';
 import 'package:car_pool_app/Widgets/custom_button.dart';
-import 'package:car_pool_app/Screens/main_screen.dart';
+import 'package:car_pool_app/Widgets/name_field.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
 
-  static const routeName = '/login';
+  static const routeName = '/register';
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
   
-  final _loginFormKey = GlobalKey<FormState>();
+  final _registerFormKey = GlobalKey<FormState>();
+
+  final _nameContoller = TextEditingController();
 
   final _emailController = TextEditingController();
 
   final _passController = TextEditingController();
+
+  late FocusNode _nameNode;
 
   late FocusNode _emailNode;
 
@@ -30,10 +34,11 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
 
+    _nameNode = FocusNode();
     _emailNode = FocusNode();
     _passNode = FocusNode();
 
-    _emailNode.requestFocus();
+    _nameNode.requestFocus();
 
     super.initState();
   }
@@ -42,17 +47,26 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login Screen'),
+        title: const Text('Register Screen'),
         centerTitle: true,
       ),
 
       body: Form(
-        key: _loginFormKey,
+        key: _registerFormKey,
         child: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              NameField(
+                controller: _nameContoller,
+                focusNode: _nameNode,
+              ),
+
+              const HSizedBox(
+                height: 20,
+              ),
+
               EmailField(
                 controller: _emailController,
                 focusNode: _emailNode,
@@ -73,12 +87,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
               CustomButton(
                 onTap: () {
-                  // if(_loginFormKey.currentState!.validate()) {}
-                  Navigator.pushNamed(context, MainScreen.routeName);
+                  if(_registerFormKey.currentState!.validate()) {}
                 },
                 width: 100,
                 height: 50,
-                child: const Text('Login'),
+                child: const Text('Register'),
               ),
             ],
           ),

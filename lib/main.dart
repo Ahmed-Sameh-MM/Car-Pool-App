@@ -25,6 +25,15 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       routes: AppRoutes.routes,
+      onGenerateRoute: AppRoutes.onGenerateRoutes,
+      theme: ThemeData(
+        primaryColor: Colors.black,
+        scaffoldBackgroundColor: Colors.black,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.black,
+        ),
+      ),
+      debugShowCheckedModeBanner: false,
     );
   }
 }

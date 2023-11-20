@@ -1,4 +1,7 @@
+import 'package:car_pool_app/Static%20Data/colors.dart';
 import 'package:flutter/material.dart';
+
+import 'package:car_pool_app/Static%20Data/constants.dart';
 
 class EmailField extends StatefulWidget {
 
@@ -14,8 +17,8 @@ class EmailField extends StatefulWidget {
   const EmailField({
     super.key,
     required this.controller,
-    this.hint = "************",
-    this.length = 30,
+    this.hint = "example@eng.asu.edu.eg",
+    this.length = 25,
     this.nextOrDone = TextInputAction.next,
     required this.focusNode,
     this.submitted = emptyFunction,
@@ -26,19 +29,16 @@ class EmailField extends StatefulWidget {
 
 class _EmailFieldState extends State<EmailField> {
 
-  bool obscurePass = false, isIconVisible = true;
-
   late final String empty;
-  late final String shortPassword;
 
-  String? emailValidator(String? password)
+  String? emailValidator(String? email)
   {
-    if(password == null || password.isEmpty) {
+    if(email == null || email.isEmpty) {
       return empty;
     }
 
-    else if(password.length < 6) {
-      return shortPassword;
+    else if(! email.endsWith(emailDomain)) {
+      return 'Wrong Domain Name !';
     }
 
     return null;
@@ -57,8 +57,32 @@ class _EmailFieldState extends State<EmailField> {
       },
       decoration: InputDecoration(
         labelText: 'Email',
+        labelStyle: const TextStyle(
+          color: Colors.white,
+        ),
+
         hintText: widget.hint,
-        icon: const Icon(Icons.email),
+        hintStyle: const TextStyle(
+          color: Colors.white38,
+        ),
+
+        counterText: '',
+
+        prefixIcon: const Icon(Icons.email),
+        prefixIconColor: Colors.white,
+
+        filled: true,
+        fillColor: primaryColor,
+
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(50.0),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(50.0),
+          borderSide: const BorderSide(
+            color: Colors.white,
+          ),
+        ),
       ),
     );
   }
