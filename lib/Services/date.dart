@@ -51,7 +51,7 @@ class Date {
     on SocketException catch(e) {
       debugPrint('fetchDate -> SocketException: $e');
       debugPrint(e.osError?.message);
-      return Left(
+      return const Left(
         ConnectionError(
           errorMessage: 'No Internet Connection, please try again',
         ),

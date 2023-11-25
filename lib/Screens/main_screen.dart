@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:car_pool_app/Screens/checkout_screen.dart';
-import 'package:car_pool_app/Screens/home_screen.dart';
+import 'package:car_pool_app/Screens/locations_screen.dart';
+import 'package:car_pool_app/Screens/history_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -17,8 +17,8 @@ class _MainScreenState extends State<MainScreen> {
   late int _selectedNavIndex;
 
   Widget screenSelector() {
-    final List<Widget> _screens = [const HomeScreen(), const CheckoutScreen()];
-    return _screens[_selectedNavIndex];
+    final List<Widget> screens = [const LocationsScreen(), const HistoryScreen()];
+    return screens[_selectedNavIndex];
   }
 
   @override
@@ -43,13 +43,13 @@ class _MainScreenState extends State<MainScreen> {
           ),
 
           BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
+            icon: Icon(Icons.history),
+            label: 'History',
           ),
 
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
-            label: 'Payments',
+            label: 'Profile',
           ),
         ],
         onTap: (int index) {

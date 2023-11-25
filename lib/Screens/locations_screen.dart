@@ -6,16 +6,16 @@ import 'package:car_pool_app/Widgets/sized_box.dart';
 import 'package:car_pool_app/Model%20Classes/location.dart';
 import 'package:car_pool_app/Screens/chosen_location_screen.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({ super.key });
+class LocationsScreen extends StatefulWidget {
+  const LocationsScreen({ super.key });
 
-  static const routeName = '/home';
+  static const routeName = '/location';
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<LocationsScreen> createState() => _LocationsScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _LocationsScreenState extends State<LocationsScreen> {
 
   Future<List>? schoolsFuture;
 
@@ -160,7 +160,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.sort),
+                      Icon(
+                        Icons.sort,
+                        color: Colors.white,
+                      ),
                       WSizedBox(
                         width: 5,
                       ),
@@ -191,7 +194,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.filter_list),
+                    Icon(
+                      Icons.filter_list,
+                      color: Colors.white,
+                    ),
                     WSizedBox(
                       width: 5,
                     ),

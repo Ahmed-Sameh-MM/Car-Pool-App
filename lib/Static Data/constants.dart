@@ -1,3 +1,3 @@
 const emailDomain = "@eng.asu.edu.eg";
 
-List<String> locations = ['Maadi', 'Fifth Settlement', '6 October'];
+const List<String> gates = ['Gate 3', 'Gate 4'];

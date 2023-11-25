@@ -5,6 +5,7 @@ import 'package:car_pool_app/Widgets/password_field.dart';
 import 'package:car_pool_app/Widgets/sized_box.dart';
 import 'package:car_pool_app/Widgets/custom_button.dart';
 import 'package:car_pool_app/Widgets/name_field.dart';
+import 'package:car_pool_app/Screens/path_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -41,6 +42,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _nameNode.requestFocus();
 
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _nameNode.dispose();
+    _emailNode.dispose();
+    _passNode.dispose();
+    
+    super.dispose();
   }
 
   @override
@@ -87,7 +97,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
               CustomButton(
                 onTap: () {
-                  if(_registerFormKey.currentState!.validate()) {}
+                  // if(_registerFormKey.currentState!.validate()) {}
+                  Navigator.pushNamed(context, PathScreen.routeName);
                 },
                 width: 100,
                 height: 50,

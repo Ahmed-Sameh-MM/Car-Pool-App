@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:car_pool_app/Static%20Data/colors.dart';
 
-class NameField extends StatelessWidget {
+class PromoCodeField extends StatelessWidget {
 
   final TextEditingController controller;
   final FocusNode focusNode;
@@ -11,12 +11,12 @@ class NameField extends StatelessWidget {
 
   final int maxLength;
 
-  const NameField({
+  const PromoCodeField({
     super.key,
     required this.controller,
     required this.focusNode,
-    this.maxLength = 20,
-    this.labelText = 'Name',
+    this.maxLength = 10,
+    this.labelText = 'Promo Code',
   });
 
   String? nameValidator(String? name) {
@@ -53,7 +53,7 @@ class NameField extends StatelessWidget {
           color: Colors.white,
         ),
 
-        hintText: 'Enter Name here!',
+        hintText: 'Enter Promo Code',
         hintStyle: const TextStyle(
           color: Colors.white38,
         ),
@@ -61,18 +61,15 @@ class NameField extends StatelessWidget {
         counterText: '',
         // icon: Icon(Icons.account_circle),
 
-        prefixIcon: const Icon(Icons.account_circle),
+        prefixIcon: const Icon(Icons.discount),
         prefixIconColor: Colors.white,
 
         filled: true,
         fillColor: primaryColor,
 
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(50.0),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(50.0),
-          borderSide: const BorderSide(
+        border: const OutlineInputBorder(),
+        focusedBorder: const OutlineInputBorder(
+          borderSide: BorderSide(
             color: Colors.white,
           ),
         ),

@@ -3,6 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:car_pool_app/Widgets/sized_box.dart';
 import 'package:car_pool_app/Widgets/custom_text.dart';
 import 'package:car_pool_app/Widgets/custom_container.dart';
+import 'package:car_pool_app/Model%20Classes/location.dart';
+import 'package:car_pool_app/Screens/payment_screen.dart';
+import 'package:car_pool_app/Static%20Data/colors.dart';
+import 'package:car_pool_app/Widgets/custom_button.dart';
+import 'package:car_pool_app/Widgets/promo_code_field.dart';
 
 class CheckoutScreen extends StatelessWidget {
   const CheckoutScreen({ super.key });
@@ -11,10 +16,7 @@ class CheckoutScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final checkoutRouteArguments = ModalRoute.of(context)!.settings.arguments;
-    
-    // final reservationHistory = checkoutRouteArguments.reservationHistory;
-    // final List<int> slotsTime = reservationHistory.slots.split("-").map( (e) => int.parse(e)).toList(); // ('2-3') -> ['2', '3'] -> [2, 3]
+    final chosenLocation = ModalRoute.of(context)!.settings.arguments as Location;
     
     return Scaffold(
       appBar: AppBar(
@@ -27,10 +29,10 @@ class CheckoutScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage(
-                    'assets/images/.png',
+                    'assets/images/${chosenLocation.name}.jpg',
                   ),
                   fit: BoxFit.cover,
                 ),
@@ -45,7 +47,7 @@ class CheckoutScreen extends StatelessWidget {
                 children: [
                   //Text('${reservationHistory.schoolName} School' , style: Theme.of(context).textTheme.headline5,),
                   CustomText(
-                    text: 'School Name',
+                    text: chosenLocation.name,
                     size: 24,
                     fontWeight: FontWeight.bold,
                   ),
@@ -56,29 +58,15 @@ class CheckoutScreen extends StatelessWidget {
 
                   Row(
                     children: [
-                      const Icon(Icons.sports_soccer),
+                      const Icon(
+                        Icons.location_pin,
+                        color: Colors.white,
+                      ),
                       const WSizedBox(
                         width: 5,
                       ),
                       CustomText(
-                        text: 'Field',
-                        size: 16,
-                      ),
-                    ],
-                  ),
-
-                  const HSizedBox(
-                    height: 5,
-                  ),
-
-                  Row(
-                    children: [
-                      const Icon(Icons.location_pin),
-                      const WSizedBox(
-                        width: 5,
-                      ),
-                      CustomText(
-                        text: 'Fifth Settlement',
+                        text: chosenLocation.address,
                         size: 16,
                       ),
                     ],
@@ -88,7 +76,7 @@ class CheckoutScreen extends StatelessWidget {
                     height: 20,
                   ),
 
-                  CustomText(
+                  const CustomText(
                     text: 'Date & Time',
                     size: 16,
                     fontWeight: FontWeight.bold,
@@ -99,94 +87,59 @@ class CheckoutScreen extends StatelessWidget {
                   ),
 
                   CustomContainer(
-                    shadow: true,
-                    color: const Color(0xFFF0F0F0),
+                    shadow: false,
+                    color: primaryColor,
                     child: Column(
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(Icons.calendar_today),
+                            const Icon(
+                              Icons.calendar_today,
+                              color: Colors.white,
+                            ),
                             const WSizedBox(
                               width: 10,
                             ),
                             CustomText(
-                              text: 'dateFormat(reservationHistory.reservationDate)',
+                              text: 'dateFormat(1/1/2023)',
                               fontWeight: FontWeight.bold,
                             ),
                           ],
                         ),
+
                         const HSizedBox(
-                          height: 20,
+                          height: 15,
                         ),
-                        Row(
-                          children: [
-                            Column(
-                              children: [
-                                const CustomText(
-                                  text: 'From',
-                                  fontWeight: FontWeight.w600,
-                                  textColor: Color(0xFF616161),
-                                ),
-
-                                const HSizedBox(
-                                  height: 10,
-                                ),
-
-                                CustomContainer(
-                                  shadow: true,
-                                  borderRadius: 8,
-                                  child: CustomText(
-                                    text: 'timeSlotTitle(slotsTime[0], 00)',
-                                    size: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const Icon(
-                              Icons.arrow_right_alt,
-                              size: 90,
-                            ),
-                            Column(
-                              children: [
-                                const CustomText(
-                                  text: 'To',
-                                  fontWeight: FontWeight.w600,
-                                  textColor: Color(0xFF616161),
-                                ),
-
-                                const HSizedBox(
-                                  height: 10,
-                                ),
-
-                                CustomContainer(
-                                  shadow: true,
-                                  borderRadius: 8,
-                                  child: CustomText(
-                                    text: 'timeSlotTitle(slotsTime[1], :00)',
-                                    size: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
+                        
+                        CustomContainer(
+                          shadow: true,
+                          borderRadius: 8,
+                          child: CustomText(
+                            text: '7:30 AM',
+                            size: 18,
+                            fontWeight: FontWeight.bold,
+                            textColor: Colors.black,
+                          ),
                         ),
                       ],
                     ),
                   ),
+
                   const HSizedBox(
-                    height: 20,
+                    height: 30,
                   ),
+
                   CustomText(
                     text: 'Pay with',
                     size: 16,
                     fontWeight: FontWeight.bold,
                   ),
+
                   const HSizedBox(
                     height: 20,
                   ),
+
                   CustomText(
                     text: 'Promo code',
                     size: 16,
@@ -194,13 +147,47 @@ class CheckoutScreen extends StatelessWidget {
                   ),
 
                   const HSizedBox(
-                    height: 20,
+                    height: 10,
                   ),
 
-                  CustomText(
-                    text: 'Payment Summary',
-                    size: 16,
-                    fontWeight: FontWeight.bold,
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 2,
+                        child: PromoCodeField(
+                          controller: TextEditingController(),
+                          focusNode: FocusNode(),
+                        ),
+                      ),
+
+                      const WSizedBox(
+                        width: 20,
+                      ),
+
+                      Expanded(
+                        flex: 1,
+                        child: CustomButton(
+                          height: 50,
+                          shadow: false,
+                          onTap: () {},
+                          child: const CustomText(
+                            text: 'Apply',
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const HSizedBox(
+                    height: 30,
+                  ),
+
+                  const Center(
+                    child: CustomText(
+                      text: 'Payment Summary',
+                      size: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
 
                   const HSizedBox(
@@ -215,7 +202,7 @@ class CheckoutScreen extends StatelessWidget {
                       ),
 
                       CustomText(
-                        text: 'EGP price.00',
+                        text: 'EGP ${chosenLocation.price}',
                       ),
                     ],
                   ),
@@ -223,6 +210,7 @@ class CheckoutScreen extends StatelessWidget {
                   const HSizedBox(
                     height: 10,
                   ),
+
                   const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -234,9 +222,11 @@ class CheckoutScreen extends StatelessWidget {
                       ),
                     ],
                   ),
+
                   const HSizedBox(
                     height: 10,
                   ),
+
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -245,15 +235,23 @@ class CheckoutScreen extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                       CustomText(
-                        text: 'EGP price.00',
+                        text: 'EGP ${chosenLocation.price}',
                         fontWeight: FontWeight.bold,
                       ),
                     ],
                   ),
+
+                  const HSizedBox(
+                    height: 30,
+                  ),
                   
-                  TextButton(
-                    child: const Text('Confirm Booking'),
-                    onPressed: () async {
+                  CustomButton(
+                    height: 50,
+                    child: const CustomText(
+                      text: 'Confirm Booking',
+                    ),
+                    onTap: () async {
+                      Navigator.pushNamed(context, PaymentScreen.routeName);
                       // final reservation = await Realtime(phoneNumber: '01111111111111').reserve(
                       //   reservationHistory: reservationHistory,
                       // );

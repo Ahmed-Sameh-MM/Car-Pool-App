@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:car_pool_app/Screens/login_screen.dart';
+import 'package:car_pool_app/Screens/register_screen.dart';
 import 'package:car_pool_app/Screens/main_screen.dart';
 
 class Wrapper extends StatelessWidget {
@@ -8,6 +9,6 @@ class Wrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LoginScreen();
+    return RegisterScreen();
   }
 }

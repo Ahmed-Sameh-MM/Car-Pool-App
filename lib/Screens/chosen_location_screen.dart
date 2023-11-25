@@ -14,11 +14,14 @@ import 'package:url_launcher/url_launcher.dart';
 
 class ChosenLocationScreen extends StatefulWidget {
 
-  final Location generalLocationData;
+  final Location locationData;
+
+  final bool showGates;
 
   const ChosenLocationScreen({
     super.key,
-    required this.generalLocationData,
+    required this.locationData,
+    this.showGates = false,
   });
 
   static const routeName = '/chosen_location';
@@ -29,38 +32,19 @@ class ChosenLocationScreen extends StatefulWidget {
 
 class _ChosenLocationScreenState extends State<ChosenLocationScreen> {
 
-  //List<int> selectedTimeSlotsIndices = []; // currently selected time slots (by index)
   int? selectedTimeSlot;
   int selectedDateSlot = 0; // currently selected date slot
 
   late final Location chosenLocationData;
 
-  final List<String> durationPeriods = ['7:30 AM', '5:30 PM'];
-  int selectedDuration = 1;
+  final List<String> timeSlots = ['7:30 AM', '5:30 PM'];
 
   DateTime? currentDate;
 
   List<String> dayNames = ['Today']; // Placeholder for the NAME of the current day and the next 6 days
   List<String> dayDates = []; // Placeholder for the DATE NUMBER of the current day and 6 days
 
-  final double bottomSheetHeight = 150;
-
-  VoidCallback? bookButton() {
-    return () {
-      if(selectedTimeSlot == null) {
-        ScaffoldMessenger.of(context).showSnackBar( const SnackBar(content: Text('No starting slot has been selected')) );
-      }
-      else{
-
-        List<int> tempSelectedTimeSlotsIndices = []; // currently selected time slots (by index)
-        for(int i = selectedTimeSlot!; i <= selectedTimeSlot! + selectedDuration ; i++) {
-          tempSelectedTimeSlotsIndices.add(i);
-        }
-
-        Navigator.pushNamed(context, CheckoutScreen.routeName, arguments: chosenLocationData);
-      }
-    };
-  }
+  final double bottomSheetHeight = 130;
 
   void dayNameAndDayDatesGenerator() async {
 
@@ -93,7 +77,7 @@ class _ChosenLocationScreenState extends State<ChosenLocationScreen> {
     if(selectedTimeSlot != null) {
 
       int start = selectedTimeSlot!;
-      int end = start + selectedDuration + 1;
+      int end = start + selectedTimeSlot! + 1;
 
       if(start <= 12 || start > 24) {
         start = start % 24;
@@ -118,56 +102,84 @@ class _ChosenLocationScreenState extends State<ChosenLocationScreen> {
             topRight: Radius.circular(30),
           ),
         ),
-        child: Column(
-          children: [
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 8.0),
-              child: CustomText(
-                text: 'Choose Field',
-                size: 20,
-                fontWeight: FontWeight.bold,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    children: [
+                      const CustomText(
+                        text: 'Your Booking',
+                        size: 16,
+                        fontWeight: FontWeight.bold,
+                        textColor: Colors.black,
+                      ),
+                      CustomText(
+                        text: 'dateFormat(currentDate!)',
+                        textColor: Colors.black,
+                      ),
+                      CustomText(
+                        text: '${timeSlots[selectedTimeSlot!]}',
+                        textColor: Colors.black,
+                      ),
+                    ],
+                  ),
+        
+                  const WSizedBox(
+                    width: 30,
+                  ),
+        
+                  Column(
+                    children: [
+                      const CustomText(
+                        text: 'Price',
+                        size: 16,
+                        fontWeight: FontWeight.bold,
+                        textColor: Colors.black,
+                      ),
+                      CustomText(
+                        text: '${chosenLocationData.price} Egp',
+                        textColor: Colors.black,
+                      ),
+                    ],
+                  ),
+                ],
               ),
-            ),
-            Row(
-              children: [
-                Column(
-                  children: [
-                    const Text('Your Booking'),
-                    // Text(dateFormat(currentDate!)),
-                    // Text('$start ➔ ${timeSlotTitle(end)}'),
-                  ],
+              CustomButton(
+                width: 200,
+                height: 50,
+                onTap: () {
+                  Navigator.pushNamed(context, CheckoutScreen.routeName, arguments: chosenLocationData);
+                },
+                child: const Center(
+                  child: CustomText(
+                    text: 'Book Now',
+                    size: 16,
+                  ),
                 ),
-                const SizedBox(width: 30,),
-                Column(
-                  children: [
-                    const Text('Price'),
-                    Text('200 Egp'),
-                  ],
-                ),
-              ],
-            ),
-            CustomButton(
-              width: 300,
-              height: 50,
-              onTap: bookButton,
-              child: Center(
-                child: Text('Book Now'),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       );
     }
+    
     return Container(
+      width: double.infinity,
       height: bottomSheetHeight,
       decoration: const BoxDecoration(
-        color: Colors.blueGrey,
+        color: primaryColor,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(8),
           topRight: Radius.circular(8),
         ),
       ),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 8.0),
@@ -177,17 +189,18 @@ class _ChosenLocationScreenState extends State<ChosenLocationScreen> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          Row(
+          
+          Column(
             children: [
-              const SizedBox(width: 30,),
-              Column(
-                children: [
-                  Text('Trip Price (${chosenLocationData.price} EGP)'),
-                  const TextButton(
-                    onPressed: null,
-                    child: Text('Book Now'),
-                  ),
-                ],
+              CustomText(
+                text: 'Trip Price (${chosenLocationData.price} EGP)',
+              ),
+              const TextButton(
+                onPressed: null,
+                child: CustomText(
+                  text: 'Book Now',
+                  textColor: Colors.white24,
+                ),
               ),
             ],
           ),
@@ -199,7 +212,7 @@ class _ChosenLocationScreenState extends State<ChosenLocationScreen> {
 
   @override
   void initState() {
-    chosenLocationData = widget.generalLocationData;
+    chosenLocationData = widget.locationData;
     
     dayNameAndDayDatesGenerator();
     super.initState();
@@ -226,51 +239,55 @@ class _ChosenLocationScreenState extends State<ChosenLocationScreen> {
                     size: 24,
                     fontWeight: FontWeight.bold,
                   ),
-                  
-                  const Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      CustomText(
-                        text: 'Location',
-                        size: 13,
-                      ),
-                    ],
-                  ),
-
-                  const HSizedBox(
-                    height: 8,
-                  ),
 
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Row(
                         children: [
-                          const Icon(Icons.location_pin),
-                          Text(chosenLocationData.address),
+                          const Icon(
+                            Icons.location_pin,
+                            color: Colors.white,
+                          ),
+                          CustomText(
+                            text: chosenLocationData.address,
+                          ),
                         ],
                       ),
-                      CustomButton(
-                        onTap: () async {
+                      Column(
+                        children: [
+                          const CustomText(
+                            text: 'Location',
+                            size: 13,
+                          ),
 
-                          final url = Uri.parse(chosenLocationData.location);
+                          const HSizedBox(
+                            height: 5,
+                          ),
 
-                          if(await canLaunchUrl(url)) {
-                            await launchUrl(url);
-                          }
+                          CustomButton(
+                            onTap: () async {
 
-                          else {
-                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Can't launch this URL, please check your browser")));
-                          }
-                        },
-                        height: 32,
-                        width: 55,
-                        borderRadius: 3,
-                        color: Colors.black,
-                        child: const Icon(
-                          Icons.location_pin,
-                          color: Colors.greenAccent,
-                        ),
+                              final url = Uri.parse(chosenLocationData.location);
+
+                              if(await canLaunchUrl(url)) {
+                                await launchUrl(url);
+                              }
+
+                              else {
+                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Can't launch this URL, please check your browser")));
+                              }
+                            },
+                            height: 32,
+                            width: 55,
+                            borderRadius: 3,
+                            color: Colors.black,
+                            child: const Icon(
+                              Icons.location_pin,
+                              color: Colors.greenAccent,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -302,7 +319,7 @@ class _ChosenLocationScreenState extends State<ChosenLocationScreen> {
                   SizedBox(
                     height: 50,
                     child: ListView.builder(
-                      itemCount: durationPeriods.length,
+                      itemCount: timeSlots.length,
                       scrollDirection: Axis.horizontal,
                       itemBuilder: (context, index) {
                         return Container(
@@ -317,13 +334,12 @@ class _ChosenLocationScreenState extends State<ChosenLocationScreen> {
                             selectedChildrenColor: Colors.black,
                             onTap: () {
                               setState(() {
-                                selectedDuration = index;
-                                selectedTimeSlot = null; // clear the actively selected time slot
+                                selectedTimeSlot = index;
                               });
                             },
-                            selected: (index == selectedDuration),
+                            selected: (index == selectedTimeSlot),
                             child: Center(
-                              child: Text(durationPeriods[index]),
+                              child: Text(timeSlots[index]),
                             ),
                           ),
                         );
@@ -383,7 +399,6 @@ class _ChosenLocationScreenState extends State<ChosenLocationScreen> {
                               onTap: () {
                                 setState(() {
                                   selectedDateSlot = index;
-                                  selectedTimeSlot = null; // clear the actively selected time slot
 
                                   final int tempDay = currentDate!.add(Duration(
                                     days: selectedDateSlot,
@@ -398,21 +413,6 @@ class _ChosenLocationScreenState extends State<ChosenLocationScreen> {
                     ),
                   ),
                   const SizedBox(height: 30,),
-          
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CustomText(
-                        text: dayNames[selectedDateSlot],
-                        size: 20,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ],
-                  ),
-          
-                  const HSizedBox(
-                    height: 30,
-                  ),
                   
                   HSizedBox(
                     height: bottomSheetHeight + 10,

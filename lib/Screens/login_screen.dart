@@ -4,7 +4,7 @@ import 'package:car_pool_app/Widgets/email_field.dart';
 import 'package:car_pool_app/Widgets/password_field.dart';
 import 'package:car_pool_app/Widgets/sized_box.dart';
 import 'package:car_pool_app/Widgets/custom_button.dart';
-import 'package:car_pool_app/Screens/main_screen.dart';
+import 'package:car_pool_app/Screens/path_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -36,6 +36,14 @@ class _LoginScreenState extends State<LoginScreen> {
     _emailNode.requestFocus();
 
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _emailNode.dispose();
+    _passNode.dispose();
+    
+    super.dispose();
   }
 
   @override
@@ -74,7 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
               CustomButton(
                 onTap: () {
                   // if(_loginFormKey.currentState!.validate()) {}
-                  Navigator.pushNamed(context, MainScreen.routeName);
+                  Navigator.pushNamed(context, PathScreen.routeName);
                 },
                 width: 100,
                 height: 50,

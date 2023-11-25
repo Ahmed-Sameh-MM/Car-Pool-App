@@ -33,6 +33,55 @@ class Location {
         address: 'Address #3',
         location: '',
       ),
+
+      Location(
+        name: 'Maadi',
+        price: 15,
+        address: 'Address #4',
+        location: '',
+      ),
+
+      Location(
+        name: 'Fifth Settlement',
+        price: 10,
+        address: 'Address #5',
+        location: '',
+      ),
+
+      Location(
+        name: '6 October',
+        price: 60,
+        address: 'Address #6',
+        location: '',
+      ),
+
+      Location(
+        name: 'Maadi',
+        price: 26,
+        address: 'Address #7',
+        location: '',
+      ),
+
+      Location(
+        name: 'Fifth Settlement',
+        price: 71,
+        address: 'Address #8',
+        location: '',
+      ),
+
+      Location(
+        name: '6 October',
+        price: 5,
+        address: 'Address #9',
+        location: '',
+      ),
+
+      Location(
+        name: 'Maadi',
+        price: 40,
+        address: 'Address #10',
+        location: '',
+      ),
     ];
   }
 }
