@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:car_pool_app/Screens/locations_screen.dart';
+import 'package:car_pool_app/Screens/routes_screen.dart';
 import 'package:car_pool_app/Screens/history_screen.dart';
+import 'package:car_pool_app/Screens/profile_screen.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -17,7 +18,7 @@ class _MainScreenState extends State<MainScreen> {
   late int _selectedNavIndex;
 
   Widget screenSelector() {
-    final List<Widget> screens = [const LocationsScreen(), const HistoryScreen()];
+    final List<Widget> screens = [const RoutesScreen(), const HistoryScreen(), const ProfileScreen()];
     return screens[_selectedNavIndex];
   }
 

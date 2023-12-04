@@ -5,6 +5,8 @@ import 'package:car_pool_app/Widgets/password_field.dart';
 import 'package:car_pool_app/Widgets/sized_box.dart';
 import 'package:car_pool_app/Widgets/custom_button.dart';
 import 'package:car_pool_app/Screens/path_screen.dart';
+import 'package:car_pool_app/Services/authenticate.dart';
+import 'package:car_pool_app/Screens/register_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -33,8 +35,6 @@ class _LoginScreenState extends State<LoginScreen> {
     _emailNode = FocusNode();
     _passNode = FocusNode();
 
-    _emailNode.requestFocus();
-
     super.initState();
   }
 
@@ -62,6 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               EmailField(
+                autoFocus: true,
                 controller: _emailController,
                 focusNode: _emailNode,
               ),
@@ -80,13 +81,37 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
 
               CustomButton(
-                onTap: () {
-                  // if(_loginFormKey.currentState!.validate()) {}
-                  Navigator.pushNamed(context, PathScreen.routeName);
+                onTap: () async {
+                  if(_loginFormKey.currentState!.validate()) {
+                    final result = await loginWithEmail(
+                      email: _emailController.text,
+                      password: _passController.text,
+                    );
+
+                    result.fold(
+                      (error) {},
+                      (success) {
+                        Navigator.pop(context);
+                      },
+                    );
+                  }
                 },
                 width: 100,
                 height: 50,
                 child: const Text('Login'),
+              ),
+
+              const HSizedBox(
+                height: 20,
+              ),
+
+              CustomButton(
+                onTap: () {
+                  Navigator.pushReplacementNamed(context, RegisterScreen.routeName);
+                },
+                width: 190,
+                height: 50,
+                child: const Text('Want to Register Instead ?'),
               ),
             ],
           ),

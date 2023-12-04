@@ -2,17 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:car_pool_app/Routes/app_routes.dart';
+import 'package:car_pool_app/firebase_options.dart';
+import 'package:car_pool_app/Services/authenticate.dart';
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart' as riverpod;
+import 'package:firebase_core/firebase_core.dart';
+import 'package:provider/provider.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations([
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitDown,
     DeviceOrientation.portraitUp,
   ])
   .then((value) => runApp(
-    const ProviderScope(
+    const riverpod.ProviderScope(
       child: MainApp(),
     ),
   ));
@@ -23,17 +32,25 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      routes: AppRoutes.routes,
-      onGenerateRoute: AppRoutes.onGenerateRoutes,
-      theme: ThemeData(
-        primaryColor: Colors.black,
-        scaffoldBackgroundColor: Colors.black,
-        appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.black,
+    return MultiProvider(
+      providers: [
+        StreamProvider.value(
+          initialData: null,
+          value: userStream,
+        )
+      ],
+      child: MaterialApp(
+        routes: AppRoutes.routes,
+        onGenerateRoute: AppRoutes.onGenerateRoutes,
+        theme: ThemeData(
+          primaryColor: Colors.black,
+          scaffoldBackgroundColor: Colors.black,
+          appBarTheme: const AppBarTheme(
+            backgroundColor: Colors.black,
+          ),
         ),
+        debugShowCheckedModeBanner: false,
       ),
-      debugShowCheckedModeBanner: false,
     );
   }
 }

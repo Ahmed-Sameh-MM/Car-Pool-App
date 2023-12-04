@@ -1,3 +1,4 @@
+import 'package:car_pool_app/Offline%20Storage/storage.dart';
 import 'package:flutter/material.dart';
 
 import 'package:car_pool_app/Widgets/email_field.dart';
@@ -5,7 +6,13 @@ import 'package:car_pool_app/Widgets/password_field.dart';
 import 'package:car_pool_app/Widgets/sized_box.dart';
 import 'package:car_pool_app/Widgets/custom_button.dart';
 import 'package:car_pool_app/Widgets/name_field.dart';
-import 'package:car_pool_app/Screens/path_screen.dart';
+import 'package:car_pool_app/Services/authenticate.dart';
+import 'package:car_pool_app/Screens/login_screen.dart';
+import 'package:car_pool_app/Services/realtime_db.dart';
+import 'package:car_pool_app/Model%20Classes/user.dart';
+
+import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -39,8 +46,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _emailNode = FocusNode();
     _passNode = FocusNode();
 
-    _nameNode.requestFocus();
-
     super.initState();
   }
 
@@ -69,6 +74,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               NameField(
+                autoFocus: true,
                 controller: _nameContoller,
                 focusNode: _nameNode,
               ),
@@ -96,13 +102,58 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
 
               CustomButton(
-                onTap: () {
-                  // if(_registerFormKey.currentState!.validate()) {}
-                  Navigator.pushNamed(context, PathScreen.routeName);
+                onTap: () async {
+                  if(_registerFormKey.currentState!.validate()) {
+                    final registrationResult = await registerWithEmail(
+                      email: _emailController.text,
+                      password: _passController.text,
+                    );
+
+                    registrationResult.fold(
+                      (error) {},
+                      (success) async {
+                        final uid = context.read<auth.User>().uid;
+
+                        final user = User(
+                          uid: uid,
+                          email: _emailController.text,
+                          name: _nameContoller.text,
+                          points: 0,
+                          tripsCount: 0,
+                        );
+
+                        final addResult = await Realtime(uid: user.uid).addUserData(user);
+
+                        addResult.fold(
+                          (error) {},
+                          (success) async {
+                            await UserStorage.addUser(user);
+                          },
+                        );
+                        
+                        if(context.mounted) {
+                          Navigator.pop(context);
+                        }
+                      },
+                    );
+                  }
                 },
                 width: 100,
                 height: 50,
                 child: const Text('Register'),
+              ),
+
+              const HSizedBox(
+                height: 20,
+              ),
+
+              CustomButton(
+                onTap: () {
+                  Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+                },
+                width: 170,
+                height: 50,
+                child: const Text('Want to Login Instead ?'),
               ),
             ],
           ),

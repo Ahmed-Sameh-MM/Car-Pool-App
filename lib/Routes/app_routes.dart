@@ -1,4 +1,3 @@
-import 'package:car_pool_app/Screens/history_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'package:car_pool_app/Widgets/wrapper.dart';
@@ -6,12 +5,14 @@ import 'package:car_pool_app/Screens/main_screen.dart';
 import 'package:car_pool_app/Screens/register_screen.dart';
 import 'package:car_pool_app/Screens/login_screen.dart';
 import 'package:car_pool_app/Screens/checkout_screen.dart';
-import 'package:car_pool_app/Screens/locations_screen.dart';
-import 'package:car_pool_app/Model%20Classes/location.dart';
-import 'package:car_pool_app/Screens/chosen_location_screen.dart';
+import 'package:car_pool_app/Screens/routes_screen.dart';
+import 'package:car_pool_app/Model%20Classes/custom_route.dart';
+import 'package:car_pool_app/Screens/chosen_route_screen.dart';
 import 'package:car_pool_app/Screens/path_screen.dart';
 import 'package:car_pool_app/Screens/gates_screen.dart';
 import 'package:car_pool_app/Screens/payment_screen.dart';
+import 'package:car_pool_app/Screens/history_screen.dart';
+import 'package:car_pool_app/Screens/profile_screen.dart';
 
 class AppRoutes {
 
@@ -24,21 +25,22 @@ class AppRoutes {
     LoginScreen.routeName: (_) => const LoginScreen(),
     PathScreen.routeName: (_) => const PathScreen(),
     GatesScreen.routeName: (_) => const GatesScreen(),
-    LocationsScreen.routeName: (_) => const LocationsScreen(),
+    RoutesScreen.routeName: (_) => const RoutesScreen(),
     CheckoutScreen.routeName: (_) => const CheckoutScreen(),
     PaymentScreen.routeName: (_) => const PaymentScreen(),
     HistoryScreen.routeName: (_) => const HistoryScreen(),
+    ProfileScreen.routeName: (_) => const ProfileScreen(),
   };
 
   // onGenerate routes
   static Route? onGenerateRoutes(RouteSettings settings) {
-    if(settings.name == ChosenLocationScreen.routeName) {
-      final args = settings.arguments as Location;
+    if(settings.name == ChosenRouteScreen.routeName) {
+      final args = settings.arguments as CustomRoute;
 
       return MaterialPageRoute(
         builder: (context) {
-          return ChosenLocationScreen(
-            locationData: args,
+          return ChosenRouteScreen(
+            routeData: args,
           );
         },
       );

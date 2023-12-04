@@ -11,12 +11,15 @@ class NameField extends StatelessWidget {
 
   final int maxLength;
 
+  final bool autoFocus;
+
   const NameField({
     super.key,
     required this.controller,
     required this.focusNode,
     this.maxLength = 20,
     this.labelText = 'Name',
+    this.autoFocus = false,
   });
 
   String? nameValidator(String? name) {
@@ -40,6 +43,7 @@ class NameField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      autofocus: autoFocus,
       maxLength: maxLength,
       //keyboardType: TextInputType.text,
       controller: controller,

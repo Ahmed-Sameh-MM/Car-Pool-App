@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
 
-import 'package:car_pool_app/Widgets/custom_button.dart';
 import 'package:car_pool_app/Widgets/custom_text.dart';
 import 'package:car_pool_app/Widgets/sized_box.dart';
-import 'package:car_pool_app/Model%20Classes/location.dart';
-import 'package:car_pool_app/Screens/chosen_location_screen.dart';
+import 'package:car_pool_app/Model%20Classes/custom_route.dart';
+import 'package:car_pool_app/Services/realtime_db.dart';
+import 'package:car_pool_app/Widgets/routes_list_view.dart';
+import 'package:car_pool_app/Widgets/search.dart';
+import 'package:car_pool_app/Screens/chosen_route_screen.dart';
 
-class LocationsScreen extends StatefulWidget {
-  const LocationsScreen({ super.key });
+class RoutesScreen extends StatefulWidget {
+  const RoutesScreen({ super.key });
 
-  static const routeName = '/location';
+  static const routeName = '/routes';
 
   @override
-  State<LocationsScreen> createState() => _LocationsScreenState();
+  State<RoutesScreen> createState() => _RoutesScreenState();
 }
 
-class _LocationsScreenState extends State<LocationsScreen> {
+class _RoutesScreenState extends State<RoutesScreen> {
 
   Future<List>? schoolsFuture;
 
@@ -23,7 +25,9 @@ class _LocationsScreenState extends State<LocationsScreen> {
 
   late String currentSort;
 
-  late List<Location> locationsList;
+  late Future< List<CustomRoute> > routesFuture;
+
+  late List<CustomRoute> routes;
 
   void showSortList() {
     showModalBottomSheet(
@@ -73,43 +77,56 @@ class _LocationsScreenState extends State<LocationsScreen> {
 
   void sorting() {
     if(currentSort == 'Lowest to Highest Price') {
-      locationsList.sort(
-        (Location l1, Location l2) {
+      routes.sort(
+        (CustomRoute l1, CustomRoute l2) {
           return l1.price.compareTo(l2.price);
         }
       );
     }
 
     else if(currentSort == 'Highest to Lowest Price') {
-      locationsList.sort(
-        (Location l1, Location l2) {
+      routes.sort(
+        (CustomRoute l1, CustomRoute l2) {
           return l2.price.compareTo(l1.price);
         }
       );
     }
 
     else if(currentSort == 'Alphabetically [A-Z]') {
-      locationsList.sort(
-        (Location l1, Location l2) {
+      routes.sort(
+        (CustomRoute l1, CustomRoute l2) {
           return l1.name.toLowerCase().compareTo(l2.name.toLowerCase());
         }
       );
     }
 
     else if(currentSort == 'Alphabetically [Z-A]') {
-      locationsList.sort(
-        (Location l1, Location l2) {
+      routes.sort(
+        (CustomRoute l1, CustomRoute l2) {
           return l2.name.toLowerCase().compareTo(l1.name.toLowerCase());
         }
       );
     }
   }
 
+  Future< List<CustomRoute> > initRoutes() async {
+    final temp = await Realtime(uid: 'uid').getRoutes();
+
+    return temp.fold(
+      (error) {
+        return Future< List<CustomRoute> >.error(error);
+      },
+      (success) {
+        return Future< List<CustomRoute> >.value(success);
+      },
+    );
+  }
+
   @override
   void initState() {
     currentSort = sort[0];
 
-    locationsList = Location.getLocations();
+    routesFuture = initRoutes();
 
     super.initState();
   }
@@ -125,14 +142,14 @@ class _LocationsScreenState extends State<LocationsScreen> {
             icon: const Icon(Icons.search),
             onPressed: () async {
 
-              // final searchResult = await showSearch(
-              //   context: context,
-              //   delegate: Search(locationsList: locationsList,),
-              // );
+              final searchResult = await showSearch(
+                context: context,
+                delegate: Search(routes: routes,),
+              );
               
-              // if(searchResult != null) {
-              //   Navigator.pushNamed(context, ChosenLocationScreen.routeName, arguments: searchResult);
-              // }
+              if(searchResult != null && context.mounted) {
+                Navigator.pushNamed(context, ChosenRouteScreen.routeName, arguments: searchResult);
+              }
             },
           ),
         ],
@@ -213,75 +230,42 @@ class _LocationsScreenState extends State<LocationsScreen> {
         ),
       ),
 
-      body: ListView.builder(
-        itemCount: locationsList.length,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20,),
-            child: CustomButton(
-              shadow: false,
-              borderRadius: 5,
-              onTap: () {
-                final locationData = locationsList[index];
-                Navigator.pushNamed(context, ChosenLocationScreen.routeName,arguments: locationData);
-              },
-              child: Column(
-                children: [
-                  Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: 130,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      image: DecorationImage(
-                        image: AssetImage(
-                          'assets/images/${locationsList[index].name}.jpg'
-                        ),
-                        opacity: .8,
-                        fit: BoxFit.fitWidth,
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CustomText(
-                          text: locationsList[index].name,
-                          size: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        const HSizedBox(
-                          height: 10,
-                        ),
-                        
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                const Icon(Icons.location_pin),
-                                CustomText(
-                                  text: locationsList[index].address,
-                                  size: 13,
-                                  textColor: Colors.white60,
-                                ),
-                              ],
-                            ),
-                            CustomText(
-                              text: '${locationsList[index].price} EGP',
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
+      body: Center(
+        child: FutureBuilder(
+          future: routesFuture,
+          builder: (context, snapshot) {
+            switch(snapshot.connectionState) {
+              case ConnectionState.none:
+                return const CustomText(
+                  text: 'None',
+                  size: 30,
+                );
+      
+              case ConnectionState.waiting:
+              case ConnectionState.active:
+                return const CircularProgressIndicator(
+                  strokeWidth: 2,
+                ); 
+      
+              case ConnectionState.done:
+                if(snapshot.hasError) {
+                  return CustomText(
+                    text: '${snapshot.error}',
+                    size: 30,
+                  );
+                }
+      
+                else if(snapshot.hasData) {
+                  routes = snapshot.data as List<CustomRoute>;
+                  return RoutesListView(
+                    routes: routes,
+                  );
+                }
+      
+                return const SizedBox.shrink();
+            }
+          },
+        ),
       ),
     );
   }

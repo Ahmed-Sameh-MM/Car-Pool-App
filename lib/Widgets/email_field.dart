@@ -11,6 +11,7 @@ class EmailField extends StatefulWidget {
   final TextInputAction nextOrDone;
   final FocusNode focusNode;
   final Function submitted;
+  final bool autoFocus;
 
   static void emptyFunction() {}
 
@@ -22,6 +23,7 @@ class EmailField extends StatefulWidget {
     this.nextOrDone = TextInputAction.next,
     required this.focusNode,
     this.submitted = emptyFunction,
+    this.autoFocus = false,
   });
   @override
   State<EmailField> createState() => _EmailFieldState();
@@ -47,6 +49,7 @@ class _EmailFieldState extends State<EmailField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      autofocus: widget.autoFocus,
       maxLength: widget.length,
       textInputAction: widget.nextOrDone,
       controller: widget.controller,

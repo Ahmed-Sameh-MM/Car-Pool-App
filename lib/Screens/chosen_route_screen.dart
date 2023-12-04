@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:car_pool_app/Model%20Classes/location.dart';
+import 'package:car_pool_app/Model%20Classes/custom_route.dart';
 import 'package:car_pool_app/Screens/checkout_screen.dart';
 import 'package:car_pool_app/Services/date.dart';
 import 'package:car_pool_app/Widgets/custom_button.dart';
@@ -12,30 +12,30 @@ import 'package:car_pool_app/Static%20Data/colors.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class ChosenLocationScreen extends StatefulWidget {
+class ChosenRouteScreen extends StatefulWidget {
 
-  final Location locationData;
+  final CustomRoute routeData;
 
   final bool showGates;
 
-  const ChosenLocationScreen({
+  const ChosenRouteScreen({
     super.key,
-    required this.locationData,
+    required this.routeData,
     this.showGates = false,
   });
 
   static const routeName = '/chosen_location';
   
   @override
-  State<ChosenLocationScreen> createState() => _ChosenLocationScreenState();
+  State<ChosenRouteScreen> createState() => _ChosenRouteScreenState();
 }
 
-class _ChosenLocationScreenState extends State<ChosenLocationScreen> {
+class _ChosenRouteScreenState extends State<ChosenRouteScreen> {
 
   int? selectedTimeSlot;
   int selectedDateSlot = 0; // currently selected date slot
 
-  late final Location chosenLocationData;
+  late final CustomRoute chosenRouteData;
 
   final List<String> timeSlots = ['7:30 AM', '5:30 PM'];
 
@@ -142,7 +142,7 @@ class _ChosenLocationScreenState extends State<ChosenLocationScreen> {
                         textColor: Colors.black,
                       ),
                       CustomText(
-                        text: '${chosenLocationData.price} Egp',
+                        text: '${chosenRouteData.price} Egp',
                         textColor: Colors.black,
                       ),
                     ],
@@ -153,7 +153,7 @@ class _ChosenLocationScreenState extends State<ChosenLocationScreen> {
                 width: 200,
                 height: 50,
                 onTap: () {
-                  Navigator.pushNamed(context, CheckoutScreen.routeName, arguments: chosenLocationData);
+                  Navigator.pushNamed(context, CheckoutScreen.routeName, arguments: chosenRouteData);
                 },
                 child: const Center(
                   child: CustomText(
@@ -193,7 +193,7 @@ class _ChosenLocationScreenState extends State<ChosenLocationScreen> {
           Column(
             children: [
               CustomText(
-                text: 'Trip Price (${chosenLocationData.price} EGP)',
+                text: 'Trip Price (${chosenRouteData.price} EGP)',
               ),
               const TextButton(
                 onPressed: null,
@@ -212,7 +212,7 @@ class _ChosenLocationScreenState extends State<ChosenLocationScreen> {
 
   @override
   void initState() {
-    chosenLocationData = widget.locationData;
+    chosenRouteData = widget.routeData;
     
     dayNameAndDayDatesGenerator();
     super.initState();
@@ -227,7 +227,7 @@ class _ChosenLocationScreenState extends State<ChosenLocationScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Image(
-              image: AssetImage('assets/images/${chosenLocationData.name}.jpg'),
+              image: AssetImage('assets/images/${chosenRouteData.name}.jpg'),
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(15, 20, 15, 0),
@@ -235,7 +235,7 @@ class _ChosenLocationScreenState extends State<ChosenLocationScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CustomText(
-                    text: chosenLocationData.name,
+                    text: chosenRouteData.name,
                     size: 24,
                     fontWeight: FontWeight.bold,
                   ),
@@ -250,7 +250,7 @@ class _ChosenLocationScreenState extends State<ChosenLocationScreen> {
                             color: Colors.white,
                           ),
                           CustomText(
-                            text: chosenLocationData.address,
+                            text: chosenRouteData.address,
                           ),
                         ],
                       ),
@@ -268,7 +268,7 @@ class _ChosenLocationScreenState extends State<ChosenLocationScreen> {
                           CustomButton(
                             onTap: () async {
 
-                              final url = Uri.parse(chosenLocationData.location);
+                              final url = Uri.parse(chosenRouteData.location);
 
                               if(await canLaunchUrl(url)) {
                                 await launchUrl(url);

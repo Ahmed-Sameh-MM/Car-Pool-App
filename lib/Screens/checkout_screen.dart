@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:car_pool_app/Widgets/sized_box.dart';
 import 'package:car_pool_app/Widgets/custom_text.dart';
 import 'package:car_pool_app/Widgets/custom_container.dart';
-import 'package:car_pool_app/Model%20Classes/location.dart';
+import 'package:car_pool_app/Model%20Classes/custom_route.dart';
 import 'package:car_pool_app/Screens/payment_screen.dart';
 import 'package:car_pool_app/Static%20Data/colors.dart';
 import 'package:car_pool_app/Widgets/custom_button.dart';
@@ -16,7 +16,7 @@ class CheckoutScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final chosenLocation = ModalRoute.of(context)!.settings.arguments as Location;
+    final chosenLocation = ModalRoute.of(context)!.settings.arguments as CustomRoute;
     
     return Scaffold(
       appBar: AppBar(

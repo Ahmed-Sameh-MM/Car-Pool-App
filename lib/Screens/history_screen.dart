@@ -1,4 +1,4 @@
-import 'package:car_pool_app/Model%20Classes/location.dart';
+import 'package:car_pool_app/Model%20Classes/custom_route.dart';
 import 'package:car_pool_app/Widgets/custom_container.dart';
 import 'package:flutter/material.dart';
 
@@ -20,7 +20,7 @@ class HistoryScreen extends StatefulWidget {
 
 class _HistoryScreenState extends State<HistoryScreen> {
 
-  Future? historyFuture = Future.delayed(const Duration(milliseconds: 500), () => Location.getLocations()[0],);
+  Future? historyFuture = Future.delayed(const Duration(milliseconds: 500), () => CustomRoute.getCustomRoutes()[0],);
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +39,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
             Padding(
               padding: const EdgeInsets.only(left: 15.0),
               child: CustomText(
-                text: 'Active Bookings',
+                text: 'Active Trips',
                 size: 16,
                 fontWeight: FontWeight.bold,
                 fontFamily: GoogleFonts.poppins().fontFamily,
@@ -73,14 +73,14 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       }
                       
                       else if(snapshot.hasData){
-                        Location? activeBooking;
+                        CustomRoute? activeBooking;
 
                         activeBooking = snapshot.data;
                         
                         if(activeBooking == null) {
                           return Center(
                             child: CustomText(
-                              text: "No Active Bookings",
+                              text: "No Active Trips",
                               size: 18,
                             ),
                           );
@@ -222,7 +222,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
             Padding(
               padding: const EdgeInsets.only(left: 15.0),
               child: CustomText(
-                text: 'Previous Bookings',
+                text: 'Previous Trips',
                 size: 16,
                 fontWeight: FontWeight.bold,
                 fontFamily: GoogleFonts.poppins().fontFamily,
@@ -239,7 +239,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
               builder: (context, snapshot) {
                 switch(snapshot.connectionState){
                   case ConnectionState.none:
-                    return Text('Error Loading the Data');
+                    return const Text('Error Loading the Data');
                   
                   case ConnectionState.waiting:
                   case ConnectionState.active:
@@ -259,7 +259,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       if(previousBookings.isEmpty) {
                         return const Center(
                           child: CustomText(
-                            text: 'No Previous Bookings',
+                            text: 'No Previous Trips',
                             size: 18,
                           ),
                         );
@@ -303,7 +303,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 CustomText(
-                                                  text: '${previousBookings[index].schoolName} School',
+                                                  text: '${previousBookings[index].schoolName}',
                                                   size: 16,
                                                   fontWeight: FontWeight.bold,
                                                 ),
@@ -401,9 +401,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         );
                       }
                     }
-                    return Text('error retrieving the data, please try again');
+                    return const Text('error retrieving the data, please try again');
                   default:
-                    return Text('Default');
+                    return const Text('Default');
                 }
               },
             ),

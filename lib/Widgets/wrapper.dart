@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 
-import 'package:car_pool_app/Screens/login_screen.dart';
 import 'package:car_pool_app/Screens/register_screen.dart';
 import 'package:car_pool_app/Screens/main_screen.dart';
+
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
 
 class Wrapper extends StatelessWidget {
   const Wrapper({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return RegisterScreen();
+
+    final user = Provider.of<User?>(context);
+    
+    if(user == null) return const RegisterScreen();
+    
+    return const MainScreen();
   }
 }
