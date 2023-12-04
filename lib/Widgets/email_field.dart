@@ -58,6 +58,11 @@ class _EmailFieldState extends State<EmailField> {
       onFieldSubmitted: (String name) {
         widget.submitted();
       },
+
+      style: const TextStyle(
+        color: Colors.white,
+      ),
+
       decoration: InputDecoration(
         labelText: 'Email',
         labelStyle: const TextStyle(

@@ -47,6 +47,11 @@ class PromoCodeField extends StatelessWidget {
       textInputAction: TextInputAction.next,
       validator: nameValidator,
       cursorRadius: const Radius.circular(10),
+
+      style: const TextStyle(
+        color: Colors.white,
+      ),
+
       decoration: InputDecoration(
         labelText: labelText,
         labelStyle: const TextStyle(

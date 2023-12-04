@@ -74,6 +74,11 @@ class _PasswordFieldState extends State<PasswordField> {
       onFieldSubmitted: (String name) {
         widget.submitted();
       },
+
+      style: const TextStyle(
+        color: Colors.white,
+      ),
+
       decoration: InputDecoration(
         labelText: 'Password',
         labelStyle: const TextStyle(

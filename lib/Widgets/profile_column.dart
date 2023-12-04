@@ -5,6 +5,8 @@ import 'package:car_pool_app/Widgets/custom_text.dart';
 import 'package:car_pool_app/Model%20Classes/user.dart';
 import 'package:car_pool_app/Widgets/sized_box.dart';
 import 'package:car_pool_app/Static%20Data/colors.dart';
+import 'package:car_pool_app/Services/authenticate.dart';
+import 'package:car_pool_app/Widgets/custom_button.dart';
 
 class ProfileColumn extends StatelessWidget {
   const ProfileColumn({
@@ -68,6 +70,24 @@ class ProfileColumn extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ],
+              ),
+            ),
+
+            const HSizedBox(
+              height: 180,
+            ),
+
+            CustomButton(
+              shadow: false,
+              width: 150,
+              height: 50,
+              onTap: () async {
+                await signout();
+              },
+              child: const CustomText(
+                text: 'Sign Out',
+                size: 30,
+                textColor: Colors.red,
               ),
             ),
           ],
