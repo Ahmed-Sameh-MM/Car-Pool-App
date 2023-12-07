@@ -4,13 +4,17 @@ import 'package:car_pool_app/Static%20Data/constants.dart';
 import 'package:car_pool_app/Widgets/custom_button.dart';
 import 'package:car_pool_app/Widgets/custom_text.dart';
 import 'package:car_pool_app/Widgets/sized_box.dart';
-import 'package:car_pool_app/Screens/main_screen.dart';
+import 'package:car_pool_app/Screens/routes_screen.dart';
+import 'package:car_pool_app/State%20Management/providers.dart';
+import 'package:car_pool_app/Screens/chosen_route_screen.dart';
 
-class GateWidget extends StatelessWidget {
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+class GateWidget extends ConsumerWidget {
   const GateWidget({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -26,7 +30,16 @@ class GateWidget extends StatelessWidget {
               return CustomButton(
                 shadow: false,
                 onTap: () {
-                  Navigator.pushNamed(context, MainScreen.routeName);
+                  final routeType = ref.read(routeTypeProvider);
+                  
+                  if(routeType == RouteType.anyToAinshams) {
+                    final chosenRouteData = ref.read(chosenRouteProvider);
+                    Navigator.pushNamed(context, ChosenRouteScreen.routeName, arguments: chosenRouteData);
+                  }
+
+                  else if(routeType == RouteType.ainshamsToAny) {
+                    Navigator.pushNamed(context, RoutesScreen.routeName);
+                  }
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(10),

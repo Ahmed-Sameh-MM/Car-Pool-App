@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:car_pool_app/Widgets/custom_button.dart';
 import 'package:car_pool_app/Widgets/custom_text.dart';
 import 'package:car_pool_app/Widgets/sized_box.dart';
+import 'package:car_pool_app/Screens/checkout_screen.dart';
 
 class PaymentScreen extends StatelessWidget {
   const PaymentScreen({ super.key });
@@ -31,7 +32,9 @@ class PaymentScreen extends StatelessWidget {
                   size: 20,
                 ),
               ),
-              onTap: () {},
+              onTap: () {
+                Navigator.pushNamed(context, CheckoutScreen.routeName);
+              },
             ),
       
             const HSizedBox(
@@ -47,7 +50,9 @@ class PaymentScreen extends StatelessWidget {
                   size: 20,
                 ),
               ),
-              onTap: () {},
+              onTap: () {
+                Navigator.pushNamed(context, CheckoutScreen.routeName);
+              },
             ),
       
             const HSizedBox(
@@ -63,7 +68,9 @@ class PaymentScreen extends StatelessWidget {
                   size: 20,
                 ),
               ),
-              onTap: () {},
+              onTap: () {
+                Navigator.pushNamed(context, CheckoutScreen.routeName);
+              },
             ),
           ],
         ),

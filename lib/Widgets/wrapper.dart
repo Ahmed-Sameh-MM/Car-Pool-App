@@ -9,6 +9,8 @@ import 'package:provider/provider.dart';
 class Wrapper extends StatelessWidget {
   const Wrapper({super.key});
 
+  static const routeName = '/';
+
   @override
   Widget build(BuildContext context) {
 

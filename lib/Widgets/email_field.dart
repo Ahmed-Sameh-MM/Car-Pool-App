@@ -1,7 +1,9 @@
-import 'package:car_pool_app/Static%20Data/colors.dart';
 import 'package:flutter/material.dart';
 
 import 'package:car_pool_app/Static%20Data/constants.dart';
+import 'package:car_pool_app/Static%20Data/colors.dart';
+
+import 'package:email_validator/email_validator.dart';
 
 class EmailField extends StatefulWidget {
 
@@ -37,6 +39,10 @@ class _EmailFieldState extends State<EmailField> {
   {
     if(email == null || email.isEmpty) {
       return empty;
+    }
+
+    else if(! EmailValidator.validate(email)) {
+      return 'Invalid Email Format !';
     }
 
     else if(! email.endsWith(emailDomain)) {

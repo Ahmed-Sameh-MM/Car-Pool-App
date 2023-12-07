@@ -1,12 +1,9 @@
-import 'package:flutter/material.dart';
+import 'package:car_pool_app/Model%20Classes/custom_route.dart';
+import 'package:car_pool_app/Static%20Data/constants.dart';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 
-final userProvider = StreamProvider.autoDispose<User?>((ref) async* {
-  User? user;
-  final stream = FirebaseAuth.instance.authStateChanges();
+final routeTypeProvider = StateProvider<RouteType>((ref) => RouteType.none);
 
-  yield user;
-});
+final chosenRouteProvider = StateProvider<CustomRoute>((ref) => CustomRoute.empty());

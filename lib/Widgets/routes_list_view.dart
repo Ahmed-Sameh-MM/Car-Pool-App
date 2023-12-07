@@ -5,8 +5,13 @@ import 'package:car_pool_app/Widgets/custom_button.dart';
 import 'package:car_pool_app/Widgets/custom_text.dart';
 import 'package:car_pool_app/Widgets/sized_box.dart';
 import 'package:car_pool_app/Model%20Classes/custom_route.dart';
+import 'package:car_pool_app/Screens/gates_screen.dart';
+import 'package:car_pool_app/State%20Management/providers.dart';
+import 'package:car_pool_app/Static%20Data/constants.dart';
 
-class RoutesListView extends StatelessWidget {
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+class RoutesListView extends ConsumerWidget {
   const RoutesListView({
     super.key,
     required this.routes,
@@ -15,7 +20,7 @@ class RoutesListView extends StatelessWidget {
   final List<CustomRoute> routes;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return ListView.builder(
       itemCount: routes.length,
       itemBuilder: (context, index) {
@@ -25,8 +30,18 @@ class RoutesListView extends StatelessWidget {
             shadow: false,
             borderRadius: 5,
             onTap: () {
-              final locationData = routes[index];
-              Navigator.pushNamed(context, ChosenRouteScreen.routeName,arguments: locationData);
+              final routeData = routes[index];
+
+              final routeType = ref.read(routeTypeProvider);
+
+              if(routeType == RouteType.anyToAinshams) {
+                ref.read(chosenRouteProvider).copyWith(routeData);
+                Navigator.pushNamed(context, GatesScreen.routeName);
+              }
+              
+              else if(routeType == RouteType.ainshamsToAny) {
+                Navigator.pushNamed(context, ChosenRouteScreen.routeName, arguments: routeData);
+              }
             },
             child: Column(
               children: [

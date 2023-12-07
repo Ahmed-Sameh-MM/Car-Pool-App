@@ -1,18 +1,22 @@
+import 'package:car_pool_app/State%20Management/providers.dart';
+import 'package:car_pool_app/Static%20Data/constants.dart';
 import 'package:flutter/material.dart';
 
 import 'package:car_pool_app/Screens/gates_screen.dart';
-import 'package:car_pool_app/Screens/main_screen.dart';
+import 'package:car_pool_app/Screens/routes_screen.dart';
 import 'package:car_pool_app/Widgets/custom_button.dart';
 import 'package:car_pool_app/Widgets/custom_text.dart';
 import 'package:car_pool_app/Widgets/sized_box.dart';
 
-class PathScreen extends StatelessWidget {
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+class PathScreen extends ConsumerWidget {
   const PathScreen({super.key});
 
   static const routeName = '/path';
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Choose A Path'),
@@ -26,7 +30,8 @@ class PathScreen extends StatelessWidget {
             CustomButton(
               shadow: false,
               onTap: () {
-                Navigator.pushNamed(context, MainScreen.routeName);
+                ref.read(routeTypeProvider.notifier).state = RouteType.anyToAinshams;
+                Navigator.pushNamed(context, RoutesScreen.routeName);
               },
               child: const Padding(
                 padding: EdgeInsets.all(10),
@@ -57,6 +62,7 @@ class PathScreen extends StatelessWidget {
             CustomButton(
               shadow: false,
               onTap: () {
+              ref.read(routeTypeProvider.notifier).state = RouteType.ainshamsToAny;
                 Navigator.pushNamed(context, GatesScreen.routeName);
               },
               child: const Padding(

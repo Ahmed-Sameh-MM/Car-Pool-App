@@ -20,7 +20,7 @@ class HistoryScreen extends StatefulWidget {
 
 class _HistoryScreenState extends State<HistoryScreen> {
 
-  Future? historyFuture = Future.delayed(const Duration(milliseconds: 500), () => CustomRoute.getCustomRoutes()[0],);
+  Future? historyFuture = Future.delayed(const Duration(milliseconds: 500), () => CustomRoute(name: 'Maadi', price: 22.5, address: 'Address #1', location: '',),);
 
   @override
   Widget build(BuildContext context) {

@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 
 import 'package:car_pool_app/Model%20Classes/custom_route.dart';
-import 'package:car_pool_app/Screens/checkout_screen.dart';
 import 'package:car_pool_app/Services/date.dart';
 import 'package:car_pool_app/Widgets/custom_button.dart';
 import 'package:car_pool_app/Widgets/custom_text.dart';
 import 'package:car_pool_app/Widgets/shimmer_template.dart';
 import 'package:car_pool_app/Widgets/sized_box.dart';
 import 'package:car_pool_app/Static%20Data/colors.dart';
+import 'package:car_pool_app/Screens/payment_screen.dart';
+import 'package:car_pool_app/Services/general_functions.dart';
+import 'package:car_pool_app/Static%20Data/constants.dart';
 
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -16,15 +18,12 @@ class ChosenRouteScreen extends StatefulWidget {
 
   final CustomRoute routeData;
 
-  final bool showGates;
-
   const ChosenRouteScreen({
     super.key,
     required this.routeData,
-    this.showGates = false,
   });
 
-  static const routeName = '/chosen_location';
+  static const routeName = '/chosen_route';
   
   @override
   State<ChosenRouteScreen> createState() => _ChosenRouteScreenState();
@@ -36,8 +35,6 @@ class _ChosenRouteScreenState extends State<ChosenRouteScreen> {
   int selectedDateSlot = 0; // currently selected date slot
 
   late final CustomRoute chosenRouteData;
-
-  final List<String> timeSlots = ['7:30 AM', '5:30 PM'];
 
   DateTime? currentDate;
 
@@ -70,8 +67,6 @@ class _ChosenRouteScreenState extends State<ChosenRouteScreen> {
       },
     );
   }
-
-  //List<bool> i = List.from(chosenSchoolData['Sunday']); // dont know why <bool> doesn't work here !
 
   Widget bookNowSheet() {
     if(selectedTimeSlot != null) {
@@ -123,7 +118,7 @@ class _ChosenRouteScreenState extends State<ChosenRouteScreen> {
                         textColor: Colors.black,
                       ),
                       CustomText(
-                        text: '${timeSlots[selectedTimeSlot!]}',
+                        text: durationToTime(timeSlots[selectedTimeSlot!]),
                         textColor: Colors.black,
                       ),
                     ],
@@ -153,7 +148,7 @@ class _ChosenRouteScreenState extends State<ChosenRouteScreen> {
                 width: 200,
                 height: 50,
                 onTap: () {
-                  Navigator.pushNamed(context, CheckoutScreen.routeName, arguments: chosenRouteData);
+                  Navigator.pushNamed(context, PaymentScreen.routeName);
                 },
                 child: const Center(
                   child: CustomText(
@@ -184,7 +179,7 @@ class _ChosenRouteScreenState extends State<ChosenRouteScreen> {
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 8.0),
             child: CustomText(
-              text: 'Choose Field',
+              text: 'Choose Time & Date',
               size: 20,
               fontWeight: FontWeight.bold,
             ),
@@ -295,16 +290,6 @@ class _ChosenRouteScreenState extends State<ChosenRouteScreen> {
                   const HSizedBox(
                     height: 20,
                   ),
-                  
-                  const CustomText(
-                    text: 'Choose Gate',
-                    size: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-
-                  const HSizedBox(
-                    height: 40,
-                  ),
 
                   const CustomText(
                     text: 'Choose Time',
@@ -339,7 +324,7 @@ class _ChosenRouteScreenState extends State<ChosenRouteScreen> {
                             },
                             selected: (index == selectedTimeSlot),
                             child: Center(
-                              child: Text(timeSlots[index]),
+                              child: Text(durationToTime(timeSlots[index])),
                             ),
                           ),
                         );

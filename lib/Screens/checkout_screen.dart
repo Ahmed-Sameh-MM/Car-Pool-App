@@ -1,22 +1,28 @@
+import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 
 import 'package:car_pool_app/Widgets/sized_box.dart';
 import 'package:car_pool_app/Widgets/custom_text.dart';
 import 'package:car_pool_app/Widgets/custom_container.dart';
-import 'package:car_pool_app/Model%20Classes/custom_route.dart';
-import 'package:car_pool_app/Screens/payment_screen.dart';
 import 'package:car_pool_app/Static%20Data/colors.dart';
 import 'package:car_pool_app/Widgets/custom_button.dart';
 import 'package:car_pool_app/Widgets/promo_code_field.dart';
+import 'package:car_pool_app/State%20Management/providers.dart';
+import 'package:car_pool_app/Offline%20Storage/storage.dart';
+import 'package:car_pool_app/Services/errors.dart';
+import 'package:car_pool_app/Services/realtime_db.dart';
+import 'package:car_pool_app/Widgets/wrapper.dart';
 
-class CheckoutScreen extends StatelessWidget {
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+class CheckoutScreen extends ConsumerWidget {
   const CheckoutScreen({ super.key });
 
   static const routeName = '/checkout';
 
   @override
-  Widget build(BuildContext context) {
-    final chosenLocation = ModalRoute.of(context)!.settings.arguments as CustomRoute;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final chosenRoute = ref.watch(chosenRouteProvider);
     
     return Scaffold(
       appBar: AppBar(
@@ -32,7 +38,7 @@ class CheckoutScreen extends StatelessWidget {
               decoration: BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage(
-                    'assets/images/${chosenLocation.name}.jpg',
+                    'assets/images/${chosenRoute.name}.jpg',
                   ),
                   fit: BoxFit.cover,
                 ),
@@ -45,9 +51,8 @@ class CheckoutScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  //Text('${reservationHistory.schoolName} School' , style: Theme.of(context).textTheme.headline5,),
                   CustomText(
-                    text: chosenLocation.name,
+                    text: chosenRoute.name,
                     size: 24,
                     fontWeight: FontWeight.bold,
                   ),
@@ -66,7 +71,7 @@ class CheckoutScreen extends StatelessWidget {
                         width: 5,
                       ),
                       CustomText(
-                        text: chosenLocation.address,
+                        text: chosenRoute.address,
                         size: 16,
                       ),
                     ],
@@ -202,7 +207,7 @@ class CheckoutScreen extends StatelessWidget {
                       ),
 
                       CustomText(
-                        text: 'EGP ${chosenLocation.price}',
+                        text: 'EGP ${chosenRoute.price}',
                       ),
                     ],
                   ),
@@ -235,7 +240,7 @@ class CheckoutScreen extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                       CustomText(
-                        text: 'EGP ${chosenLocation.price}',
+                        text: 'EGP ${chosenRoute.price}',
                         fontWeight: FontWeight.bold,
                       ),
                     ],
@@ -248,47 +253,42 @@ class CheckoutScreen extends StatelessWidget {
                   CustomButton(
                     height: 50,
                     child: const CustomText(
-                      text: 'Confirm Booking',
+                      text: 'Confirm Trip',
                     ),
                     onTap: () async {
-                      Navigator.pushNamed(context, PaymentScreen.routeName);
-                      // final reservation = await Realtime(phoneNumber: '01111111111111').reserve(
-                      //   reservationHistory: reservationHistory,
+                      final user = await UserStorage.readUser();
+                      
+                      // final tripReservation = await Realtime(uid: user.uid).reserve(
+                      //   trip: ,
                       // );
+
+                      final tripReservation = await Future.delayed(const Duration(seconds: 1), () => const Right(true));
             
-                      // reservation.fold(
-                      //   (error) {
-                      //     if(error is ConnectionError) {
-                      //       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error.errorMessage)));
-                      //     }
-                      //     else if(error is FirebaseError) {
-                      //       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error.errorMessage)));
-                      //     }
-                      //     else if(error is AlreadyReservedError) {
-                      //       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error.errorMessage)));
-                      //       Navigator.pop(context);
-                      //     }
-                      //   },
-                      //   (right) async {
-                      //     final history = await Firestore(phoneNumber: userData.phoneNumber).addReservationHistory(reservationHistory);
-            
-                      //     history.fold(
-                      //       (error) {},
-                      //       (right) async {
-                      //         await Storage().addHistory(reservationHistory);
+                      tripReservation.fold(
+                        (error) {
+                          if(error is ConnectionError || error is FirebaseError) {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error.errorMessage)));
+                          }
+                          
+                          else if(error is AlreadyReservedError) {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error.errorMessage)));
+                            Navigator.pop(context);
+                          }
+                        },
+                        (right) async {
+                          // await Storage().addHistory(reservationHistory);
                               
-                      //         userData.accountStatus = AccountStatus.active;
-                      //         userData.reservationsCounter += 1;
-                      //         await Storage().updateUserAccountStatus(userData);
-                      //         await Storage().incrementReservationsCounter(userData);
-            
-                      //         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Successful Reservation")));
-                      //         // TODO handle the stopwatch, either stop and reset it or stop it only, just dispose it
-                      //         Navigator.popUntil(context, ModalRoute.withName(Wrapper.routeName));
-                      //       },
-                      //     );
-                      //   },
-                      // );
+                          // userData.accountStatus = AccountStatus.active;
+                          // userData.reservationsCounter += 1;
+
+                          // await Storage().updateUserAccountStatus(userData);
+                          // await Storage().incrementReservationsCounter(userData);
+        
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Successful Reservation")));
+                          
+                          Navigator.popUntil(context, ModalRoute.withName(Wrapper.routeName));
+                        },
+                      );
                     },
                   ),
                 ],

@@ -1,11 +1,12 @@
 import 'dart:io';
-import 'package:car_pool_app/Model%20Classes/custom_route.dart';
-import 'package:car_pool_app/Model%20Classes/user.dart';
+import 'package:car_pool_app/Model%20Classes/trip.dart';
 import 'package:flutter/material.dart'; // used for debugPrint()
 
 import 'package:car_pool_app/Services/lookup.dart';
 import 'package:car_pool_app/Services/errors.dart';
 import 'package:car_pool_app/Services/date.dart';
+import 'package:car_pool_app/Model%20Classes/custom_route.dart';
+import 'package:car_pool_app/Model%20Classes/user.dart';
 
 import 'package:dartz/dartz.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -23,92 +24,49 @@ class Realtime {
     required this.uid,
   });
 
-  final userDataReference = FirebaseDatabase.instance.ref().child("/user_data");
-
   final usersReference = FirebaseDatabase.instance.ref().child("/users");
 
   // Reservation Methods
   
-  // Future< Either<ErrorTypes, bool> > reserve({required ReservationHistory reservationHistory, required String name}) async {
+  Future< Either<ErrorTypes, bool> > reserve({required Trip trip}) async {
 
-  //   final connection = await LookUp.checkInternetConnection();
+    final connection = await LookUp.checkInternetConnection();
 
-  //   return connection.fold(
-  //     (error) {
-  //       return Left(error);
-  //     },
-  //     (right) async {
-  //       try {
-  //         //final defaultValues = {'available' : false}; //, 'userName' : reservationHistory.name, 'userPhone' : reservationHistory.phoneNumber};
-  //         bool interruptFlag = false;
+    return connection.fold(
+      (error) {
+        return Left(error);
+      },
+      (right) async {
+        try {
+          // checking the time constraints
+          // debugPrint(trip.date.add(trip.time));
 
-  //         // check if any one of the selected slots are already reserved, right before making any reservations
-  //         for(int i = reservationHistory.chosenTimeSlots.first; i <= reservationHistory.chosenTimeSlots.last; i++) {
-  //           await reservationDataReference.child(reservationHistory.schoolId).child(reservationHistory.day).child(reservationHistory.field).child(i.toString()).once().then((event) {
-  //             debugPrint('snapshot.value[$i]: ${event.snapshot.value}');
-  //             if(event.snapshot.value == false) interruptFlag = true;
-  //           });
-  //           if(interruptFlag) {
-  //             return Left(
-  //               AlreadyReservedError(),
-  //             );
-  //           }
-  //         }
+          // reserving successfully
+          await reservationDataReference.child(trip.date.toString()).child(trip.id.toString()).update({});
 
-  //         Map<String, dynamic> chosenTimeSlots = {};
+          // Updating the users reference
 
-  //         // making the map of the selected slots to be sent 1 time to the realtime database
-  //         for(int i = 0; i < reservationHistory.chosenTimeSlots.length; i++) {
-  //           chosenTimeSlots['${reservationHistory.chosenTimeSlots[i]}'] = false;
-  //         }
+          Map<String, dynamic> temp_2 = {
+            // 'accountStatus' : UserData.statusToString(AccountStatus.active),
+            'tripsCount' : ServerValue.increment(1),
+            'points' : ServerValue.increment(5),
+          };
+
+          await usersReference.child(uid).update(temp_2);
           
-  //         // closing the selected slots and reserving successfully
-  //         await reservationDataReference.child(reservationHistory.schoolId).child(reservationHistory.day).child(reservationHistory.field).update(chosenTimeSlots);
-
-  //         // Updating the user data reference
-
-  //         final List<int> slotsTime = reservationHistory.slots.split("-").map( (e) => int.parse(e)).toList(); // ('2-5') -> ['2', '5'] -> [2, 5]
-          
-  //         List<int> slots = [];
-
-  //         for(int i = slotsTime.first; i < slotsTime.last; i++) {
-  //           slots.add(i);
-  //         }
-          
-  //         Map<String, dynamic> temp = {
-  //           "customerPhoneNumber": uid,
-  //           "customerName": name,
-  //           // "slots": reservationHistory.chosenTimeSlots,
-  //           "slots": slots,
-  //           "reservationCost": reservationHistory.price,
-  //           "confirmationCode": reservationHistory.confirmationCode,
-  //           "reservationNumber": reservationHistory.reservationNumber,
-  //         };
-  //         await userDataReference.child(reservationHistory.schoolId).child(reservationHistory.day).child(reservationHistory.field).child(reservationHistory.slots).set(temp);
-
-  //         // Updating the users reference
-
-  //         Map<String, dynamic> temp_2 = {
-  //           'accountStatus' : UserData.statusToString(AccountStatus.active),
-  //           'reservationsCounter' : ServerValue.increment(1),
-  //           'historyUpdateFlag' : ServerValue.increment(1),
-  //         };
-
-  //         await usersReference.child(uid).update(temp_2);
-          
-  //         return const Right(true);
-  //       }
-  //       catch(e) {
-  //         return Left(
-  //           FirebaseError(
-  //             errorMessage: 'Server Error: $e',
-  //             errorId: 101,
-  //           ),
-  //         );
-  //       }
-  //     },
-  //   );
-  // }
+          return const Right(true);
+        }
+        catch(e) {
+          return Left(
+            FirebaseError(
+              errorMessage: 'Server Error: $e',
+              errorId: 101,
+            ),
+          );
+        }
+      },
+    );
+  }
 
   // void removeReservationAndUserDataRecords(ReservationHistory reservationHistory) async {
   //   // Removing the corresponding reservation record from the DB
