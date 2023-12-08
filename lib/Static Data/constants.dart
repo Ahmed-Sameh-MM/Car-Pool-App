@@ -22,8 +22,8 @@ const List<Duration> timeSlots = [
 
 const Map<String, Duration> timeConstraints = {
   "7:30 AM": Duration(
-    hours: -24 - 9,
-    minutes: -30,
+    hours: -24 + 22,
+    minutes: 00,
   ),
 
   "5:30 PM": Duration(

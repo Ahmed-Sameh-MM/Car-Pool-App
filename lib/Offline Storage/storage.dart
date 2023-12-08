@@ -33,7 +33,7 @@ class UserStorage {
     return User.fromJson(user[0]);
   }
 
-  static Future deleteCard(User user) async {
+  static Future deleteUser() async {
     final cardsDB = await _initUser();
     await cardsDB.delete(
       'user',

@@ -1,4 +1,3 @@
-import 'package:dartz/dartz.dart';
 import 'package:flutter/material.dart';
 
 import 'package:car_pool_app/Widgets/sized_box.dart';
@@ -12,6 +11,8 @@ import 'package:car_pool_app/Offline%20Storage/storage.dart';
 import 'package:car_pool_app/Services/errors.dart';
 import 'package:car_pool_app/Services/realtime_db.dart';
 import 'package:car_pool_app/Widgets/wrapper.dart';
+import 'package:car_pool_app/Services/trip_id_generator.dart';
+import 'package:car_pool_app/Services/date.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -135,7 +136,7 @@ class CheckoutScreen extends ConsumerWidget {
                     height: 30,
                   ),
 
-                  CustomText(
+                  const CustomText(
                     text: 'Pay with',
                     size: 16,
                     fontWeight: FontWeight.bold,
@@ -145,7 +146,7 @@ class CheckoutScreen extends ConsumerWidget {
                     height: 20,
                   ),
 
-                  CustomText(
+                  const CustomText(
                     text: 'Promo code',
                     size: 16,
                     fontWeight: FontWeight.bold,
@@ -202,7 +203,7 @@ class CheckoutScreen extends ConsumerWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      CustomText(
+                      const CustomText(
                         text: 'fee',
                       ),
 
@@ -257,36 +258,46 @@ class CheckoutScreen extends ConsumerWidget {
                     ),
                     onTap: () async {
                       final user = await UserStorage.readUser();
-                      
-                      // final tripReservation = await Realtime(uid: user.uid).reserve(
-                      //   trip: ,
-                      // );
 
-                      final tripReservation = await Future.delayed(const Duration(seconds: 1), () => const Right(true));
-            
-                      tripReservation.fold(
-                        (error) {
-                          if(error is ConnectionError || error is FirebaseError) {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error.errorMessage)));
-                          }
-                          
-                          else if(error is AlreadyReservedError) {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error.errorMessage)));
-                            Navigator.pop(context);
-                          }
-                        },
+                      final date = await Date.fetchDate();
+
+                      date.fold(
+                        (error) {},
                         (right) async {
-                          // await Storage().addHistory(reservationHistory);
-                              
-                          // userData.accountStatus = AccountStatus.active;
-                          // userData.reservationsCounter += 1;
+                          ref.read(tripProvider).id = TripIdGenerator().getRandomString(6);
+                          ref.read(tripProvider).currentDate = right;
 
-                          // await Storage().updateUserAccountStatus(userData);
-                          // await Storage().incrementReservationsCounter(userData);
-        
-                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Successful Reservation")));
-                          
-                          Navigator.popUntil(context, ModalRoute.withName(Wrapper.routeName));
+                          final trip = ref.read(tripProvider);
+                          final tripReservation = await Realtime(uid: user.uid).reserve(
+                            trip: trip,
+                          );
+                
+                          tripReservation.fold(
+                            (error) {
+                              if(error is ConnectionError || error is FirebaseError) {
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error.errorMessage)));
+                              }
+                              
+                              else if(error is LateReservationError) {
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error.errorMessage)));
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                              }
+                            },
+                            (right) async {
+                              // await Storage().addHistory(reservationHistory);
+                                  
+                              // userData.accountStatus = AccountStatus.active;
+                              // userData.reservationsCounter += 1;
+
+                              // await Storage().updateUserAccountStatus(userData);
+                              // await Storage().incrementReservationsCounter(userData);
+            
+                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Successful Reservation")));
+                              
+                              Navigator.popUntil(context, ModalRoute.withName(Wrapper.routeName));
+                            },
+                          );
                         },
                       );
                     },

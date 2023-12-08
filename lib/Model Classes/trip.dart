@@ -3,21 +3,19 @@ import 'package:json_annotation/json_annotation.dart';
 part 'trip.g.dart';
 
 enum TripStatus { // Can be active or previous, there can be only one active reservation
-  active,
-  cancelled,
+  rejected,
   pending,
   approved,
-  expired,
-  confirmed,
 }
 
 @JsonSerializable()
 class Trip {
-  int id;
+  String id;
   double price;
   String source;
   String destination;
-  DateTime date;
+  DateTime currentDate;
+  DateTime tripDate;
   Duration time;
   TripStatus status;
 
@@ -26,10 +24,20 @@ class Trip {
     required this.price,
     required this.source,
     required this.destination,
-    required this.date,
+    required this.currentDate,
+    required this.tripDate,
     required this.time,
     required this.status,
   });
+
+  Trip.empty({
+    this.id = "",
+    this.price = 10,
+    this.source = "",
+    this.destination = "",
+    this.time = Duration.zero,
+    this.status = TripStatus.pending,
+  }) : currentDate = DateTime(2024), tripDate = DateTime(2024);
 
   factory Trip.fromJson(Map<String, dynamic> json) => _$TripFromJson(json);
 
@@ -38,12 +46,9 @@ class Trip {
   static String statusToString(TripStatus bookingStatus) {
 
     const Map<TripStatus, String> statusMap = {
-      TripStatus.active: 'active',
-      TripStatus.cancelled: 'cancelled',
+      TripStatus.rejected: 'rejected',
       TripStatus.pending: 'pending',
       TripStatus.approved: 'approved',
-      TripStatus.expired: 'expired',
-      TripStatus.confirmed: 'confirmed',
     };
 
     return statusMap[bookingStatus]!;
@@ -52,12 +57,9 @@ class Trip {
   static TripStatus stringToStatus(String bookingStatus) {
 
     const Map<String, TripStatus> statusMap = {
-      'active': TripStatus.active,
-      'cancelled': TripStatus.cancelled,
+      'rejected': TripStatus.rejected,
       'pending': TripStatus.pending,
       'approved': TripStatus.approved,
-      'expired': TripStatus.expired,
-      'confirmed': TripStatus.confirmed,
     };
 
     return statusMap[bookingStatus] as TripStatus;

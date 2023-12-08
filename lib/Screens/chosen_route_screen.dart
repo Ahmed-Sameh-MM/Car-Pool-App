@@ -10,6 +10,8 @@ import 'package:car_pool_app/Static%20Data/colors.dart';
 import 'package:car_pool_app/Screens/payment_screen.dart';
 import 'package:car_pool_app/Services/general_functions.dart';
 import 'package:car_pool_app/Static%20Data/constants.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:car_pool_app/State%20Management/providers.dart';
 
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -70,17 +72,6 @@ class _ChosenRouteScreenState extends State<ChosenRouteScreen> {
 
   Widget bookNowSheet() {
     if(selectedTimeSlot != null) {
-
-      int start = selectedTimeSlot!;
-      int end = start + selectedTimeSlot! + 1;
-
-      if(start <= 12 || start > 24) {
-        start = start % 24;
-      }
-      else {
-        start -= 12;
-      }
-
       return Container(
         height: bottomSheetHeight,
         decoration: const BoxDecoration(
@@ -144,18 +135,29 @@ class _ChosenRouteScreenState extends State<ChosenRouteScreen> {
                   ),
                 ],
               ),
-              CustomButton(
-                width: 200,
-                height: 50,
-                onTap: () {
-                  Navigator.pushNamed(context, PaymentScreen.routeName);
-                },
-                child: const Center(
-                  child: CustomText(
-                    text: 'Book Now',
-                    size: 16,
-                  ),
-                ),
+              Consumer(
+                builder: (context, ref, child) {
+                  return CustomButton(
+                    width: 200,
+                    height: 50,
+                    onTap: () {
+                      final tripDate = currentDate!.add(Duration(
+                        days: selectedDateSlot,
+                      ));
+                      ref.read(tripProvider).tripDate = DateTime(tripDate.year, tripDate.month, tripDate.day);
+
+                      ref.read(tripProvider).time = timeSlots[selectedTimeSlot!];
+                      
+                      Navigator.pushNamed(context, PaymentScreen.routeName);
+                    },
+                    child: const Center(
+                      child: CustomText(
+                        text: 'Book Now',
+                        size: 16,
+                      ),
+                    ),
+                  );
+                }
               ),
             ],
           ),
@@ -384,10 +386,6 @@ class _ChosenRouteScreenState extends State<ChosenRouteScreen> {
                               onTap: () {
                                 setState(() {
                                   selectedDateSlot = index;
-
-                                  final int tempDay = currentDate!.add(Duration(
-                                    days: selectedDateSlot,
-                                  )).day;
                                 });
                               },
                               selected: ( index == selectedDateSlot ),

@@ -40,16 +40,16 @@ class FirebaseError extends ErrorTypes {
   );
 }
 
-class AlreadyReservedError extends ErrorTypes {
+class LateReservationError extends ErrorTypes {
 
-  static const _errorTitle = 'Already Reserved Slot(s)';
-
-  static const _errorMessage = 'One or all of the Selected Slots are already reserved, see the updated schedule';
+  static const _errorTitle = 'Late Reservation';
 
   static const _errorId = 90;
 
-  const AlreadyReservedError() : super(
-    errorMessage: _errorMessage,
+  const LateReservationError({
+    required String errorMessage,
+  }) : super(
+    errorMessage: errorMessage,
     errorTitle: _errorTitle,
     errorId: _errorId,
   );

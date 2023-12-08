@@ -1,3 +1,4 @@
+import 'package:car_pool_app/Offline%20Storage/storage.dart';
 import 'package:flutter/material.dart';
 
 import 'package:car_pool_app/Widgets/custom_container.dart';
@@ -82,6 +83,8 @@ class ProfileColumn extends StatelessWidget {
               width: 150,
               height: 50,
               onTap: () async {
+                await UserStorage.deleteUser();
+                
                 await signout();
               },
               child: const CustomText(

@@ -7,11 +7,12 @@ part of 'trip.dart';
 // **************************************************************************
 
 Trip _$TripFromJson(Map<String, dynamic> json) => Trip(
-      id: json['id'] as int,
+      id: json['id'] as String,
       price: (json['price'] as num).toDouble(),
       source: json['source'] as String,
       destination: json['destination'] as String,
-      date: DateTime.parse(json['date'] as String),
+      currentDate: DateTime.parse(json['currentDate'] as String),
+      tripDate: DateTime.parse(json['tripDate'] as String),
       time: Duration(microseconds: json['time'] as int),
       status: $enumDecode(_$TripStatusEnumMap, json['status']),
     );
@@ -21,16 +22,14 @@ Map<String, dynamic> _$TripToJson(Trip instance) => <String, dynamic>{
       'price': instance.price,
       'source': instance.source,
       'destination': instance.destination,
-      'date': instance.date.toIso8601String(),
+      'currentDate': instance.currentDate.toIso8601String(),
+      'tripDate': instance.tripDate.toIso8601String(),
       'time': instance.time.inMicroseconds,
       'status': _$TripStatusEnumMap[instance.status]!,
     };
 
 const _$TripStatusEnumMap = {
-  TripStatus.active: 'active',
-  TripStatus.cancelled: 'cancelled',
+  TripStatus.rejected: 'rejected',
   TripStatus.pending: 'pending',
   TripStatus.approved: 'approved',
-  TripStatus.expired: 'expired',
-  TripStatus.confirmed: 'confirmed',
 };
