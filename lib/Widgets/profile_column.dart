@@ -1,4 +1,4 @@
-import 'package:car_pool_app/Offline%20Storage/storage.dart';
+import 'package:car_pool_app/Services/realtime_db.dart';
 import 'package:flutter/material.dart';
 
 import 'package:car_pool_app/Widgets/custom_container.dart';
@@ -8,14 +8,51 @@ import 'package:car_pool_app/Widgets/sized_box.dart';
 import 'package:car_pool_app/Static%20Data/colors.dart';
 import 'package:car_pool_app/Services/authenticate.dart';
 import 'package:car_pool_app/Widgets/custom_button.dart';
+import 'package:car_pool_app/Offline%20Storage/storage.dart';
 
-class ProfileColumn extends StatelessWidget {
+class ProfileColumn extends StatefulWidget {
   const ProfileColumn({
     super.key,
     required this.user,
   });
 
   final User user;
+
+  @override
+  State<ProfileColumn> createState() => _ProfileColumnState();
+}
+
+class _ProfileColumnState extends State<ProfileColumn> {
+
+  late bool disableValidation;
+
+  late bool isLoaded;
+
+  Future initSwitchValue() async {
+    final future = await getSwitchValue();
+
+    future.fold(
+      (error) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error.errorMessage)));
+      },
+      (switchValue) {
+        setState(() {
+          isLoaded = true;
+          disableValidation = switchValue;
+        });
+      },
+    );
+  }
+
+  @override
+  void initState() {
+    isLoaded = false;
+    disableValidation = false;
+    
+    initSwitchValue();
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +76,7 @@ class ProfileColumn extends StatelessWidget {
             ),
 
             CustomText(
-              text: user.name,
+              text: widget.user.name,
               size: 28,
               fontWeight: FontWeight.bold,
             ),
@@ -56,7 +93,7 @@ class ProfileColumn extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CustomText(
-                    text: 'Points: ${user.points}',
+                    text: 'Points: ${widget.user.points}',
                     size: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -66,7 +103,7 @@ class ProfileColumn extends StatelessWidget {
                   ),
 
                   CustomText(
-                    text: 'Trips Taken: ${user.tripsCount}',
+                    text: 'Trips Taken: ${widget.user.tripsCount}',
                     size: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -75,7 +112,46 @@ class ProfileColumn extends StatelessWidget {
             ),
 
             const HSizedBox(
-              height: 180,
+              height: 30,
+            ),
+
+            isLoaded ? Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const CustomText(
+                  text: 'Disable Validation:',
+                  size: 20,
+                ),
+
+                const WSizedBox(
+                  width: 10,
+                ),
+
+                Switch(
+                  value: disableValidation,
+                  onChanged: (value) async {
+                    final future = await setSwitchValue(value);
+                    
+                    future.fold(
+                      (error) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error.errorMessage)));
+                      },
+                      (success) {
+                        setState(() {
+                          disableValidation = value;
+                        });
+                      },
+                    );
+                  },
+                  trackColor: MaterialStateProperty.all<Color>(Colors.white),
+                  thumbColor: MaterialStateProperty.all<Color>(Colors.red),
+                  activeColor: Colors.red,
+                ),
+              ],
+            ) : const CircularProgressIndicator(),
+
+            const HSizedBox(
+              height: 110,
             ),
 
             CustomButton(

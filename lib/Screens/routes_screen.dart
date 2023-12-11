@@ -110,7 +110,7 @@ class _RoutesScreenState extends State<RoutesScreen> {
   }
 
   Future< List<CustomRoute> > initRoutes() async {
-    final temp = await Realtime(uid: 'uid').getRoutes();
+    final temp = await getRoutes();
 
     return temp.fold(
       (error) {

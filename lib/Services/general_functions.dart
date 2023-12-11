@@ -1,3 +1,5 @@
+import 'package:intl/intl.dart';
+
 String durationToTime(Duration duration) {
   String meridiem = 'AM';
 
@@ -9,4 +11,11 @@ String durationToTime(Duration duration) {
   final minutes = duration.inMinutes.remainder(60);
 
   return '${duration.inHours}:$minutes $meridiem';
+}
+
+
+String formatDate(DateTime dateTime) {
+  final formatter = DateFormat('dd/MM/yyyy');
+  
+  return formatter.format(dateTime);
 }

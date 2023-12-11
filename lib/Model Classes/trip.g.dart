@@ -6,7 +6,7 @@ part of 'trip.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-Trip _$TripFromJson(Map<String, dynamic> json) => Trip(
+Trip _$TripFromJson(Map<dynamic, dynamic> json) => Trip(
       id: json['id'] as String,
       price: (json['price'] as num).toDouble(),
       source: json['source'] as String,
@@ -32,4 +32,5 @@ const _$TripStatusEnumMap = {
   TripStatus.rejected: 'rejected',
   TripStatus.pending: 'pending',
   TripStatus.approved: 'approved',
+  TripStatus.completed: 'completed',
 };

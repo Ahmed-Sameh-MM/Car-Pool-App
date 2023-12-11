@@ -6,13 +6,15 @@ import 'package:car_pool_app/Screens/register_screen.dart';
 import 'package:car_pool_app/Screens/login_screen.dart';
 import 'package:car_pool_app/Screens/checkout_screen.dart';
 import 'package:car_pool_app/Screens/routes_screen.dart';
-import 'package:car_pool_app/Model%20Classes/custom_route.dart';
 import 'package:car_pool_app/Screens/chosen_route_screen.dart';
 import 'package:car_pool_app/Screens/path_screen.dart';
 import 'package:car_pool_app/Screens/gates_screen.dart';
 import 'package:car_pool_app/Screens/payment_screen.dart';
 import 'package:car_pool_app/Screens/history_screen.dart';
 import 'package:car_pool_app/Screens/profile_screen.dart';
+import 'package:car_pool_app/Screens/tracking_screen.dart';
+import 'package:car_pool_app/Model%20Classes/custom_route.dart';
+import 'package:car_pool_app/Model%20Classes/trip.dart';
 
 class AppRoutes {
 
@@ -41,6 +43,18 @@ class AppRoutes {
         builder: (context) {
           return ChosenRouteScreen(
             routeData: args,
+          );
+        },
+      );
+    }
+
+    else if(settings.name == TrackingScreen.routeName) {
+      final args = settings.arguments as Trip;
+
+      return MaterialPageRoute(
+        builder: (context) {
+          return TrackingScreen(
+            trip: args,
           );
         },
       );

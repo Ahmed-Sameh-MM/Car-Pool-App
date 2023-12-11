@@ -6,6 +6,7 @@ enum TripStatus { // Can be active or previous, there can be only one active res
   rejected,
   pending,
   approved,
+  completed,
 }
 
 @JsonSerializable()
@@ -39,29 +40,7 @@ class Trip {
     this.status = TripStatus.pending,
   }) : currentDate = DateTime(2024), tripDate = DateTime(2024);
 
-  factory Trip.fromJson(Map<String, dynamic> json) => _$TripFromJson(json);
+  factory Trip.fromJson(Map<dynamic, dynamic> json) => _$TripFromJson(json);
 
   Map<String, dynamic> toJson() => _$TripToJson(this);
-
-  static String statusToString(TripStatus bookingStatus) {
-
-    const Map<TripStatus, String> statusMap = {
-      TripStatus.rejected: 'rejected',
-      TripStatus.pending: 'pending',
-      TripStatus.approved: 'approved',
-    };
-
-    return statusMap[bookingStatus]!;
-  }
-
-  static TripStatus stringToStatus(String bookingStatus) {
-
-    const Map<String, TripStatus> statusMap = {
-      'rejected': TripStatus.rejected,
-      'pending': TripStatus.pending,
-      'approved': TripStatus.approved,
-    };
-
-    return statusMap[bookingStatus] as TripStatus;
-  }
 }

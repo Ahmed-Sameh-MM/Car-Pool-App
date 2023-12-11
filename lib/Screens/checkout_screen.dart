@@ -1,3 +1,4 @@
+import 'package:car_pool_app/Services/general_functions.dart';
 import 'package:flutter/material.dart';
 
 import 'package:car_pool_app/Widgets/sized_box.dart';
@@ -24,6 +25,8 @@ class CheckoutScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final chosenRoute = ref.watch(chosenRouteProvider);
+
+    final trip = ref.watch(tripProvider);
     
     return Scaffold(
       appBar: AppBar(
@@ -108,22 +111,23 @@ class CheckoutScreen extends ConsumerWidget {
                               width: 10,
                             ),
                             CustomText(
-                              text: 'dateFormat(1/1/2023)',
+                              text: formatDate(trip.tripDate),
+                              size: 20,
                               fontWeight: FontWeight.bold,
                             ),
                           ],
                         ),
 
                         const HSizedBox(
-                          height: 15,
+                          height: 25,
                         ),
                         
                         CustomContainer(
                           shadow: true,
                           borderRadius: 8,
                           child: CustomText(
-                            text: '7:30 AM',
-                            size: 18,
+                            text: durationToTime(trip.time),
+                            size: 20,
                             fontWeight: FontWeight.bold,
                             textColor: Colors.black,
                           ),
@@ -134,16 +138,6 @@ class CheckoutScreen extends ConsumerWidget {
 
                   const HSizedBox(
                     height: 30,
-                  ),
-
-                  const CustomText(
-                    text: 'Pay with',
-                    size: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-
-                  const HSizedBox(
-                    height: 20,
                   ),
 
                   const CustomText(

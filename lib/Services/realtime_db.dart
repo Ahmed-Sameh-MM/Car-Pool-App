@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart'; // used for debugPrint()
-
 import 'package:car_pool_app/Services/lookup.dart';
 import 'package:car_pool_app/Services/errors.dart';
 import 'package:car_pool_app/Model%20Classes/custom_route.dart';
@@ -38,17 +36,21 @@ class Realtime {
       },
       (right) async {
         try {
-          // checking the time constraints
-          DateTime rawDate = DateTime(trip.tripDate.year, trip.tripDate.month, trip.tripDate.day);
+          final disableValidation = await FirebaseDatabase.instance.ref().child('disable_validation').once().then((event) => event.snapshot.value as bool);
 
-          rawDate = rawDate.add(timeConstraints[durationToTime(trip.time)]!);
+          if(! disableValidation) {
+            // checking the time constraints
+            DateTime rawDate = DateTime(trip.tripDate.year, trip.tripDate.month, trip.tripDate.day);
 
-          if(trip.currentDate.isAfter(rawDate)) {
-            return Left(
-              LateReservationError(
-                errorMessage: "You need to reserve this time slot before ${durationToTime(timeConstraints[durationToTime(trip.time)]!)}",
-              ),
-            );
+            rawDate = rawDate.add(timeConstraints[durationToTime(trip.time)]!);
+
+            if(trip.currentDate.isAfter(rawDate)) {
+              return Left(
+                LateReservationError(
+                  errorMessage: "You need to reserve this time slot before ${durationToTime(timeConstraints[durationToTime(trip.time)]!)}",
+                ),
+              );
+            }
           }
 
           // reserving successfully
@@ -86,9 +88,15 @@ class Realtime {
       (right) async {
         try {
           final trips = await tripsReference.child(uid).once().then((event) {
-            final List jsonList = event.snapshot.value as List;
+            final jsonMap = event.snapshot.value as Map;
+
+            final List<Trip> temp = [];
+
+            jsonMap.forEach((key, value) {
+              temp.add(Trip.fromJson(value));
+            });
             
-            return List<Trip>.from(jsonList.map((trip) => Trip.fromJson(trip.cast<String, dynamic>())));
+            return temp;
           });
 
           return Right(trips);
@@ -155,7 +163,62 @@ class Realtime {
     );
   }
 
-  // CustomRoute Methods
+  // End of UserData methods
+}
+
+// Switch Value Methods
+
+Future< Either<ErrorTypes, bool> > getSwitchValue() async {
+  final connection = await LookUp.checkInternetConnection();
+
+  return connection.fold(
+    (error) {
+      return Left(error);
+    },
+    (right) async {
+      try {
+        final disableValidation = await FirebaseDatabase.instance.ref().child('disable_validation').once().then((event) => event.snapshot.value as bool);
+        
+        return Right(disableValidation);
+      }
+      catch(e) {
+        return Left(
+          FirebaseError(
+            errorMessage: 'Server Error: $e',
+            errorId: 101,
+          ),
+        );
+      }
+    },
+  );
+}
+
+Future< Either<ErrorTypes, bool> > setSwitchValue(bool value) async {
+    final connection = await LookUp.checkInternetConnection();
+
+    return connection.fold(
+      (error) {
+        return Left(error);
+      },
+      (right) async {
+        try {
+          await FirebaseDatabase.instance.ref().child('disable_validation').set(value);
+          
+          return const Right(true);
+        }
+        catch(e) {
+          return Left(
+            FirebaseError(
+              errorMessage: 'Server Error: $e',
+              errorId: 101,
+            ),
+          );
+        }
+      },
+    );
+  }
+
+// CustomRoute Methods
 
   Future< Either<ErrorTypes, bool> > addRoutes(List<CustomRoute> routes) async {
     final connection = await LookUp.checkInternetConnection();
@@ -209,36 +272,6 @@ class Realtime {
       },
     );
   }
-
-  Future< Either<ErrorTypes, String> > getEmailFromPhone() async {
-    final connection = await LookUp.checkInternetConnection();
-
-    return connection.fold(
-      (error) {
-        return Left(error);
-      },
-      (right) async {
-        try{
-          final String email = await usersReference.child(uid).child("email").once().then((event) {
-            return event.snapshot.value as String;
-          });
-          return Right(email);
-        }
-        catch(e){
-          debugPrint('getEmailFromPhone ERROR:  $e');
-          return Left(
-            FirebaseError(
-              errorMessage: 'Server Error: $e',
-              errorId: 106,
-            ),
-          );
-        }
-      },
-    );
-  }
-  
-  // End of UserData methods
-}
 
 Stream<DatabaseEvent> dayStream(String schoolId, String day) {
   return tripsReference.child(schoolId).child(day).onValue;
