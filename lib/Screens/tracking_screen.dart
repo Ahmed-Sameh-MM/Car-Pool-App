@@ -33,8 +33,8 @@ class TrackingScreen extends StatelessWidget {
 
           trip.status == TripStatus.pending ? CustomButton(
             onTap: () async {
-              final user = await UserStorage.readUser();
-              await Realtime(uid: user.uid).cancelTrip(tripId: trip.id);
+              final driver = await DriverStorage.readDriver();
+              await Realtime(uid: driver.uid).cancelTrip(tripId: trip.id);
             },
             child: const CustomText(
               text: 'Cancel',

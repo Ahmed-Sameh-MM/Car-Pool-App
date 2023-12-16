@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'user.dart';
+part of 'driver.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-User _$UserFromJson(Map<dynamic, dynamic> json) => User(
+Driver _$DriverFromJson(Map<dynamic, dynamic> json) => Driver(
       uid: json['uid'] as String,
       email: json['email'] as String,
       name: json['name'] as String,
@@ -14,7 +14,7 @@ User _$UserFromJson(Map<dynamic, dynamic> json) => User(
       tripsCount: json['tripsCount'] as int,
     );
 
-Map<String, dynamic> _$UserToJson(User instance) => <String, dynamic>{
+Map<String, dynamic> _$DriverToJson(Driver instance) => <String, dynamic>{
       'uid': instance.uid,
       'email': instance.email,
       'name': instance.name,

@@ -1,4 +1,3 @@
-import 'package:driver_car_pool_app/Offline%20Storage/storage.dart';
 import 'package:flutter/material.dart';
 
 import 'package:driver_car_pool_app/Widgets/email_field.dart';
@@ -9,7 +8,8 @@ import 'package:driver_car_pool_app/Widgets/name_field.dart';
 import 'package:driver_car_pool_app/Services/authenticate.dart';
 import 'package:driver_car_pool_app/Screens/login_screen.dart';
 import 'package:driver_car_pool_app/Services/realtime_db.dart';
-import 'package:driver_car_pool_app/Model%20Classes/user.dart';
+import 'package:driver_car_pool_app/Model%20Classes/driver.dart';
+import 'package:driver_car_pool_app/Offline%20Storage/storage.dart';
 
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
@@ -114,7 +114,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       (success) async {
                         final uid = context.read<auth.User>().uid;
 
-                        final user = User(
+                        final driver = Driver(
                           uid: uid,
                           email: _emailController.text,
                           name: _nameContoller.text,
@@ -122,12 +122,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           tripsCount: 0,
                         );
 
-                        final addResult = await Realtime(uid: user.uid).addUserData(user);
+                        final addResult = await Realtime(uid: driver.uid).addDriverData(driver);
 
                         addResult.fold(
                           (error) {},
                           (success) async {
-                            await UserStorage.addUser(user);
+                            await DriverStorage.addDriver(driver);
                           },
                         );
                         

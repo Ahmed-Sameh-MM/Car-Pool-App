@@ -251,7 +251,7 @@ class CheckoutScreen extends ConsumerWidget {
                       text: 'Create Trip',
                     ),
                     onTap: () async {
-                      final user = await UserStorage.readUser();
+                      final driver = await DriverStorage.readDriver();
 
                       final date = await Date.fetchDate();
 
@@ -262,11 +262,11 @@ class CheckoutScreen extends ConsumerWidget {
                           ref.read(tripProvider).currentDate = right;
 
                           final trip = ref.read(tripProvider);
-                          final tripReservation = await Realtime(uid: user.uid).createTrip(
+                          final tripCreation = await Realtime(uid: driver.uid).createTrip(
                             trip: trip,
                           );
                 
-                          tripReservation.fold(
+                          tripCreation.fold(
                             (error) {
                               if(error is ConnectionError || error is FirebaseError) {
                                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error.errorMessage)));
@@ -287,7 +287,7 @@ class CheckoutScreen extends ConsumerWidget {
                               // await Storage().updateUserAccountStatus(userData);
                               // await Storage().incrementReservationsCounter(userData);
             
-                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Successful Reservation")));
+                              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Successful Trip Creation")));
                               
                               Navigator.popUntil(context, ModalRoute.withName(Wrapper.routeName));
                             },

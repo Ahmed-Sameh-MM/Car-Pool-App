@@ -1,16 +1,16 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'user.g.dart';
+part 'driver.g.dart';
 
 @JsonSerializable()
-class User {
+class Driver {
   final String uid;
   final String email;
   final String name;
   final int points;
   final int tripsCount;
 
-  User({
+  Driver({
     required this.uid,
     required this.email,
     required this.name,
@@ -18,7 +18,7 @@ class User {
     required this.tripsCount,
   });
 
-  factory User.fromJson(Map<dynamic, dynamic> json) => _$UserFromJson(json);
+  factory Driver.fromJson(Map<dynamic, dynamic> json) => _$DriverFromJson(json);
 
-  Map<String, dynamic> toJson() => _$UserToJson(this);
+  Map<String, dynamic> toJson() => _$DriverToJson(this);
 }

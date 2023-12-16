@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:driver_car_pool_app/Model Classes/user.dart';
+import 'package:driver_car_pool_app/Model%20Classes/driver.dart';
 import 'package:driver_car_pool_app/Offline%20Storage/storage.dart';
 import 'package:driver_car_pool_app/Widgets/custom_text.dart';
 import 'package:driver_car_pool_app/Widgets/profile_column.dart';
@@ -16,11 +16,11 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
 
-  late Future<User> userFuture;
+  late Future<Driver> driverFuture;
 
   @override
   void initState() {
-    userFuture = UserStorage.readUser();
+    driverFuture = DriverStorage.readDriver();
 
     super.initState();
   }
@@ -35,7 +35,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       body: FutureBuilder(
         initialData: null,
-        future: userFuture,
+        future: driverFuture,
         builder: (context, snapshot) {
           switch(snapshot.connectionState) {
             case ConnectionState.none:
@@ -60,7 +60,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     
               else if(snapshot.hasData) {
                 return ProfileColumn(
-                  user: snapshot.data as User,
+                  driver: snapshot.data as Driver,
                 );
               }
     

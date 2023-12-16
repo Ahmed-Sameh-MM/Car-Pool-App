@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:driver_car_pool_app/Widgets/custom_container.dart';
 import 'package:driver_car_pool_app/Widgets/custom_text.dart';
-import 'package:driver_car_pool_app/Model%20Classes/user.dart';
+import 'package:driver_car_pool_app/Model%20Classes/driver.dart';
 import 'package:driver_car_pool_app/Widgets/sized_box.dart';
 import 'package:driver_car_pool_app/Static%20Data/colors.dart';
 import 'package:driver_car_pool_app/Services/authenticate.dart';
@@ -13,10 +13,10 @@ import 'package:driver_car_pool_app/Services/realtime_db.dart';
 class ProfileColumn extends StatefulWidget {
   const ProfileColumn({
     super.key,
-    required this.user,
+    required this.driver,
   });
 
-  final User user;
+  final Driver driver;
 
   @override
   State<ProfileColumn> createState() => _ProfileColumnState();
@@ -76,7 +76,7 @@ class _ProfileColumnState extends State<ProfileColumn> {
             ),
 
             CustomText(
-              text: widget.user.name,
+              text: widget.driver.name,
               size: 28,
               fontWeight: FontWeight.bold,
             ),
@@ -93,7 +93,7 @@ class _ProfileColumnState extends State<ProfileColumn> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CustomText(
-                    text: 'Points: ${widget.user.points}',
+                    text: 'Points: ${widget.driver.points}',
                     size: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -103,7 +103,7 @@ class _ProfileColumnState extends State<ProfileColumn> {
                   ),
 
                   CustomText(
-                    text: 'Trips Taken: ${widget.user.tripsCount}',
+                    text: 'Trips Taken: ${widget.driver.tripsCount}',
                     size: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -159,7 +159,7 @@ class _ProfileColumnState extends State<ProfileColumn> {
               width: 150,
               height: 50,
               onTap: () async {
-                await UserStorage.deleteUser();
+                await DriverStorage.deleteDriver();
                 
                 await signout();
               },

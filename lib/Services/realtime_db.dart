@@ -1,7 +1,7 @@
 import 'package:driver_car_pool_app/Services/lookup.dart';
 import 'package:driver_car_pool_app/Services/errors.dart';
 import 'package:driver_car_pool_app/Model%20Classes/custom_route.dart';
-import 'package:driver_car_pool_app/Model%20Classes/user.dart';
+import 'package:driver_car_pool_app/Model%20Classes/driver.dart';
 import 'package:driver_car_pool_app/Model%20Classes/trip.dart';
 import 'package:driver_car_pool_app/Static%20Data/constants.dart';
 import 'package:driver_car_pool_app/Services/general_functions.dart';
@@ -147,7 +147,7 @@ class Realtime {
 
   // UserData Methods
 
-  Future< Either<ErrorTypes, bool> > addUserData(User user) async {
+  Future< Either<ErrorTypes, bool> > addDriverData(Driver driver) async {
     final connection = await LookUp.checkInternetConnection();
     return connection.fold(
       (error) {
@@ -155,7 +155,7 @@ class Realtime {
       },
       (right) async {
         try {
-          await driversReference.child(uid).set(user.toJson());
+          await driversReference.child(uid).set(driver.toJson());
           return const Right(true);
         }
         catch(e) {
@@ -170,7 +170,7 @@ class Realtime {
     );
   }
 
-  Future< Either<ErrorTypes, User> > getUserData() async {
+  Future< Either<ErrorTypes, Driver> > getDriverData() async {
     final connection = await LookUp.checkInternetConnection();
     return connection.fold(
       (error) {
@@ -178,7 +178,7 @@ class Realtime {
       },
       (right) async {
         try {
-          final user = await driversReference.child(uid).once().then((event) => User.fromJson(event.snapshot.value as Map));
+          final user = await driversReference.child(uid).once().then((event) => Driver.fromJson(event.snapshot.value as Map));
           return Right(user);
         }
         catch(e) {
@@ -250,7 +250,7 @@ Future< Either<ErrorTypes, bool> > setSwitchValue(bool value) async {
 
   // CustomRoute Methods
 
-  Future< Either<ErrorTypes, bool> > addRoutes(List<CustomRoute> routes) async {
+  Future< Either<ErrorTypes, bool> > addRoute(CustomRoute route) async {
     final connection = await LookUp.checkInternetConnection();
     return connection.fold(
       (error) {
@@ -258,9 +258,7 @@ Future< Either<ErrorTypes, bool> > setSwitchValue(bool value) async {
       },
       (right) async {
         try {
-          for(int i = 0; i < routes.length; i++) {
-            await routesReference.child('$i').set(routes[i].toJson());
-          }
+          await routesReference.child('10').set(route.toJson());
           return const Right(true);
         }
         catch(e) {

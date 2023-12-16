@@ -1,6 +1,3 @@
-import 'package:driver_car_pool_app/Offline%20Storage/storage.dart';
-import 'package:driver_car_pool_app/Services/realtime_db.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:driver_car_pool_app/Widgets/email_field.dart';
@@ -9,7 +6,11 @@ import 'package:driver_car_pool_app/Widgets/sized_box.dart';
 import 'package:driver_car_pool_app/Widgets/custom_button.dart';
 import 'package:driver_car_pool_app/Services/authenticate.dart';
 import 'package:driver_car_pool_app/Screens/register_screen.dart';
+import 'package:driver_car_pool_app/Offline%20Storage/storage.dart';
+import 'package:driver_car_pool_app/Services/realtime_db.dart';
+
 import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -96,12 +97,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       (success) async {
                         final uid = context.read<User>().uid;
                         
-                        final userData = await Realtime(uid: uid).getUserData();
+                        final userData = await Realtime(uid: uid).getDriverData();
 
                         userData.fold(
                           (error) {},
                           (user) async {
-                            await UserStorage.addUser(user);
+                            await DriverStorage.addDriver(user);
                         
                             if(context.mounted) {
                               Navigator.pop(context);
