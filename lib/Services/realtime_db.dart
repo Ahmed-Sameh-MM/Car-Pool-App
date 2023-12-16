@@ -28,9 +28,9 @@ class Realtime {
   
   Future< Either<ErrorTypes, bool> > createTrip({required Trip trip}) async {
 
-    final connection = await LookUp.checkInternetConnection();
+    final check = await checkTrip(trip: trip);
 
-    return connection.fold(
+    return check.fold(
       (error) {
         return Left(error);
       },
@@ -74,7 +74,7 @@ class Realtime {
           return Left(
             FirebaseError(
               errorMessage: 'Server Error: $e',
-              errorId: 101,
+              errorId: 100,
             ),
           );
         }
@@ -118,7 +118,15 @@ class Realtime {
       (right) async {
         try {
           final trips = await driverTripsReference.child(uid).once().then((event) {
-            final jsonMap = event.snapshot.value as Map;
+            Map jsonMap;
+
+            if(event.snapshot.value == null) {
+              jsonMap = {};
+            }
+
+            else {
+              jsonMap = event.snapshot.value as Map;
+            }
 
             final List<Trip> temp = [];
 
@@ -135,10 +143,32 @@ class Realtime {
           return Left(
             FirebaseError(
               errorMessage: 'Server Error: $e',
-              errorId: 103,
+              errorId: 102,
             ),
           );
         }
+      },
+    );
+  }
+
+  Future< Either<ErrorTypes, bool> > checkTrip({required Trip trip}) async {
+    
+    final tripsFuture = await getTrips();
+
+    return tripsFuture.fold(
+      (error) {
+        return Left(error);
+      },
+      (trips) {
+        for(int i = 0; i < trips.length; i++) {
+          if(trips[i].source == trip.source && trips[i].destination == trip.destination && trips[i].tripDate.isAtSameMomentAs(trip.tripDate) && trips[i].time.compareTo(trip.time) == 0) {
+            return const Left(
+              AlreadyReservedError()
+            );
+          }
+        }
+
+        return const Right(true);
       },
     );
   }
@@ -162,7 +192,7 @@ class Realtime {
           return Left(
             FirebaseError(
               errorMessage: 'Server Error: $e',
-              errorId: 103,
+              errorId: 104,
             ),
           );
         }
@@ -185,7 +215,7 @@ class Realtime {
           return Left(
             FirebaseError(
               errorMessage: 'Server Error: $e',
-              errorId: 103,
+              errorId: 105,
             ),
           );
         }
@@ -215,7 +245,7 @@ Future< Either<ErrorTypes, bool> > getSwitchValue() async {
         return Left(
           FirebaseError(
             errorMessage: 'Server Error: $e',
-            errorId: 101,
+            errorId: 106,
           ),
         );
       }
@@ -240,7 +270,7 @@ Future< Either<ErrorTypes, bool> > setSwitchValue(bool value) async {
           return Left(
             FirebaseError(
               errorMessage: 'Server Error: $e',
-              errorId: 101,
+              errorId: 107,
             ),
           );
         }
@@ -265,7 +295,7 @@ Future< Either<ErrorTypes, bool> > setSwitchValue(bool value) async {
           return Left(
             FirebaseError(
               errorMessage: 'Server Error: $e',
-              errorId: 103,
+              errorId: 108,
             ),
           );
         }
@@ -293,7 +323,7 @@ Future< Either<ErrorTypes, bool> > setSwitchValue(bool value) async {
           return Left(
             FirebaseError(
               errorMessage: 'Server Error: $e',
-              errorId: 103,
+              errorId: 109,
             ),
           );
         }

@@ -272,7 +272,7 @@ class CheckoutScreen extends ConsumerWidget {
                                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error.errorMessage)));
                               }
                               
-                              else if(error is LateReservationError) {
+                              else if(error is LateReservationError || error is AlreadyReservedError) {
                                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error.errorMessage)));
                                 Navigator.pop(context);
                                 Navigator.pop(context);
