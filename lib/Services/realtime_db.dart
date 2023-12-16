@@ -1,3 +1,4 @@
+import 'package:car_pool_app/Model%20Classes/driver_trip.dart';
 import 'package:car_pool_app/Services/lookup.dart';
 import 'package:car_pool_app/Services/errors.dart';
 import 'package:car_pool_app/Model%20Classes/custom_route.dart';
@@ -12,7 +13,11 @@ import 'package:firebase_database/firebase_database.dart';
 
 final tripsReference = FirebaseDatabase.instance.ref("trips");
 
+final driverTripsReference = FirebaseDatabase.instance.ref("driver_trips");
+
 final routesReference = FirebaseDatabase.instance.ref("routes");
+
+final rootReference = FirebaseDatabase.instance.ref();
 
 class Realtime {
 
@@ -24,9 +29,11 @@ class Realtime {
 
   final usersReference = FirebaseDatabase.instance.ref("users");
 
+  final driversReference = FirebaseDatabase.instance.ref("drivers");
+
   // Trip Reservation Methods
   
-  Future< Either<ErrorTypes, bool> > reserve({required Trip trip}) async {
+  Future< Either<ErrorTypes, bool> > reserveTrip({required Trip trip}) async {
 
     final connection = await LookUp.checkInternetConnection();
 
@@ -36,7 +43,7 @@ class Realtime {
       },
       (right) async {
         try {
-          final disableValidation = await FirebaseDatabase.instance.ref().child('disable_validation').once().then((event) => event.snapshot.value as bool);
+          final disableValidation = await rootReference.child('disable_user_validation').once().then((event) => event.snapshot.value as bool);
 
           if(! disableValidation) {
             // checking the time constraints
@@ -56,14 +63,44 @@ class Realtime {
           // reserving successfully
           await tripsReference.child(uid).child(trip.id).set(trip.toJson());
 
+          // adding the trip to the closed trips
+          // await usersReference.child(uid).update({'reservedTrips': trip.tripDate});
+
           // Updating the users reference
 
           Map<String, dynamic> temp = {
-            'tripsCount' : ServerValue.increment(1),
-            'points' : ServerValue.increment(5),
+            'numberOfSeats' : ServerValue.increment(-1),
+            'users' : uid,
           };
 
-          await usersReference.child(uid).update(temp);
+          await driverTripsReference.child(uid).child(trip.id).update(temp); // TODO driver UID
+          
+          return const Right(true);
+        }
+        catch(e) {
+          return Left(
+            FirebaseError(
+              errorMessage: 'Server Error: $e',
+              errorId: 101,
+            ),
+          );
+        }
+      },
+    );
+  }
+
+  Future< Either<ErrorTypes, bool> > cancelTrip({required String tripId}) async {
+
+    final connection = await LookUp.checkInternetConnection();
+
+    return connection.fold(
+      (error) {
+        return Left(error);
+      },
+      (right) async {
+        try {
+          // canceling successfully
+          await tripsReference.child(uid).child(tripId).update({'status': 'canceled'});
           
           return const Right(true);
         }
@@ -88,7 +125,7 @@ class Realtime {
       (right) async {
         try {
           final trips = await tripsReference.child(uid).once().then((event) {
-            final jsonMap = event.snapshot.value as Map;
+            Map jsonMap = (event.snapshot.value ?? {}) as Map;
 
             final List<Trip> temp = [];
 
@@ -97,6 +134,51 @@ class Realtime {
             });
             
             return temp;
+          });
+
+          return Right(trips);
+        }
+        catch(e) {
+          return Left(
+            FirebaseError(
+              errorMessage: 'Server Error: $e',
+              errorId: 103,
+            ),
+          );
+        }
+      },
+    );
+  }
+
+  Future< Either<ErrorTypes, List<DriverTrip>> > filterDriverTrips({required Trip trip}) async {
+    final connection = await LookUp.checkInternetConnection();
+    return connection.fold(
+      (error) {
+        return Left(error);
+      },
+      (right) async {
+        try {
+          final trips = await driverTripsReference.once().then((event) {
+            Map jsonMap = (event.snapshot.value ?? {}) as Map;
+
+            final List<DriverTrip> driverTrips = [];
+
+            jsonMap.forEach((key, value) {
+              Map tripsMap = (value ?? {}) as Map;
+
+              tripsMap.forEach((tripId, trip) {
+                final driverTrip = DriverTrip.fromJson(trip);
+                driverTrip.driverUid = key;
+                
+                driverTrips.add(trip);
+              });
+            });
+
+            driverTrips.removeWhere((element) {
+              return element.source != trip.source || element.destination != trip.destination || ! element.tripDate.isAtSameMomentAs(trip.tripDate) || element.time.compareTo(trip.time) != 0;
+            });
+            
+            return driverTrips;
           });
 
           return Right(trips);
@@ -177,7 +259,7 @@ Future< Either<ErrorTypes, bool> > getSwitchValue() async {
     },
     (right) async {
       try {
-        final disableValidation = await FirebaseDatabase.instance.ref().child('disable_validation').once().then((event) => event.snapshot.value as bool);
+        final disableValidation = await rootReference.child('disable_user_validation').once().then((event) => event.snapshot.value as bool);
         
         return Right(disableValidation);
       }
@@ -202,7 +284,7 @@ Future< Either<ErrorTypes, bool> > setSwitchValue(bool value) async {
       },
       (right) async {
         try {
-          await FirebaseDatabase.instance.ref().child('disable_validation').set(value);
+          await rootReference.child('disable_user_validation').set(value);
           
           return const Right(true);
         }
@@ -218,32 +300,7 @@ Future< Either<ErrorTypes, bool> > setSwitchValue(bool value) async {
     );
   }
 
-// CustomRoute Methods
-
-  Future< Either<ErrorTypes, bool> > addRoutes(List<CustomRoute> routes) async {
-    final connection = await LookUp.checkInternetConnection();
-    return connection.fold(
-      (error) {
-        return Left(error);
-      },
-      (right) async {
-        try {
-          for(int i = 0; i < routes.length; i++) {
-            await routesReference.child('$i').set(routes[i].toJson());
-          }
-          return const Right(true);
-        }
-        catch(e) {
-          return Left(
-            FirebaseError(
-              errorMessage: 'Server Error: $e',
-              errorId: 103,
-            ),
-          );
-        }
-      },
-    );
-  }
+  // CustomRoute Methods
 
   Future< Either<ErrorTypes, List<CustomRoute>> > getRoutes() async {
     final connection = await LookUp.checkInternetConnection();

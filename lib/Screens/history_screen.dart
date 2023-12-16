@@ -110,6 +110,21 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   typeText: "REJECTED",
                 ),
               ),
+
+              const HSizedBox(
+                height: 40,
+              ),
+        
+              HistoryListView(
+                helper: HistoryHelper(
+                  future: historyFuture,
+                  titleText: "Canceled Trips",
+                  status: TripStatus.canceled,
+                  emptyText: "No Previous Canceled Trips",
+                  typeColor: Colors.grey,
+                  typeText: "CANCELED",
+                ),
+              ),
             ],
           ),
         ),

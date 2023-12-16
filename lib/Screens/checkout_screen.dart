@@ -1,4 +1,3 @@
-import 'package:car_pool_app/Services/general_functions.dart';
 import 'package:flutter/material.dart';
 
 import 'package:car_pool_app/Widgets/sized_box.dart';
@@ -14,6 +13,7 @@ import 'package:car_pool_app/Services/realtime_db.dart';
 import 'package:car_pool_app/Widgets/wrapper.dart';
 import 'package:car_pool_app/Services/trip_id_generator.dart';
 import 'package:car_pool_app/Services/date.dart';
+import 'package:car_pool_app/Services/general_functions.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -248,7 +248,7 @@ class CheckoutScreen extends ConsumerWidget {
                   CustomButton(
                     height: 50,
                     child: const CustomText(
-                      text: 'Confirm Trip',
+                      text: 'Search for Trips',
                     ),
                     onTap: () async {
                       final user = await UserStorage.readUser();
@@ -262,7 +262,7 @@ class CheckoutScreen extends ConsumerWidget {
                           ref.read(tripProvider).currentDate = right;
 
                           final trip = ref.read(tripProvider);
-                          final tripReservation = await Realtime(uid: user.uid).reserve(
+                          final tripReservation = await Realtime(uid: user.uid).reserveTrip(
                             trip: trip,
                           );
                 

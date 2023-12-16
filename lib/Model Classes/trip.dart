@@ -7,6 +7,7 @@ enum TripStatus { // Can be active or previous, there can be only one active res
   pending,
   approved,
   completed,
+  canceled,
 }
 
 @JsonSerializable()

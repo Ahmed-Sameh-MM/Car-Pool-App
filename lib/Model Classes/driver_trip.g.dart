@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'trip.dart';
+part of 'driver_trip.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-Trip _$TripFromJson(Map<dynamic, dynamic> json) => Trip(
+DriverTrip _$DriverTripFromJson(Map<dynamic, dynamic> json) => DriverTrip(
       id: json['id'] as String,
       price: (json['price'] as num).toDouble(),
       source: json['source'] as String,
@@ -15,9 +15,14 @@ Trip _$TripFromJson(Map<dynamic, dynamic> json) => Trip(
       tripDate: DateTime.parse(json['tripDate'] as String),
       time: Duration(microseconds: json['time'] as int),
       status: $enumDecode(_$TripStatusEnumMap, json['status']),
+      driverUid: json['driverUid'] as String,
+      numberOfSeats: json['numberOfSeats'] as int,
+      users:
+          (json['users'] as List<dynamic>?)?.map((e) => e as String).toList(),
     );
 
-Map<String, dynamic> _$TripToJson(Trip instance) => <String, dynamic>{
+Map<String, dynamic> _$DriverTripToJson(DriverTrip instance) =>
+    <String, dynamic>{
       'id': instance.id,
       'price': instance.price,
       'source': instance.source,
@@ -26,6 +31,9 @@ Map<String, dynamic> _$TripToJson(Trip instance) => <String, dynamic>{
       'tripDate': instance.tripDate.toIso8601String(),
       'time': instance.time.inMicroseconds,
       'status': _$TripStatusEnumMap[instance.status]!,
+      'driverUid': instance.driverUid,
+      'numberOfSeats': instance.numberOfSeats,
+      'users': instance.users,
     };
 
 const _$TripStatusEnumMap = {
