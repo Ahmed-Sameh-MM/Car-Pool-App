@@ -15,6 +15,7 @@ import 'package:car_pool_app/Screens/profile_screen.dart';
 import 'package:car_pool_app/Screens/tracking_screen.dart';
 import 'package:car_pool_app/Model%20Classes/custom_route.dart';
 import 'package:car_pool_app/Model%20Classes/trip.dart';
+import 'package:car_pool_app/Screens/trips_screen.dart';
 
 class AppRoutes {
 
@@ -54,6 +55,18 @@ class AppRoutes {
       return MaterialPageRoute(
         builder: (context) {
           return TrackingScreen(
+            trip: args,
+          );
+        },
+      );
+    }
+
+    else if(settings.name == TripsScreen.routeName) {
+      final args = settings.arguments as Trip;
+
+      return MaterialPageRoute(
+        builder: (context) {
+          return TripsScreen(
             trip: args,
           );
         },

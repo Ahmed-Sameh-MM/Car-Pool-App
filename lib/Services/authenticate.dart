@@ -37,7 +37,7 @@ Future< Either<ErrorTypes, User?> > registerWithEmail({required String email, re
     (success) async {
       try{
         final userCredential = await auth.createUserWithEmailAndPassword(
-          email: email,
+          email: "user_$email",
           password: password,
         );
         return Right(userCredential.user);
@@ -88,7 +88,7 @@ Future< Either<ErrorTypes, bool> > loginWithEmail({required String email, requir
     (right) async {
       try{
         /*UserCredential user = */await auth.signInWithEmailAndPassword(
-          email: email,
+          email: "user_$email",
           password: password,
         );
         //return user.user;

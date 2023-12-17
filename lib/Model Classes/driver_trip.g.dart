@@ -15,7 +15,6 @@ DriverTrip _$DriverTripFromJson(Map<dynamic, dynamic> json) => DriverTrip(
       tripDate: DateTime.parse(json['tripDate'] as String),
       time: Duration(microseconds: json['time'] as int),
       status: $enumDecode(_$TripStatusEnumMap, json['status']),
-      driverUid: json['driverUid'] as String,
       numberOfSeats: json['numberOfSeats'] as int,
       users:
           (json['users'] as List<dynamic>?)?.map((e) => e as String).toList(),

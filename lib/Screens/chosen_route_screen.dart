@@ -7,11 +7,11 @@ import 'package:car_pool_app/Widgets/custom_text.dart';
 import 'package:car_pool_app/Widgets/shimmer_template.dart';
 import 'package:car_pool_app/Widgets/sized_box.dart';
 import 'package:car_pool_app/Static%20Data/colors.dart';
-import 'package:car_pool_app/Screens/payment_screen.dart';
 import 'package:car_pool_app/Services/general_functions.dart';
 import 'package:car_pool_app/Static%20Data/constants.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:car_pool_app/State%20Management/providers.dart';
+import 'package:car_pool_app/Screens/trips_screen.dart';
 
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -148,11 +148,11 @@ class _ChosenRouteScreenState extends State<ChosenRouteScreen> {
 
                       ref.read(tripProvider).time = timeSlots[selectedTimeSlot!];
                       
-                      Navigator.pushNamed(context, PaymentScreen.routeName);
+                      Navigator.pushNamed(context, TripsScreen.routeName, arguments: ref.read(tripProvider));
                     },
                     child: const Center(
                       child: CustomText(
-                        text: 'Book Now',
+                        text: "Search for Trips",
                         size: 16,
                       ),
                     ),

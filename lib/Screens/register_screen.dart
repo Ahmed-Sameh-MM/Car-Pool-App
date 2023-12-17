@@ -1,4 +1,3 @@
-import 'package:car_pool_app/Offline%20Storage/storage.dart';
 import 'package:flutter/material.dart';
 
 import 'package:car_pool_app/Widgets/email_field.dart';
@@ -10,6 +9,7 @@ import 'package:car_pool_app/Services/authenticate.dart';
 import 'package:car_pool_app/Screens/login_screen.dart';
 import 'package:car_pool_app/Services/realtime_db.dart';
 import 'package:car_pool_app/Model%20Classes/user.dart';
+import 'package:car_pool_app/Offline%20Storage/storage.dart';
 
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
@@ -66,96 +66,100 @@ class _RegisterScreenState extends State<RegisterScreen> {
         centerTitle: true,
       ),
 
-      body: Form(
-        key: _registerFormKey,
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              NameField(
-                autoFocus: true,
-                controller: _nameContoller,
-                focusNode: _nameNode,
-              ),
-
-              const HSizedBox(
-                height: 20,
-              ),
-
-              EmailField(
-                controller: _emailController,
-                focusNode: _emailNode,
-              ),
-
-              const HSizedBox(
-                height: 20,
-              ),
-
-              PasswordField(
-                controller: _passController,
-                focusNode: _passNode,
-              ),
-
-              const HSizedBox(
-                height: 20,
-              ),
-
-              CustomButton(
-                onTap: () async {
-                  if(_registerFormKey.currentState!.validate()) {
-                    final registrationResult = await registerWithEmail(
-                      email: _emailController.text,
-                      password: _passController.text,
-                    );
-
-                    registrationResult.fold(
-                      (error) {},
-                      (success) async {
-                        final uid = context.read<auth.User>().uid;
-
-                        final user = User(
-                          uid: uid,
+      body: Center(
+        child: SingleChildScrollView(
+          child: Form(
+            key: _registerFormKey,
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  NameField(
+                    autoFocus: true,
+                    controller: _nameContoller,
+                    focusNode: _nameNode,
+                  ),
+        
+                  const HSizedBox(
+                    height: 20,
+                  ),
+        
+                  EmailField(
+                    controller: _emailController,
+                    focusNode: _emailNode,
+                  ),
+        
+                  const HSizedBox(
+                    height: 20,
+                  ),
+        
+                  PasswordField(
+                    controller: _passController,
+                    focusNode: _passNode,
+                  ),
+        
+                  const HSizedBox(
+                    height: 20,
+                  ),
+        
+                  CustomButton(
+                    onTap: () async {
+                      if(_registerFormKey.currentState!.validate()) {
+                        final registrationResult = await registerWithEmail(
                           email: _emailController.text,
-                          name: _nameContoller.text,
-                          points: 0,
-                          tripsCount: 0,
+                          password: _passController.text,
                         );
-
-                        final addResult = await Realtime(uid: user.uid).addUserData(user);
-
-                        addResult.fold(
+        
+                        registrationResult.fold(
                           (error) {},
                           (success) async {
-                            await UserStorage.addUser(user);
+                            final uid = context.read<auth.User>().uid;
+        
+                            final user = User(
+                              uid: uid,
+                              email: _emailController.text,
+                              name: _nameContoller.text,
+                              points: 0,
+                              tripsCount: 0,
+                            );
+        
+                            final addResult = await Realtime(uid: user.uid).addUserData(user);
+        
+                            addResult.fold(
+                              (error) {},
+                              (success) async {
+                                await UserStorage.addUser(user);
+                              },
+                            );
+                            
+                            if(context.mounted) {
+                              Navigator.pop(context);
+                            }
                           },
                         );
-                        
-                        if(context.mounted) {
-                          Navigator.pop(context);
-                        }
-                      },
-                    );
-                  }
-                },
-                width: 100,
-                height: 50,
-                child: const Text('Register'),
+                      }
+                    },
+                    width: 100,
+                    height: 50,
+                    child: const Text('Register'),
+                  ),
+        
+                  const HSizedBox(
+                    height: 20,
+                  ),
+        
+                  CustomButton(
+                    onTap: () {
+                      Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+                    },
+                    width: 170,
+                    height: 50,
+                    child: const Text('Want to Login Instead ?'),
+                  ),
+                ],
               ),
-
-              const HSizedBox(
-                height: 20,
-              ),
-
-              CustomButton(
-                onTap: () {
-                  Navigator.pushReplacementNamed(context, LoginScreen.routeName);
-                },
-                width: 170,
-                height: 50,
-                child: const Text('Want to Login Instead ?'),
-              ),
-            ],
+            ),
           ),
         ),
       ),

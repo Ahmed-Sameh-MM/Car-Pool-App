@@ -5,8 +5,11 @@ import 'package:json_annotation/json_annotation.dart';
 part 'driver_trip.g.dart';
 
 @JsonSerializable()
-class DriverTrip extends Trip {  
-  String driverUid;
+class DriverTrip extends Trip {
+
+  @JsonKey(includeFromJson: false, includeToJson: true)
+  String? driverUid;
+
   int numberOfSeats;
   List<String>? users;
 
@@ -20,7 +23,7 @@ class DriverTrip extends Trip {
     required Duration time,
     required TripStatus status,
 
-    required this.driverUid,
+    this.driverUid,
     required this.numberOfSeats,
     this.users,
   }) : super(

@@ -170,7 +170,7 @@ class Realtime {
                 final driverTrip = DriverTrip.fromJson(trip);
                 driverTrip.driverUid = key;
                 
-                driverTrips.add(trip);
+                driverTrips.add(driverTrip);
               });
             });
 

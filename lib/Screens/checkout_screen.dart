@@ -248,7 +248,7 @@ class CheckoutScreen extends ConsumerWidget {
                   CustomButton(
                     height: 50,
                     child: const CustomText(
-                      text: 'Search for Trips',
+                      text: 'Confirm Trip',
                     ),
                     onTap: () async {
                       final user = await UserStorage.readUser();
