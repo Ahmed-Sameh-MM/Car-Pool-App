@@ -66,96 +66,100 @@ class _RegisterScreenState extends State<RegisterScreen> {
         centerTitle: true,
       ),
 
-      body: Form(
-        key: _registerFormKey,
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              NameField(
-                autoFocus: true,
-                controller: _nameContoller,
-                focusNode: _nameNode,
-              ),
-
-              const HSizedBox(
-                height: 20,
-              ),
-
-              EmailField(
-                controller: _emailController,
-                focusNode: _emailNode,
-              ),
-
-              const HSizedBox(
-                height: 20,
-              ),
-
-              PasswordField(
-                controller: _passController,
-                focusNode: _passNode,
-              ),
-
-              const HSizedBox(
-                height: 20,
-              ),
-
-              CustomButton(
-                onTap: () async {
-                  if(_registerFormKey.currentState!.validate()) {
-                    final registrationResult = await registerWithEmail(
-                      email: _emailController.text,
-                      password: _passController.text,
-                    );
-
-                    registrationResult.fold(
-                      (error) {},
-                      (success) async {
-                        final uid = context.read<auth.User>().uid;
-
-                        final driver = Driver(
-                          uid: uid,
+      body: Center(
+        child: SingleChildScrollView(
+          child: Form(
+            key: _registerFormKey,
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  NameField(
+                    autoFocus: true,
+                    controller: _nameContoller,
+                    focusNode: _nameNode,
+                  ),
+        
+                  const HSizedBox(
+                    height: 20,
+                  ),
+        
+                  EmailField(
+                    controller: _emailController,
+                    focusNode: _emailNode,
+                  ),
+        
+                  const HSizedBox(
+                    height: 20,
+                  ),
+        
+                  PasswordField(
+                    controller: _passController,
+                    focusNode: _passNode,
+                  ),
+        
+                  const HSizedBox(
+                    height: 20,
+                  ),
+        
+                  CustomButton(
+                    onTap: () async {
+                      if(_registerFormKey.currentState!.validate()) {
+                        final registrationResult = await registerWithEmail(
                           email: _emailController.text,
-                          name: _nameContoller.text,
-                          points: 0,
-                          tripsCount: 0,
+                          password: _passController.text,
                         );
-
-                        final addResult = await Realtime(uid: driver.uid).addDriverData(driver);
-
-                        addResult.fold(
+        
+                        registrationResult.fold(
                           (error) {},
                           (success) async {
-                            await DriverStorage.addDriver(driver);
+                            final uid = context.read<auth.User>().uid;
+        
+                            final driver = Driver(
+                              uid: uid,
+                              email: _emailController.text,
+                              name: _nameContoller.text,
+                              points: 0,
+                              tripsCount: 0,
+                            );
+        
+                            final addResult = await Realtime(uid: driver.uid).addDriverData(driver);
+        
+                            addResult.fold(
+                              (error) {},
+                              (success) async {
+                                await DriverStorage.addDriver(driver);
+                              },
+                            );
+                            
+                            if(context.mounted) {
+                              Navigator.pop(context);
+                            }
                           },
                         );
-                        
-                        if(context.mounted) {
-                          Navigator.pop(context);
-                        }
-                      },
-                    );
-                  }
-                },
-                width: 100,
-                height: 50,
-                child: const Text('Register'),
+                      }
+                    },
+                    width: 100,
+                    height: 50,
+                    child: const Text('Register'),
+                  ),
+        
+                  const HSizedBox(
+                    height: 20,
+                  ),
+        
+                  CustomButton(
+                    onTap: () {
+                      Navigator.pushReplacementNamed(context, LoginScreen.routeName);
+                    },
+                    width: 170,
+                    height: 50,
+                    child: const Text('Want to Login Instead ?'),
+                  ),
+                ],
               ),
-
-              const HSizedBox(
-                height: 20,
-              ),
-
-              CustomButton(
-                onTap: () {
-                  Navigator.pushReplacementNamed(context, LoginScreen.routeName);
-                },
-                width: 170,
-                height: 50,
-                child: const Text('Want to Login Instead ?'),
-              ),
-            ],
+            ),
           ),
         ),
       ),

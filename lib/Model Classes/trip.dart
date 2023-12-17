@@ -20,6 +20,7 @@ class Trip {
   DateTime tripDate;
   Duration time;
   TripStatus status;
+
   int numberOfSeats;
   List<String>? users;
 
@@ -32,6 +33,7 @@ class Trip {
     required this.tripDate,
     required this.time,
     required this.status,
+    
     this.numberOfSeats = 4,
     this.users,
   });
@@ -43,6 +45,7 @@ class Trip {
     this.destination = "",
     this.time = Duration.zero,
     this.status = TripStatus.pending,
+    
     this.numberOfSeats = 4,
     this.users = const [],
   }) : currentDate = DateTime(2024), tripDate = DateTime(2024);

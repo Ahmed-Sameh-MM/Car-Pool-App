@@ -23,7 +23,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
   Future< List<Trip> > initHistory() async {
     final driver = await DriverStorage.readDriver();
 
-    final temp = await Realtime(uid: driver.uid).getTrips();
+    final temp = await Realtime(uid: driver.uid).getDriverTrips();
 
     return temp.fold(
       (error) {

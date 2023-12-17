@@ -5,7 +5,6 @@ import 'package:driver_car_pool_app/Widgets/custom_text.dart';
 import 'package:driver_car_pool_app/Widgets/custom_container.dart';
 import 'package:driver_car_pool_app/Static%20Data/colors.dart';
 import 'package:driver_car_pool_app/Widgets/custom_button.dart';
-import 'package:driver_car_pool_app/Widgets/promo_code_field.dart';
 import 'package:driver_car_pool_app/State%20Management/providers.dart';
 import 'package:driver_car_pool_app/Offline%20Storage/storage.dart';
 import 'package:driver_car_pool_app/Services/errors.dart';
@@ -137,49 +136,7 @@ class CheckoutScreen extends ConsumerWidget {
                   ),
 
                   const HSizedBox(
-                    height: 30,
-                  ),
-
-                  const CustomText(
-                    text: 'Promo code',
-                    size: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-
-                  const HSizedBox(
-                    height: 10,
-                  ),
-
-                  Row(
-                    children: [
-                      Expanded(
-                        flex: 2,
-                        child: PromoCodeField(
-                          controller: TextEditingController(),
-                          focusNode: FocusNode(),
-                        ),
-                      ),
-
-                      const WSizedBox(
-                        width: 20,
-                      ),
-
-                      Expanded(
-                        flex: 1,
-                        child: CustomButton(
-                          height: 50,
-                          shadow: false,
-                          onTap: () {},
-                          child: const CustomText(
-                            text: 'Apply',
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const HSizedBox(
-                    height: 30,
+                    height: 40,
                   ),
 
                   const Center(

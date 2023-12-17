@@ -109,7 +109,7 @@ class Realtime {
     );
   }
 
-  Future< Either<ErrorTypes, List<Trip>> > getTrips() async {
+  Future< Either<ErrorTypes, List<Trip>> > getDriverTrips() async {
     final connection = await LookUp.checkInternetConnection();
     return connection.fold(
       (error) {
@@ -118,15 +118,7 @@ class Realtime {
       (right) async {
         try {
           final trips = await driverTripsReference.child(uid).once().then((event) {
-            Map jsonMap;
-
-            if(event.snapshot.value == null) {
-              jsonMap = {};
-            }
-
-            else {
-              jsonMap = event.snapshot.value as Map;
-            }
+            Map jsonMap = (event.snapshot.value ?? {}) as Map;
 
             final List<Trip> temp = [];
 
@@ -153,7 +145,7 @@ class Realtime {
 
   Future< Either<ErrorTypes, bool> > checkTrip({required Trip trip}) async {
     
-    final tripsFuture = await getTrips();
+    final tripsFuture = await getDriverTrips();
 
     return tripsFuture.fold(
       (error) {

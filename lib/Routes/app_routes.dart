@@ -9,7 +9,6 @@ import 'package:driver_car_pool_app/Screens/routes_screen.dart';
 import 'package:driver_car_pool_app/Screens/chosen_route_screen.dart';
 import 'package:driver_car_pool_app/Screens/path_screen.dart';
 import 'package:driver_car_pool_app/Screens/gates_screen.dart';
-import 'package:driver_car_pool_app/Screens/payment_screen.dart';
 import 'package:driver_car_pool_app/Screens/history_screen.dart';
 import 'package:driver_car_pool_app/Screens/profile_screen.dart';
 import 'package:driver_car_pool_app/Screens/tracking_screen.dart';
@@ -29,7 +28,6 @@ class AppRoutes {
     GatesScreen.routeName: (_) => const GatesScreen(),
     RoutesScreen.routeName: (_) => const RoutesScreen(),
     CheckoutScreen.routeName: (_) => const CheckoutScreen(),
-    PaymentScreen.routeName: (_) => const PaymentScreen(),
     HistoryScreen.routeName: (_) => const HistoryScreen(),
     ProfileScreen.routeName: (_) => const ProfileScreen(),
   };
