@@ -12,6 +12,7 @@ import 'package:car_pool_app/Static%20Data/constants.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:car_pool_app/State%20Management/providers.dart';
 import 'package:car_pool_app/Screens/trips_screen.dart';
+import 'package:car_pool_app/Widgets/custom_alert_dialog.dart';
 
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -51,7 +52,10 @@ class _ChosenRouteScreenState extends State<ChosenRouteScreen> {
 
     date.fold(
       (error) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error.errorMessage)));
+        CustomAlertDialog(
+          context: context,
+          error: error,
+        );
       },
       (right) {
         
@@ -248,7 +252,9 @@ class _ChosenRouteScreenState extends State<ChosenRouteScreen> {
                               }
 
                               else {
-                                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Can't launch this URL, please check your browser")));
+                                if(context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Can't launch this URL, please check your browser")));
+                                }
                               }
                             },
                             height: 32,

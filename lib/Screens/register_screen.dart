@@ -10,6 +10,7 @@ import 'package:car_pool_app/Screens/login_screen.dart';
 import 'package:car_pool_app/Services/realtime_db.dart';
 import 'package:car_pool_app/Model%20Classes/user.dart';
 import 'package:car_pool_app/Offline%20Storage/storage.dart';
+import 'package:car_pool_app/Widgets/custom_alert_dialog.dart';
 
 import 'package:provider/provider.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
@@ -112,7 +113,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         );
         
                         registrationResult.fold(
-                          (error) {},
+                          (error) {
+                            CustomAlertDialog(
+                              context: context,
+                              error: error,
+                            );
+                          },
                           (success) async {
                             final uid = context.read<auth.User>().uid;
         
@@ -127,7 +133,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             final addResult = await Realtime(uid: user.uid).addUserData(user);
         
                             addResult.fold(
-                              (error) {},
+                              (error) {
+                                CustomAlertDialog(
+                                  context: context,
+                                  error: error,
+                                );
+                              },
                               (success) async {
                                 await UserStorage.addUser(user);
                               },

@@ -43,19 +43,50 @@ Future< Either<ErrorTypes, User?> > registerWithEmail({required String email, re
         return Right(userCredential.user);
       }
       on FirebaseAuthException catch(e) {
-
         if(e.code == 'email-already-in-use'){
           debugPrint("email already in use!!");
+          return const Left(
+            AuthenticationError(
+              errorId: 300,
+              errorMessage: "Email Already in Use",
+            ),
+          );
         }
         else if(e.code == 'weak-password'){
           debugPrint("weak password....");
+          return const Left(
+            AuthenticationError(
+              errorId: 301,
+              errorMessage: "Weak Password, minimum 6 characters",
+            ),
+          );
         }
         else if(e.code == "invalid-email"){
           debugPrint("invalid- Email... pls enter a valid one");
+          return const Left(
+            AuthenticationError(
+              errorId: 302,
+              errorMessage: "Invalid Email",
+            ),
+          );
         }
         else if(e.code == 'operation-not-allowed'){
           debugPrint("operation not allowed, contact support !");
+          return const Left(
+            AuthenticationError(
+              errorId: 303,
+              errorMessage: "Operation Not Allowed, Contact Support !",
+            ),
+          );
         }
+        else if(e.code == "too-many-requests") {
+          return const Left(
+            RequestsError(
+              errorId: 304,
+            ),
+          );
+        }
+
         return Left(
           UnexpectedError(
             customError: e.code,
@@ -95,6 +126,8 @@ Future< Either<ErrorTypes, bool> > loginWithEmail({required String email, requir
         return const Right(true);
       }
       on FirebaseAuthException catch (e) {
+        debugPrint(e.code);
+        
         if(e.code == 'user-not-found')
         {
           debugPrint('No user found for that email.');
@@ -120,11 +153,27 @@ Future< Either<ErrorTypes, bool> > loginWithEmail({required String email, requir
             ),
           );
         }
+        else if(e.code == 'invalid-credential'){
+          debugPrint('invalid email');
+          return const Left(
+            InvalidCredentialError(
+              errorId: 402,
+            ),
+          );
+        }
         else if(e.code == 'user-disabled'){
           return const Left(
             UserDisabledError(),
           );
         }
+        else if(e.code == "too-many-requests") {
+          return const Left(
+            RequestsError(
+              errorId: 403,
+            ),
+          );
+        }
+
         return Left(
           UnexpectedError(
             customError: 'Unexpected FirebaseAuthException',

@@ -1,5 +1,6 @@
 import 'package:car_pool_app/Offline%20Storage/storage.dart';
 import 'package:car_pool_app/Services/realtime_db.dart';
+import 'package:car_pool_app/Widgets/custom_alert_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -92,14 +93,24 @@ class _LoginScreenState extends State<LoginScreen> {
                     );
 
                     result.fold(
-                      (error) {},
+                      (error) {
+                        CustomAlertDialog(
+                          context: context,
+                          error: error,
+                        );
+                      },
                       (success) async {
                         final uid = context.read<User>().uid;
                         
                         final userData = await Realtime(uid: uid).getUserData();
 
                         userData.fold(
-                          (error) {},
+                          (error) {
+                            CustomAlertDialog(
+                              context: context,
+                              error: error,
+                            );
+                          },
                           (user) async {
                             await UserStorage.addUser(user);
                         

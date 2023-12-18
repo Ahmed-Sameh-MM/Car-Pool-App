@@ -28,13 +28,57 @@ class ConnectionError extends ErrorTypes {
 
 class FirebaseError extends ErrorTypes {
 
-  static const _errorTitle = 'Server Error';
+  static const _errorTitle = 'Firebase Error';
   
   const FirebaseError({
     required String errorMessage,
     required int errorId,
   }) : super(
     errorMessage: errorMessage,
+    errorTitle: _errorTitle,
+    errorId: errorId,
+  );
+}
+
+class AuthenticationError extends ErrorTypes {
+
+  static const _errorTitle = 'Authentication Error';
+  
+  const AuthenticationError({
+    required String errorMessage,
+    required int errorId,
+  }) : super(
+    errorMessage: errorMessage,
+    errorTitle: _errorTitle,
+    errorId: errorId,
+  );
+}
+
+class RequestsError extends ErrorTypes {
+
+  static const _errorTitle = 'Too Many Requests';
+
+  static const _errorMessage = 'Try Again Later';
+  
+  const RequestsError({
+    required int errorId,
+  }) : super(
+    errorMessage: _errorMessage,
+    errorTitle: _errorTitle,
+    errorId: errorId,
+  );
+}
+
+class InvalidCredentialError extends ErrorTypes {
+
+  static const _errorTitle = 'Invalid Credential';
+
+  static const _errorMessage = 'Check Your Password Again';
+  
+  const InvalidCredentialError({
+    required int errorId,
+  }) : super(
+    errorMessage: _errorMessage,
     errorTitle: _errorTitle,
     errorId: errorId,
   );

@@ -9,6 +9,7 @@ import 'package:car_pool_app/Services/authenticate.dart';
 import 'package:car_pool_app/Widgets/custom_button.dart';
 import 'package:car_pool_app/Offline%20Storage/storage.dart';
 import 'package:car_pool_app/Services/realtime_db.dart';
+import 'package:car_pool_app/Widgets/custom_alert_dialog.dart';
 
 class ProfileColumn extends StatefulWidget {
   const ProfileColumn({
@@ -33,7 +34,10 @@ class _ProfileColumnState extends State<ProfileColumn> {
 
     future.fold(
       (error) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error.errorMessage)));
+        CustomAlertDialog(
+          context: context,
+          error: error,
+        );
       },
       (switchValue) {
         setState(() {
@@ -134,7 +138,10 @@ class _ProfileColumnState extends State<ProfileColumn> {
                     
                     future.fold(
                       (error) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error.errorMessage)));
+                        CustomAlertDialog(
+                          context: context,
+                          error: error,
+                        );
                       },
                       (success) {
                         setState(() {
