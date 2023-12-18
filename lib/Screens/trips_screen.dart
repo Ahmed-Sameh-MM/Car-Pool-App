@@ -1,3 +1,4 @@
+import 'package:car_pool_app/State%20Management/providers.dart';
 import 'package:flutter/material.dart';
 
 import 'package:car_pool_app/Model%20Classes/trip.dart';
@@ -10,17 +11,18 @@ import 'package:car_pool_app/Widgets/sized_box.dart';
 import 'package:car_pool_app/Services/general_functions.dart';
 import 'package:car_pool_app/Model%20Classes/driver_trip.dart';
 import 'package:car_pool_app/Screens/payment_screen.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class TripsScreen extends StatefulWidget {
 
-  final Trip trip;
+  final DriverTrip driverTrip;
 
   const TripsScreen({
     super.key,
-    required this.trip,
+    required this.driverTrip,
   });
 
   static const routeName = '/trips';
@@ -36,7 +38,7 @@ class _TripsScreenState extends State<TripsScreen> {
   Future< List<Trip> > initTrips() async {
     final user = await UserStorage.readUser();
 
-    final temp = await Realtime(uid: user.uid).filterDriverTrips(trip: widget.trip);
+    final temp = await Realtime(uid: user.uid).filterDriverTrips(trip: widget.driverTrip);
 
     return temp.fold(
       (error) {
@@ -135,124 +137,134 @@ class _TripsScreenState extends State<TripsScreen> {
                                 );
                               },
                               itemBuilder: (context, index) {
-                                return CustomButton(
-                                  hPadding: 10,
-                                  vPadding: 10,
-                                  onTap: () {
-                                  Navigator.pushNamed(context, PaymentScreen.routeName);
-                                },
-                                  child: Stack(
-                                    children: [
-                                      Column(
+                                return Consumer(
+                                  builder: (context, ref, child) {
+                                    return CustomButton(
+                                      hPadding: 10,
+                                      vPadding: 10,
+                                      onTap: () {
+                                        ref.read(driverTripProvider).id = trips[index].id;
+
+                                        ref.read(driverTripProvider).driverUid = trips[index].driverUid;
+                                        ref.read(driverTripProvider).numberOfSeats = trips[index].numberOfSeats;
+                                        ref.read(driverTripProvider).users = trips[index].users;
+
+                                        Navigator.pushNamed(context, PaymentScreen.routeName);
+                                      },
+                                      child: Stack(
                                         children: [
-                                          Row(
+                                          Column(
                                             children: [
-                                              Image.asset(
-                                                'assets/images/${trips[index].destination}.jpg',
-                                                width: 65,
-                                                height: 65,
-                                                fit: BoxFit.fill,
-                                              ),
-                          
-                                              const WSizedBox(
-                                                width: 10,
-                                              ),
-                          
-                                              Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                              Row(
                                                 children: [
-                                                  CustomText(
-                                                    text: trips[index].source,
-                                                    size: 16,
-                                                    fontWeight: FontWeight.bold,
+                                                  Image.asset(
+                                                    'assets/images/${trips[index].destination}.jpg',
+                                                    width: 65,
+                                                    height: 65,
+                                                    fit: BoxFit.fill,
                                                   ),
                           
-                                                  const HSizedBox(
-                                                    height: 5,
+                                                  const WSizedBox(
+                                                    width: 10,
                                                   ),
                           
-                                                  CustomText(
-                                                    text: "To",
-                                                    fontWeight: FontWeight.w600,
-                                                    fontFamily: GoogleFonts.poppins().fontFamily,
-                                                    textColor: Colors.white30,
-                                                  ),
-                          
-                                                  const HSizedBox(
-                                                    height: 5,
-                                                  ),
-                          
-                                                  CustomText(
-                                                    text: trips[index].destination,
-                                                    size: 16,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                          
-                                          const HSizedBox(
-                                            height: 10,
-                                          ),
-                          
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  Row(
+                                                  Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
                                                     children: [
                                                       CustomText(
-                                                        text: formatDate(trips[index].tripDate),
+                                                        text: trips[index].source,
+                                                        size: 16,
                                                         fontWeight: FontWeight.bold,
                                                       ),
                           
-                                                      const WSizedBox(
-                                                        width: 20,
+                                                      const HSizedBox(
+                                                        height: 5,
                                                       ),
                           
                                                       CustomText(
-                                                        text: durationToTime(trips[index].time),
+                                                        text: "To",
+                                                        fontWeight: FontWeight.w600,
+                                                        fontFamily: GoogleFonts.poppins().fontFamily,
+                                                        textColor: Colors.white30,
+                                                      ),
+                          
+                                                      const HSizedBox(
+                                                        height: 5,
+                                                      ),
+                          
+                                                      CustomText(
+                                                        text: trips[index].destination,
+                                                        size: 16,
                                                         fontWeight: FontWeight.bold,
                                                       ),
                                                     ],
                                                   ),
-                                                  
-                                                  const HSizedBox(
-                                                    height: 10,
-                                                  ),
+                                                ],
+                                              ),
                           
-                                                  const CustomText(
-                                                    text: "Tap to Reserve",
-                                                    textColor: Colors.white38,
+                                              const HSizedBox(
+                                                height: 10,
+                                              ),
+                          
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      Row(
+                                                        children: [
+                                                          CustomText(
+                                                            text: formatDate(trips[index].tripDate),
+                                                            fontWeight: FontWeight.bold,
+                                                          ),
+                          
+                                                          const WSizedBox(
+                                                            width: 20,
+                                                          ),
+                          
+                                                          CustomText(
+                                                            text: durationToTime(trips[index].time),
+                                                            fontWeight: FontWeight.bold,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      
+                                                      const HSizedBox(
+                                                        height: 10,
+                                                      ),
+                          
+                                                      const CustomText(
+                                                        text: "Tap to Reserve",
+                                                        textColor: Colors.white38,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  CustomText(
+                                                    text: '${trips[index].price} EGP',
+                                                    fontWeight: FontWeight.bold,
                                                   ),
                                                 ],
                                               ),
-                                              CustomText(
-                                                text: '${trips[index].price} EGP',
-                                                fontWeight: FontWeight.bold,
-                                              ),
                                             ],
+                                          ),
+                                          Positioned(
+                                            right: 1,
+                                            child: CustomContainer(
+                                              vpadding: 5,
+                                              hpadding: 5,
+                                              borderRadius: 5,
+                                              color: trips[index].numberOfSeats > 1 ? Colors.green : Colors.red,
+                                              child: CustomText(
+                                                text: trips[index].numberOfSeats.toString(),
+                                                textColor: Colors.white,
+                                              ),
+                                            ),
                                           ),
                                         ],
                                       ),
-                                      Positioned(
-                                        right: 1,
-                                        child: CustomContainer(
-                                          vpadding: 5,
-                                          hpadding: 5,
-                                          borderRadius: 5,
-                                          color: trips[index].numberOfSeats > 1 ? Colors.green : Colors.red,
-                                          child: CustomText(
-                                            text: trips[index].numberOfSeats.toString(),
-                                            textColor: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                    );
+                                  }
                                 );
                               }
                             ),

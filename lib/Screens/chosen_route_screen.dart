@@ -43,7 +43,7 @@ class _ChosenRouteScreenState extends State<ChosenRouteScreen> {
   List<String> dayNames = ['Today']; // Placeholder for the NAME of the current day and the next 6 days
   List<String> dayDates = []; // Placeholder for the DATE NUMBER of the current day and 6 days
 
-  final double bottomSheetHeight = 130;
+  final double bottomSheetHeight = 160;
 
   void dayNameAndDayDatesGenerator() async {
 
@@ -74,86 +74,68 @@ class _ChosenRouteScreenState extends State<ChosenRouteScreen> {
     if(selectedTimeSlot != null) {
       return Container(
         height: bottomSheetHeight,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFFFFFFFF),
-              Color(0xFFF5F0F0),
-            ],
-          ),
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(30),
-            topRight: Radius.circular(30),
-          ),
-        ),
+        color: primaryColor,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              const CustomText(
+                text: 'Your Booking',
+                size: 16,
+                fontWeight: FontWeight.bold,
+              ),
+
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Column(
                     children: [
-                      const CustomText(
-                        text: 'Your Booking',
-                        size: 16,
-                        fontWeight: FontWeight.bold,
-                        textColor: Colors.black,
-                      ),
                       CustomText(
-                        text: 'dateFormat(currentDate!)',
-                        textColor: Colors.black,
+                        text: formatDate(currentDate!.add(Duration(days: selectedDateSlot))),
                       ),
                       CustomText(
                         text: durationToTime(timeSlots[selectedTimeSlot!]),
-                        textColor: Colors.black,
                       ),
                     ],
                   ),
         
                   const WSizedBox(
-                    width: 30,
+                    width: 50,
                   ),
         
-                  Column(
-                    children: [
-                      const CustomText(
-                        text: 'Price',
-                        size: 16,
-                        fontWeight: FontWeight.bold,
-                        textColor: Colors.black,
-                      ),
-                      CustomText(
-                        text: '${chosenRouteData.price} Egp',
-                        textColor: Colors.black,
-                      ),
-                    ],
+                  CustomText(
+                    text: 'Price: ${chosenRouteData.price} Egp',
+                    size: 16,
                   ),
                 ],
               ),
+
+              const HSizedBox(
+                height: 30,
+              ),
+              
               Consumer(
                 builder: (context, ref, child) {
                   return CustomButton(
                     width: 200,
                     height: 50,
+                    color: Colors.white,
                     onTap: () {
                       final tripDate = currentDate!.add(Duration(
                         days: selectedDateSlot,
                       ));
-                      ref.read(tripProvider).tripDate = DateTime(tripDate.year, tripDate.month, tripDate.day);
+                      ref.read(driverTripProvider).tripDate = DateTime(tripDate.year, tripDate.month, tripDate.day);
 
-                      ref.read(tripProvider).time = timeSlots[selectedTimeSlot!];
+                      ref.read(driverTripProvider).time = timeSlots[selectedTimeSlot!];
                       
-                      Navigator.pushNamed(context, TripsScreen.routeName, arguments: ref.read(tripProvider));
+                      Navigator.pushNamed(context, TripsScreen.routeName, arguments: ref.read(driverTripProvider));
                     },
                     child: const Center(
                       child: CustomText(
                         text: "Search for Trips",
                         size: 16,
+                        textColor: Colors.black,
                       ),
                     ),
                   );
@@ -167,14 +149,8 @@ class _ChosenRouteScreenState extends State<ChosenRouteScreen> {
     
     return Container(
       width: double.infinity,
-      height: bottomSheetHeight,
-      decoration: const BoxDecoration(
-        color: primaryColor,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(8),
-          topRight: Radius.circular(8),
-        ),
-      ),
+      height: bottomSheetHeight - 30,
+      color: primaryColor,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -195,7 +171,7 @@ class _ChosenRouteScreenState extends State<ChosenRouteScreen> {
               const TextButton(
                 onPressed: null,
                 child: CustomText(
-                  text: 'Book Now',
+                  text: 'Search for Trips',
                   textColor: Colors.white24,
                 ),
               ),

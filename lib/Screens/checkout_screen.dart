@@ -11,7 +11,6 @@ import 'package:car_pool_app/Offline%20Storage/storage.dart';
 import 'package:car_pool_app/Services/errors.dart';
 import 'package:car_pool_app/Services/realtime_db.dart';
 import 'package:car_pool_app/Widgets/wrapper.dart';
-import 'package:car_pool_app/Services/trip_id_generator.dart';
 import 'package:car_pool_app/Services/date.dart';
 import 'package:car_pool_app/Services/general_functions.dart';
 
@@ -26,7 +25,7 @@ class CheckoutScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final chosenRoute = ref.watch(chosenRouteProvider);
 
-    final trip = ref.watch(tripProvider);
+    final trip = ref.watch(driverTripProvider);
     
     return Scaffold(
       appBar: AppBar(
@@ -258,12 +257,10 @@ class CheckoutScreen extends ConsumerWidget {
                       date.fold(
                         (error) {},
                         (right) async {
-                          ref.read(tripProvider).id = TripIdGenerator().getRandomString(6);
-                          ref.read(tripProvider).currentDate = right;
+                          ref.read(driverTripProvider).currentDate = right;
 
-                          final trip = ref.read(tripProvider);
                           final tripReservation = await Realtime(uid: user.uid).reserveTrip(
-                            trip: trip,
+                            driverTrip: ref.read(driverTripProvider),
                           );
                 
                           tripReservation.fold(

@@ -35,18 +35,18 @@ class RoutesListView extends ConsumerWidget {
               ref.read(chosenRouteProvider).copyWith(routeData);
 
               // set the price of the trip based on the chosen route
-              ref.read(tripProvider).price = routeData.price;
+              ref.read(driverTripProvider).price = routeData.price;
 
               final routeType = ref.read(routeTypeProvider);
 
               if(routeType == RouteType.anyToAinshams) {
-                ref.read(tripProvider).source = routeData.name;
+                ref.read(driverTripProvider).source = routeData.name;
 
                 Navigator.pushNamed(context, GatesScreen.routeName);
               }
               
               else if(routeType == RouteType.ainshamsToAny) {
-                ref.read(tripProvider).destination = routeData.name;
+                ref.read(driverTripProvider).destination = routeData.name;
 
                 Navigator.pushNamed(context, ChosenRouteScreen.routeName, arguments: routeData);
               }

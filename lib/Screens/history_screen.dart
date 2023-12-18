@@ -6,6 +6,7 @@ import 'package:car_pool_app/Offline%20Storage/storage.dart';
 import 'package:car_pool_app/Services/realtime_db.dart';
 import 'package:car_pool_app/Widgets/history_list_view.dart';
 import 'package:car_pool_app/Model%20Classes/history_helper.dart';
+import 'package:car_pool_app/Model%20Classes/driver_trip.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({ super.key });
@@ -20,17 +21,17 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   Future? historyFuture;
 
-  Future< List<Trip> > initHistory() async {
+  Future< List<DriverTrip> > initHistory() async {
     final user = await UserStorage.readUser();
 
     final temp = await Realtime(uid: user.uid).getTrips();
 
     return temp.fold(
       (error) {
-        return Future< List<Trip> >.error(error);
+        return Future< List<DriverTrip> >.error(error);
       },
-      (trips) {
-        return Future< List<Trip> >.value(trips);
+      (driverTrips) {
+        return Future< List<DriverTrip> >.value(driverTrips);
       },
     );
   }

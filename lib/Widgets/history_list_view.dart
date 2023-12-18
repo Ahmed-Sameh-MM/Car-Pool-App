@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 import 'package:car_pool_app/Model%20Classes/history_helper.dart';
-import 'package:car_pool_app/Model%20Classes/trip.dart';
 import 'package:car_pool_app/Screens/tracking_screen.dart';
 import 'package:car_pool_app/Services/general_functions.dart';
 import 'package:car_pool_app/Widgets/custom_button.dart';
 import 'package:car_pool_app/Widgets/custom_container.dart';
 import 'package:car_pool_app/Widgets/custom_text.dart';
 import 'package:car_pool_app/Widgets/sized_box.dart';
+import 'package:car_pool_app/Model%20Classes/driver_trip.dart';
 
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -67,7 +67,7 @@ class HistoryListView extends StatelessWidget {
                   }
                   
                   else if(snapshot.hasData){
-                    List<Trip> trips = [];
+                    List<DriverTrip> trips = [];
   
                     for(int i = 0; i < snapshot.data.length; i++) {
                       if(snapshot.data[i].status == helper.status) {

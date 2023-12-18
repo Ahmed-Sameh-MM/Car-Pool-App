@@ -33,7 +33,7 @@ class Realtime {
 
   // Trip Reservation Methods
   
-  Future< Either<ErrorTypes, bool> > reserveTrip({required Trip trip}) async {
+  Future< Either<ErrorTypes, bool> > reserveTrip({required DriverTrip driverTrip}) async {
 
     final connection = await LookUp.checkInternetConnection();
 
@@ -43,37 +43,57 @@ class Realtime {
       },
       (right) async {
         try {
+          final users = await driverTripsReference.child(driverTrip.driverUid!).child(driverTrip.id).child("users").once().then((event) => event.snapshot.value);
+
+          final usersList = List<String>.from((users ?? []) as List);
+
+          bool isDuplicate = false;
+
+          for(int i = 0; i < usersList.length; i++) {
+            if(uid == usersList[i]) {
+              isDuplicate = true;
+              break;
+            }
+          }
+
+          if(isDuplicate) {
+            return const Left(
+              AlreadyReservedError(),
+            );
+          }
+          
           final disableValidation = await rootReference.child('disable_user_validation').once().then((event) => event.snapshot.value as bool);
 
           if(! disableValidation) {
             // checking the time constraints
-            DateTime rawDate = DateTime(trip.tripDate.year, trip.tripDate.month, trip.tripDate.day);
+            DateTime rawDate = DateTime(driverTrip.tripDate.year, driverTrip.tripDate.month, driverTrip.tripDate.day);
 
-            rawDate = rawDate.add(timeConstraints[durationToTime(trip.time)]!);
+            rawDate = rawDate.add(timeConstraints[durationToTime(driverTrip.time)]!);
 
-            if(trip.currentDate.isAfter(rawDate)) {
+            if(driverTrip.currentDate.isAfter(rawDate)) {
               return Left(
                 LateReservationError(
-                  errorMessage: "You need to reserve this time slot before ${durationToTime(timeConstraints[durationToTime(trip.time)]!)}",
+                  errorMessage: "You need to reserve this time slot before ${durationToTime(timeConstraints[durationToTime(driverTrip.time)]!)}",
                 ),
               );
             }
           }
 
           // reserving successfully
-          await tripsReference.child(uid).child(trip.id).set(trip.toJson());
+          await tripsReference.child(uid).child(driverTrip.id).set(driverTrip.toJson());
 
-          // adding the trip to the closed trips
-          // await usersReference.child(uid).update({'reservedTrips': trip.tripDate});
+          // adding this user to the users list
 
-          // Updating the users reference
+          usersList.add(uid);
+
+          // Updating the driver trips reference
 
           Map<String, dynamic> temp = {
             'numberOfSeats' : ServerValue.increment(-1),
-            'users' : uid,
+            'users' : usersList,
           };
 
-          await driverTripsReference.child(uid).child(trip.id).update(temp); // TODO driver UID
+          await driverTripsReference.child(driverTrip.driverUid!).child(driverTrip.id).update(temp);
           
           return const Right(true);
         }
@@ -89,7 +109,7 @@ class Realtime {
     );
   }
 
-  Future< Either<ErrorTypes, bool> > cancelTrip({required String tripId}) async {
+  Future< Either<ErrorTypes, bool> > cancelTrip({required DriverTrip driverTrip}) async {
 
     final connection = await LookUp.checkInternetConnection();
 
@@ -100,7 +120,24 @@ class Realtime {
       (right) async {
         try {
           // canceling successfully
-          await tripsReference.child(uid).child(tripId).update({'status': 'canceled'});
+          await tripsReference.child(uid).child(driverTrip.id).update({'status': 'canceled'});
+
+          // reading the users list
+
+          final users = await driverTripsReference.child(driverTrip.driverUid!).child(driverTrip.id).child("users").once().then((event) => event.snapshot.value);
+
+          final usersList = List<String>.from((users ?? []) as List);
+
+          usersList.removeWhere((element) => (element == uid));
+
+          // Updating the drivers reference
+
+          Map<String, dynamic> temp = {
+            'numberOfSeats' : ServerValue.increment(1),
+            'users' : usersList,
+          };
+
+          await driverTripsReference.child(driverTrip.driverUid!).child(driverTrip.id).update(temp);
           
           return const Right(true);
         }
@@ -116,7 +153,7 @@ class Realtime {
     );
   }
 
-  Future< Either<ErrorTypes, List<Trip>> > getTrips() async {
+  Future< Either<ErrorTypes, List<DriverTrip>> > getTrips() async {
     final connection = await LookUp.checkInternetConnection();
     return connection.fold(
       (error) {
@@ -127,10 +164,10 @@ class Realtime {
           final trips = await tripsReference.child(uid).once().then((event) {
             Map jsonMap = (event.snapshot.value ?? {}) as Map;
 
-            final List<Trip> temp = [];
+            final List<DriverTrip> temp = [];
 
             jsonMap.forEach((key, value) {
-              temp.add(Trip.fromJson(value));
+              temp.add(DriverTrip.fullFromJson(value));
             });
             
             return temp;

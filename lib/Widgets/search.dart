@@ -37,9 +37,15 @@ class Search extends SearchDelegate {
   Widget buildResults(BuildContext context) {
 
     List<CustomRoute> temp = [];
+
+    if(query == '') {
+      return const SizedBox.shrink();
+    }
+
     for(int i = 0; i < routes.length; i++) {
       if(routes[i].name.toLowerCase().contains(query.toLowerCase())) temp.add(routes[i]);
-    } // TODO resolve clear when search is done Bug
+    }
+    
     if(temp.isNotEmpty) {
       return ListView.builder(
         itemCount: temp.length,
@@ -49,11 +55,9 @@ class Search extends SearchDelegate {
               children: [
                 CustomText(
                   text: temp[index].name,
-                  textColor: Colors.black,
                 ),
                 CustomText(
                   text: temp[index].address,
-                  textColor: Colors.black,
                 ),
               ],
             ),
@@ -66,7 +70,9 @@ class Search extends SearchDelegate {
     }
 
     return Center(
-      child: Text('No results found for "$query"'),
+      child: CustomText(
+        text: 'No results found for "$query"',
+      ),
     );
   }
 
@@ -77,8 +83,13 @@ class Search extends SearchDelegate {
         itemCount: routes.length,
         itemBuilder: (context, index) {
           return ListTile(
-            title: Text(routes[index].name),
-            leading: const Icon(Icons.history),
+            title: CustomText(
+              text: routes[index].name,
+            ),
+            leading: const Icon(
+              Icons.history,
+              color: Colors.white,
+            ),
             onTap: () {
               close(context, routes[index]);
             },
@@ -96,7 +107,9 @@ class Search extends SearchDelegate {
         itemCount: temp.length,
         itemBuilder: (context, index) {
           return ListTile(
-            title: Text(temp[index].name),
+            title: CustomText(
+              text: temp[index].name,
+            ),
             onTap: () {
               close(context, temp[index]);
             },
@@ -106,7 +119,9 @@ class Search extends SearchDelegate {
     }
 
     return Center(
-      child: Text('No results found for "$query"'),
+      child: CustomText(
+        text: 'No results found for "$query"',
+      ),
     );
 
   }

@@ -6,14 +6,15 @@ import 'package:car_pool_app/Services/realtime_db.dart';
 import 'package:car_pool_app/Widgets/custom_button.dart';
 import 'package:car_pool_app/Widgets/custom_text.dart';
 import 'package:car_pool_app/Offline%20Storage/storage.dart';
+import 'package:car_pool_app/Model%20Classes/driver_trip.dart';
 
 class TrackingScreen extends StatelessWidget {
   const TrackingScreen({
     super.key,
-    required this.trip,
+    required this.driverTrip,
   });
 
-  final Trip trip;
+  final DriverTrip driverTrip;
 
   static const routeName = '/tracking';
 
@@ -28,13 +29,18 @@ class TrackingScreen extends StatelessWidget {
       body: Column(
         children: [
           TrackingColumn(
-            status: trip.status,
+            status: driverTrip.status,
           ),
 
-          trip.status == TripStatus.pending ? CustomButton(
+          driverTrip.status == TripStatus.pending ? CustomButton(
             onTap: () async {
               final user = await UserStorage.readUser();
-              await Realtime(uid: user.uid).cancelTrip(tripId: trip.id);
+              
+              await Realtime(uid: user.uid).cancelTrip(driverTrip: driverTrip);
+
+              if(context.mounted) {
+                Navigator.pop(context);
+              }
             },
             child: const CustomText(
               text: 'Cancel',
