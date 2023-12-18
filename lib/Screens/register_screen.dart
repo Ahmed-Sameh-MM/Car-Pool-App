@@ -1,3 +1,4 @@
+import 'package:driver_car_pool_app/Widgets/custom_alert_dialog.dart';
 import 'package:flutter/material.dart';
 
 import 'package:driver_car_pool_app/Widgets/email_field.dart';
@@ -112,7 +113,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         );
         
                         registrationResult.fold(
-                          (error) {},
+                          (error) {
+                            CustomAlertDialog(
+                              context: context,
+                              error: error,
+                            );
+                          },
                           (success) async {
                             final uid = context.read<auth.User>().uid;
         
@@ -127,7 +133,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             final addResult = await Realtime(uid: driver.uid).addDriverData(driver);
         
                             addResult.fold(
-                              (error) {},
+                              (error) {
+                                CustomAlertDialog(
+                                  context: context,
+                                  error: error,
+                                );
+                              },
                               (success) async {
                                 await DriverStorage.addDriver(driver);
                               },

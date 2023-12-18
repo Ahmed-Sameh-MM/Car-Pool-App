@@ -12,6 +12,7 @@ import 'package:driver_car_pool_app/Static%20Data/constants.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:driver_car_pool_app/State%20Management/providers.dart';
 import 'package:driver_car_pool_app/Screens/checkout_screen.dart';
+import 'package:driver_car_pool_app/Widgets/custom_alert_dialog.dart';
 
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -51,7 +52,10 @@ class _ChosenRouteScreenState extends State<ChosenRouteScreen> {
 
     date.fold(
       (error) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error.errorMessage)));
+        CustomAlertDialog(
+          context: context,
+          error: error,
+        );
       },
       (right) {
         

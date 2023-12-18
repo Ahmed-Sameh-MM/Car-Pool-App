@@ -1,3 +1,4 @@
+import 'package:driver_car_pool_app/Widgets/custom_alert_dialog.dart';
 import 'package:flutter/material.dart';
 
 import 'package:driver_car_pool_app/Widgets/custom_container.dart';
@@ -33,7 +34,10 @@ class _ProfileColumnState extends State<ProfileColumn> {
 
     future.fold(
       (error) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error.errorMessage)));
+        CustomAlertDialog(
+          context: context,
+          error: error,
+        );
       },
       (switchValue) {
         setState(() {
@@ -134,7 +138,10 @@ class _ProfileColumnState extends State<ProfileColumn> {
                     
                     future.fold(
                       (error) {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error.errorMessage)));
+                        CustomAlertDialog(
+                          context: context,
+                          error: error,
+                        );
                       },
                       (success) {
                         setState(() {

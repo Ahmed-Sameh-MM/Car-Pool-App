@@ -1,3 +1,4 @@
+import 'package:driver_car_pool_app/Widgets/custom_alert_dialog.dart';
 import 'package:flutter/material.dart';
 
 import 'package:driver_car_pool_app/Widgets/sized_box.dart';
@@ -213,7 +214,12 @@ class CheckoutScreen extends ConsumerWidget {
                       final date = await Date.fetchDate();
 
                       date.fold(
-                        (error) {},
+                        (error) {
+                          CustomAlertDialog(
+                            context: context,
+                            error: error,
+                          );
+                        },
                         (right) async {
                           ref.read(tripProvider).id = TripIdGenerator().getRandomString(6);
                           ref.read(tripProvider).currentDate = right;
@@ -225,14 +231,22 @@ class CheckoutScreen extends ConsumerWidget {
                 
                           tripCreation.fold(
                             (error) {
-                              if(error is ConnectionError || error is FirebaseError) {
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error.errorMessage)));
+                              if(error is LateReservationError || error is AlreadyReservedError) {
+                                CustomAlertDialog(
+                                  context: context,
+                                  error: error,
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    Navigator.pop(context);
+                                    Navigator.pop(context);
+                                  },
+                                );
                               }
-                              
-                              else if(error is LateReservationError || error is AlreadyReservedError) {
-                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error.errorMessage)));
-                                Navigator.pop(context);
-                                Navigator.pop(context);
+                              else {
+                                CustomAlertDialog(
+                                  context: context,
+                                  error: error,
+                                );
                               }
                             },
                             (right) async {
