@@ -1,4 +1,3 @@
-import 'package:car_pool_app/State%20Management/providers.dart';
 import 'package:flutter/material.dart';
 
 import 'package:car_pool_app/Model%20Classes/trip.dart';
@@ -9,20 +8,20 @@ import 'package:car_pool_app/Widgets/custom_container.dart';
 import 'package:car_pool_app/Widgets/custom_text.dart';
 import 'package:car_pool_app/Widgets/sized_box.dart';
 import 'package:car_pool_app/Services/general_functions.dart';
-import 'package:car_pool_app/Model%20Classes/driver_trip.dart';
 import 'package:car_pool_app/Screens/payment_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:car_pool_app/State%20Management/providers.dart';
 
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class TripsScreen extends StatefulWidget {
 
-  final DriverTrip driverTrip;
+  final Trip trip;
 
   const TripsScreen({
     super.key,
-    required this.driverTrip,
+    required this.trip,
   });
 
   static const routeName = '/trips';
@@ -38,7 +37,7 @@ class _TripsScreenState extends State<TripsScreen> {
   Future< List<Trip> > initTrips() async {
     final user = await UserStorage.readUser();
 
-    final temp = await Realtime(uid: user.uid).filterDriverTrips(trip: widget.driverTrip);
+    final temp = await Realtime(uid: user.uid).filterTrips(trip: widget.trip);
 
     return temp.fold(
       (error) {
@@ -113,7 +112,7 @@ class _TripsScreenState extends State<TripsScreen> {
                       }
                       
                       else if(snapshot.hasData){
-                        List<DriverTrip> trips = snapshot.data;
+                        List<Trip> trips = snapshot.data;
       
                         if(trips.isEmpty) {
                           return const Center(
@@ -143,11 +142,11 @@ class _TripsScreenState extends State<TripsScreen> {
                                       hPadding: 10,
                                       vPadding: 10,
                                       onTap: () {
-                                        ref.read(driverTripProvider).id = trips[index].id;
+                                        ref.read(tripProvider).id = trips[index].id;
 
-                                        ref.read(driverTripProvider).driverUid = trips[index].driverUid;
-                                        ref.read(driverTripProvider).numberOfSeats = trips[index].numberOfSeats;
-                                        ref.read(driverTripProvider).users = trips[index].users;
+                                        ref.read(tripProvider).driverUid = trips[index].driverUid;
+                                        ref.read(tripProvider).numberOfSeats = trips[index].numberOfSeats;
+                                        ref.read(tripProvider).users = trips[index].users;
 
                                         Navigator.pushNamed(context, PaymentScreen.routeName);
                                       },

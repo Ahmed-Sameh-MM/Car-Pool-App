@@ -35,14 +35,14 @@ class GateWidget extends ConsumerWidget {
                   final routeType = ref.read(routeTypeProvider);
                   
                   if(routeType == RouteType.anyToAinshams) {
-                    ref.read(driverTripProvider).destination = chosenGateName;
+                    ref.read(tripProvider).destination = chosenGateName;
 
                     final chosenRouteData = ref.read(chosenRouteProvider);
                     Navigator.pushNamed(context, ChosenRouteScreen.routeName, arguments: chosenRouteData);
                   }
 
                   else if(routeType == RouteType.ainshamsToAny) {
-                    ref.read(driverTripProvider).source = chosenGateName;
+                    ref.read(tripProvider).source = chosenGateName;
 
                     Navigator.pushNamed(context, RoutesScreen.routeName);
                   }

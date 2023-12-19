@@ -1,6 +1,7 @@
-import 'package:car_pool_app/Model%20Classes/trip.dart';
-import 'package:car_pool_app/Widgets/tracking_item.dart';
 import 'package:flutter/material.dart';
+
+import 'package:car_pool_app/Model%20Classes/order.dart';
+import 'package:car_pool_app/Widgets/tracking_item.dart';
 
 import 'package:timeline_tile/timeline_tile.dart';
 
@@ -10,7 +11,7 @@ class TrackingColumn extends StatelessWidget {
     required this.status,
   });
 
-  final TripStatus status;
+  final OrderStatus status;
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +19,7 @@ class TrackingColumn extends StatelessWidget {
       children: [
         const PendingItem(),
 
-        status == TripStatus.pending || status == TripStatus.approved || status == TripStatus.completed ? Column(
+        status == OrderStatus.pending || status == OrderStatus.approved || status == OrderStatus.completed ? Column(
           children: [
             ApprovedItem(
               status: status,
@@ -30,9 +31,9 @@ class TrackingColumn extends StatelessWidget {
           ],
         ) : const SizedBox.shrink(),
 
-        status == TripStatus.canceled ? const CanceledItem() : const SizedBox.shrink(),
+        status == OrderStatus.canceled ? const CanceledItem() : const SizedBox.shrink(),
 
-        status == TripStatus.rejected ? const RejectedItem() : const SizedBox.shrink(),
+        status == OrderStatus.rejected ? const RejectedItem() : const SizedBox.shrink(),
       ],
     );
   }
@@ -70,12 +71,12 @@ class ApprovedItem extends StatelessWidget {
     required this.status,
   });
 
-  final TripStatus status;
+  final OrderStatus status;
 
   @override
   Widget build(BuildContext context) {
 
-    final isApproved = status == TripStatus.approved;
+    final isApproved = status == OrderStatus.approved;
 
     return TimelineTile(
       alignment: TimelineAlign.manual,
@@ -104,12 +105,12 @@ class CompletedItem extends StatelessWidget {
     required this.status,
   });
 
-  final TripStatus status;
+  final OrderStatus status;
 
   @override
   Widget build(BuildContext context) {
 
-    final isCompleted = status == TripStatus.completed;
+    final isCompleted = status == OrderStatus.completed;
 
     return TimelineTile(
       alignment: TimelineAlign.manual,

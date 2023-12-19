@@ -1,4 +1,3 @@
-import 'package:car_pool_app/Model%20Classes/driver_trip.dart';
 import 'package:car_pool_app/Services/lookup.dart';
 import 'package:car_pool_app/Services/errors.dart';
 import 'package:car_pool_app/Model%20Classes/custom_route.dart';
@@ -33,7 +32,7 @@ class Realtime {
 
   // Trip Reservation Methods
   
-  Future< Either<ErrorTypes, bool> > reserveTrip({required DriverTrip driverTrip}) async {
+  Future< Either<ErrorTypes, bool> > reserveTrip({required Trip trip}) async {
 
     final connection = await LookUp.checkInternetConnection();
 
@@ -43,7 +42,7 @@ class Realtime {
       },
       (right) async {
         try {
-          final users = await driverTripsReference.child(driverTrip.driverUid!).child(driverTrip.id).child("users").once().then((event) => event.snapshot.value);
+          final users = await driverTripsReference.child(trip.driverUid!).child(trip.id).child("users").once().then((event) => event.snapshot.value);
 
           final usersList = List<String>.from((users ?? []) as List);
 
@@ -66,21 +65,21 @@ class Realtime {
 
           if(! disableValidation) {
             // checking the time constraints
-            DateTime rawDate = DateTime(driverTrip.tripDate.year, driverTrip.tripDate.month, driverTrip.tripDate.day);
+            DateTime rawDate = DateTime(trip.tripDate.year, trip.tripDate.month, trip.tripDate.day);
 
-            rawDate = rawDate.add(timeConstraints[durationToTime(driverTrip.time)]!);
+            rawDate = rawDate.add(timeConstraints[durationToTime(trip.time)]!);
 
-            if(driverTrip.currentDate.isAfter(rawDate)) {
+            if(trip.currentDate.isAfter(rawDate)) {
               return Left(
                 LateReservationError(
-                  errorMessage: "You need to reserve this time slot before ${durationToTime(timeConstraints[durationToTime(driverTrip.time)]!)}",
+                  errorMessage: "You need to reserve this time slot before ${durationToTime(timeConstraints[durationToTime(trip.time)]!)}",
                 ),
               );
             }
           }
 
           // reserving successfully
-          await tripsReference.child(uid).child(driverTrip.id).set(driverTrip.toJson());
+          await tripsReference.child(uid).child(trip.id).set(trip.toJson());
 
           // adding this user to the users list
 
@@ -93,7 +92,7 @@ class Realtime {
             'users' : usersList,
           };
 
-          await driverTripsReference.child(driverTrip.driverUid!).child(driverTrip.id).update(temp);
+          await driverTripsReference.child(trip.driverUid!).child(trip.id).update(temp);
           
           return const Right(true);
         }
@@ -109,7 +108,7 @@ class Realtime {
     );
   }
 
-  Future< Either<ErrorTypes, bool> > cancelTrip({required DriverTrip driverTrip}) async {
+  Future< Either<ErrorTypes, bool> > cancelTrip({required Trip trip}) async {
 
     final connection = await LookUp.checkInternetConnection();
 
@@ -120,11 +119,11 @@ class Realtime {
       (right) async {
         try {
           // canceling successfully
-          await tripsReference.child(uid).child(driverTrip.id).update({'status': 'canceled'});
+          await tripsReference.child(uid).child(trip.id).update({'status': 'canceled'});
 
           // reading the users list
 
-          final users = await driverTripsReference.child(driverTrip.driverUid!).child(driverTrip.id).child("users").once().then((event) => event.snapshot.value);
+          final users = await driverTripsReference.child(trip.driverUid!).child(trip.id).child("users").once().then((event) => event.snapshot.value);
 
           final usersList = List<String>.from((users ?? []) as List);
 
@@ -137,7 +136,7 @@ class Realtime {
             'users' : usersList,
           };
 
-          await driverTripsReference.child(driverTrip.driverUid!).child(driverTrip.id).update(temp);
+          await driverTripsReference.child(trip.driverUid!).child(trip.id).update(temp);
           
           return const Right(true);
         }
@@ -153,7 +152,7 @@ class Realtime {
     );
   }
 
-  Future< Either<ErrorTypes, List<DriverTrip>> > getTrips() async {
+  Future< Either<ErrorTypes, List<Trip>> > getTrips() async {
     final connection = await LookUp.checkInternetConnection();
     return connection.fold(
       (error) {
@@ -164,10 +163,10 @@ class Realtime {
           final trips = await tripsReference.child(uid).once().then((event) {
             Map jsonMap = (event.snapshot.value ?? {}) as Map;
 
-            final List<DriverTrip> temp = [];
+            final List<Trip> temp = [];
 
             jsonMap.forEach((key, value) {
-              temp.add(DriverTrip.fullFromJson(value));
+              temp.add(Trip.fullFromJson(value));
             });
             
             return temp;
@@ -187,7 +186,7 @@ class Realtime {
     );
   }
 
-  Future< Either<ErrorTypes, List<DriverTrip>> > filterDriverTrips({required Trip trip}) async {
+  Future< Either<ErrorTypes, List<Trip>> > filterTrips({required Trip trip}) async {
     final connection = await LookUp.checkInternetConnection();
     return connection.fold(
       (error) {
@@ -198,13 +197,13 @@ class Realtime {
           final trips = await driverTripsReference.once().then((event) {
             Map jsonMap = (event.snapshot.value ?? {}) as Map;
 
-            final List<DriverTrip> driverTrips = [];
+            final List<Trip> driverTrips = [];
 
             jsonMap.forEach((key, value) {
               Map tripsMap = (value ?? {}) as Map;
 
               tripsMap.forEach((tripId, trip) {
-                final driverTrip = DriverTrip.fromJson(trip);
+                final driverTrip = Trip.fromJson(trip);
                 driverTrip.driverUid = key;
                 
                 driverTrips.add(driverTrip);

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import 'package:car_pool_app/Model%20Classes/trip.dart';
+import 'package:car_pool_app/Model%20Classes/order.dart';
 
 class HistoryHelper {
   Future? future;
   String titleText;
-  TripStatus status;
+  OrderStatus status;
   String emptyText;
   String tapText;
 

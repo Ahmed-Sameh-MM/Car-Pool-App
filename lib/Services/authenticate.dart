@@ -230,7 +230,7 @@ Future<String> verifyEmail() async {
 // Future<void> finishedRegistration(RegistrationData registrationData, String password, BuildContext context) async
 // {
 //   debugPrint("START :::: ${getCurrentUser()}"); 
-//   await emailUser.updateDisplayName(registrationData.fName +' '+ registrationData.lName); //TODO test to revoke any potential errors
+//   await emailUser.updateDisplayName(registrationData.fName +' '+ registrationData.lName);
   
 //   await getCurrentUser()?.reload();
 //   debugPrint("FINAL :::: ${getCurrentUser()}");

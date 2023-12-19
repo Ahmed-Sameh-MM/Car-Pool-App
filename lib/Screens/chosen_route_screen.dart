@@ -129,11 +129,11 @@ class _ChosenRouteScreenState extends State<ChosenRouteScreen> {
                       final tripDate = currentDate!.add(Duration(
                         days: selectedDateSlot,
                       ));
-                      ref.read(driverTripProvider).tripDate = DateTime(tripDate.year, tripDate.month, tripDate.day);
+                      ref.read(tripProvider).tripDate = DateTime(tripDate.year, tripDate.month, tripDate.day);
 
-                      ref.read(driverTripProvider).time = timeSlots[selectedTimeSlot!];
+                      ref.read(tripProvider).time = timeSlots[selectedTimeSlot!];
                       
-                      Navigator.pushNamed(context, TripsScreen.routeName, arguments: ref.read(driverTripProvider));
+                      Navigator.pushNamed(context, TripsScreen.routeName, arguments: ref.read(tripProvider));
                     },
                     child: const Center(
                       child: CustomText(

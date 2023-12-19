@@ -1,4 +1,3 @@
-import 'package:car_pool_app/Model%20Classes/driver_trip.dart';
 import 'package:flutter/material.dart';
 
 import 'package:car_pool_app/Widgets/wrapper.dart';
@@ -51,24 +50,24 @@ class AppRoutes {
     }
 
     else if(settings.name == TrackingScreen.routeName) {
-      final args = settings.arguments as DriverTrip;
+      final args = settings.arguments as Trip;
 
       return MaterialPageRoute(
         builder: (context) {
           return TrackingScreen(
-            driverTrip: args,
+            trip: args,
           );
         },
       );
     }
 
     else if(settings.name == TripsScreen.routeName) {
-      final args = settings.arguments as DriverTrip;
+      final args = settings.arguments as Trip;
 
       return MaterialPageRoute(
         builder: (context) {
           return TripsScreen(
-            driverTrip: args,
+            trip: args,
           );
         },
       );

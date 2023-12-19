@@ -26,7 +26,7 @@ class CheckoutScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final chosenRoute = ref.watch(chosenRouteProvider);
 
-    final trip = ref.watch(driverTripProvider);
+    final trip = ref.watch(tripProvider);
     
     return Scaffold(
       appBar: AppBar(
@@ -263,10 +263,10 @@ class CheckoutScreen extends ConsumerWidget {
                           );
                         },
                         (right) async {
-                          ref.read(driverTripProvider).currentDate = right;
+                          ref.read(tripProvider).currentDate = right;
 
                           final tripReservation = await Realtime(uid: user.uid).reserveTrip(
-                            driverTrip: ref.read(driverTripProvider),
+                            trip: ref.read(tripProvider),
                           );
                 
                           tripReservation.fold(

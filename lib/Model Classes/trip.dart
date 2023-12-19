@@ -1,45 +1,81 @@
+import 'package:car_pool_app/Model%20Classes/order.dart';
+
 import 'package:json_annotation/json_annotation.dart';
 
 part 'trip.g.dart';
 
-enum TripStatus { // Can be active or previous, there can be only one active reservation
-  rejected,
-  pending,
-  approved,
+enum TripStatus {
+  open,
+  fullyReserved,
   completed,
   canceled,
 }
 
 @JsonSerializable()
-class Trip {
-  String id;
-  double price;
-  String source;
-  String destination;
-  DateTime currentDate;
-  DateTime tripDate;
-  Duration time;
-  TripStatus status;
+class Trip extends Order {
+
+  @JsonKey(includeFromJson: false, includeToJson: true)
+  String? driverUid;
+
+  int numberOfSeats;
+  List<String>? users;
+  TripStatus tripStatus;
 
   Trip({
-    required this.id,
-    required this.price,
-    required this.source,
-    required this.destination,
-    required this.currentDate,
-    required this.tripDate,
-    required this.time,
-    required this.status,
-  });
+    required String id,
+    required double price,
+    required String source,
+    required String destination,
+    required DateTime currentDate,
+    required DateTime tripDate,
+    required Duration time,
+    required OrderStatus status,
+
+    this.driverUid,
+    required this.numberOfSeats,
+    this.users,
+    required this.tripStatus,
+  }) : super(
+    id: id,
+    price: price,
+    source: source,
+    destination: destination,
+    currentDate: currentDate,
+    tripDate: tripDate,
+    time: time,
+    status: status,
+  );
 
   Trip.empty({
-    this.id = "",
-    this.price = 10,
-    this.source = "",
-    this.destination = "",
-    this.time = Duration.zero,
-    this.status = TripStatus.pending,
-  }) : currentDate = DateTime(2024), tripDate = DateTime(2024);
+    this.driverUid = "",
+    this.numberOfSeats = 0,
+    this.users = const [],
+    this.tripStatus = TripStatus.open,
+  }) : super(
+    id: "",
+    price: 0,
+    source: "",
+    destination: "",
+    currentDate: DateTime(2024),
+    tripDate: DateTime(2024),
+    time: Duration.zero,
+    status: OrderStatus.pending,
+  );
+
+  static Trip fullFromJson(Map<dynamic, dynamic> json) => Trip(
+    id: json['id'] as String,
+    price: (json['price'] as num).toDouble(),
+    source: json['source'] as String,
+    destination: json['destination'] as String,
+    currentDate: DateTime.parse(json['currentDate'] as String),
+    tripDate: DateTime.parse(json['tripDate'] as String),
+    time: Duration(microseconds: json['time'] as int),
+    status: $enumDecode(_$OrderStatusEnumMap, json['status']),
+    numberOfSeats: json['numberOfSeats'] as int,
+    users: (json['users'] as List<dynamic>?)?.map((e) => e as String).toList(),
+    driverUid: json['driverUid'] as String,
+    tripStatus: $enumDecode(_$TripStatusEnumMap, json['tripStatus']),
+  );
 
   factory Trip.fromJson(Map<dynamic, dynamic> json) => _$TripFromJson(json);
 

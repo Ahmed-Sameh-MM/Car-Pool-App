@@ -1,12 +1,12 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'driver_trip.dart';
+part of 'order.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-DriverTrip _$DriverTripFromJson(Map<dynamic, dynamic> json) => DriverTrip(
+Order _$OrderFromJson(Map<dynamic, dynamic> json) => Order(
       id: json['id'] as String,
       price: (json['price'] as num).toDouble(),
       source: json['source'] as String,
@@ -14,14 +14,10 @@ DriverTrip _$DriverTripFromJson(Map<dynamic, dynamic> json) => DriverTrip(
       currentDate: DateTime.parse(json['currentDate'] as String),
       tripDate: DateTime.parse(json['tripDate'] as String),
       time: Duration(microseconds: json['time'] as int),
-      status: $enumDecode(_$TripStatusEnumMap, json['status']),
-      numberOfSeats: json['numberOfSeats'] as int,
-      users:
-          (json['users'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      status: $enumDecode(_$OrderStatusEnumMap, json['status']),
     );
 
-Map<String, dynamic> _$DriverTripToJson(DriverTrip instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$OrderToJson(Order instance) => <String, dynamic>{
       'id': instance.id,
       'price': instance.price,
       'source': instance.source,
@@ -29,16 +25,13 @@ Map<String, dynamic> _$DriverTripToJson(DriverTrip instance) =>
       'currentDate': instance.currentDate.toIso8601String(),
       'tripDate': instance.tripDate.toIso8601String(),
       'time': instance.time.inMicroseconds,
-      'status': _$TripStatusEnumMap[instance.status]!,
-      'driverUid': instance.driverUid,
-      'numberOfSeats': instance.numberOfSeats,
-      'users': instance.users,
+      'status': _$OrderStatusEnumMap[instance.status]!,
     };
 
-const _$TripStatusEnumMap = {
-  TripStatus.rejected: 'rejected',
-  TripStatus.pending: 'pending',
-  TripStatus.approved: 'approved',
-  TripStatus.completed: 'completed',
-  TripStatus.canceled: 'canceled',
+const _$OrderStatusEnumMap = {
+  OrderStatus.rejected: 'rejected',
+  OrderStatus.pending: 'pending',
+  OrderStatus.approved: 'approved',
+  OrderStatus.completed: 'completed',
+  OrderStatus.canceled: 'canceled',
 };
