@@ -2,11 +2,18 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'trip.g.dart';
 
-enum TripStatus { // Can be active or previous, there can be only one active reservation
-  rejected,
+enum TripStatus {
+  open,
+  fullyReserved,
+  completed,
+  canceled,
+}
+
+enum OrderStatus {
   pending,
   approved,
   completed,
+  rejected,
   canceled,
 }
 
@@ -19,7 +26,7 @@ class Trip {
   DateTime currentDate;
   DateTime tripDate;
   Duration time;
-  TripStatus status;
+  TripStatus tripStatus;
 
   int numberOfSeats;
   List<String>? users;
@@ -32,7 +39,7 @@ class Trip {
     required this.currentDate,
     required this.tripDate,
     required this.time,
-    required this.status,
+    required this.tripStatus,
     
     this.numberOfSeats = 4,
     this.users,
@@ -44,7 +51,7 @@ class Trip {
     this.source = "",
     this.destination = "",
     this.time = Duration.zero,
-    this.status = TripStatus.pending,
+    this.tripStatus = TripStatus.open,
     
     this.numberOfSeats = 4,
     this.users = const [],

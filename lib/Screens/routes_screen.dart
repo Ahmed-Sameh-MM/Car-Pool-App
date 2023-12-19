@@ -1,3 +1,4 @@
+import 'package:driver_car_pool_app/Services/errors.dart';
 import 'package:flutter/material.dart';
 
 import 'package:driver_car_pool_app/Widgets/custom_text.dart';
@@ -249,9 +250,11 @@ class _RoutesScreenState extends State<RoutesScreen> {
       
               case ConnectionState.done:
                 if(snapshot.hasError) {
+                  final error = snapshot.error as ErrorTypes;
+                  
                   return CustomText(
-                    text: '${snapshot.error}',
-                    size: 30,
+                    text: error.errorMessage,
+                    size: 20,
                   );
                 }
       

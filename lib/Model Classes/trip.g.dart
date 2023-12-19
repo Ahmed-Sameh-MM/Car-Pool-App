@@ -14,7 +14,7 @@ Trip _$TripFromJson(Map<dynamic, dynamic> json) => Trip(
       currentDate: DateTime.parse(json['currentDate'] as String),
       tripDate: DateTime.parse(json['tripDate'] as String),
       time: Duration(microseconds: json['time'] as int),
-      status: $enumDecode(_$TripStatusEnumMap, json['status']),
+      tripStatus: $enumDecode(_$TripStatusEnumMap, json['tripStatus']),
       numberOfSeats: json['numberOfSeats'] as int? ?? 4,
       users:
           (json['users'] as List<dynamic>?)?.map((e) => e as String).toList(),
@@ -28,15 +28,14 @@ Map<String, dynamic> _$TripToJson(Trip instance) => <String, dynamic>{
       'currentDate': instance.currentDate.toIso8601String(),
       'tripDate': instance.tripDate.toIso8601String(),
       'time': instance.time.inMicroseconds,
-      'status': _$TripStatusEnumMap[instance.status]!,
+      'tripStatus': _$TripStatusEnumMap[instance.tripStatus]!,
       'numberOfSeats': instance.numberOfSeats,
       'users': instance.users,
     };
 
 const _$TripStatusEnumMap = {
-  TripStatus.rejected: 'rejected',
-  TripStatus.pending: 'pending',
-  TripStatus.approved: 'approved',
+  TripStatus.open: 'open',
+  TripStatus.fullyReserved: 'fullyReserved',
   TripStatus.completed: 'completed',
   TripStatus.canceled: 'canceled',
 };

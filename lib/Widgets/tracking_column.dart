@@ -1,6 +1,7 @@
+import 'package:flutter/material.dart';
+
 import 'package:driver_car_pool_app/Model%20Classes/trip.dart';
 import 'package:driver_car_pool_app/Widgets/tracking_item.dart';
-import 'package:flutter/material.dart';
 
 import 'package:timeline_tile/timeline_tile.dart';
 
@@ -16,14 +17,10 @@ class TrackingColumn extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const PendingItem(),
+        const OpenItem(),
 
-        status == TripStatus.pending || status == TripStatus.approved || status == TripStatus.completed ? Column(
+        status == TripStatus.open || status == TripStatus.fullyReserved || status == TripStatus.completed ? Column(
           children: [
-            ApprovedItem(
-              status: status,
-            ),
-
             CompletedItem(
               status: status,
             ),
@@ -31,15 +28,13 @@ class TrackingColumn extends StatelessWidget {
         ) : const SizedBox.shrink(),
 
         status == TripStatus.canceled ? const CanceledItem() : const SizedBox.shrink(),
-
-        status == TripStatus.rejected ? const RejectedItem() : const SizedBox.shrink(),
       ],
     );
   }
 }
 
-class PendingItem extends StatelessWidget {
-  const PendingItem({super.key});
+class OpenItem extends StatelessWidget {
+  const OpenItem({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -54,45 +49,11 @@ class PendingItem extends StatelessWidget {
       ),
       endChild: const TrackingItem(
         icon: Icons.pending,
-        title: 'Pending',
-        message: "Waiting for driver's confirmation",
+        title: 'Open',
+        message: "Open for Any User",
       ),
       beforeLineStyle: const LineStyle(
         color: Color(0xFF27AA69),
-      ),
-    );
-  }
-}
-
-class ApprovedItem extends StatelessWidget {
-  const ApprovedItem({
-    super.key,
-    required this.status,
-  });
-
-  final TripStatus status;
-
-  @override
-  Widget build(BuildContext context) {
-
-    final isApproved = status == TripStatus.approved;
-
-    return TimelineTile(
-      alignment: TimelineAlign.manual,
-      lineXY: 0.1,
-      indicatorStyle: IndicatorStyle(
-        width: 20,
-        color: isApproved ?const Color(0xFF2B619C) : const Color(0xFF27AA69),
-        padding: const EdgeInsets.all(6),
-      ),
-      endChild: TrackingItem(
-        disabled: isApproved,
-        icon: Icons.check_circle,
-        title: 'Approved',
-        message: "Trip has been approved !",
-      ),
-      beforeLineStyle: LineStyle(
-        color: isApproved ? const Color(0xFF27AA69) : const Color(0xFFDADADA),
       ),
     );
   }
@@ -178,7 +139,7 @@ class CanceledItem extends StatelessWidget {
         icon: Icons.cancel,
         iconColor: Colors.grey,
         title: 'Canceled',
-        message: "You've canceled Your Request",
+        message: "You've canceled Your Trip",
       ),
       beforeLineStyle: const LineStyle(
         color: Color(0xFF27AA69),

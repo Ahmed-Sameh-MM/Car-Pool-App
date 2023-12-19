@@ -12,6 +12,8 @@ import 'package:firebase_database/firebase_database.dart';
 
 final driverTripsReference = FirebaseDatabase.instance.ref("driver_trips");
 
+final userTripsReference = FirebaseDatabase.instance.ref("trips");
+
 final routesReference = FirebaseDatabase.instance.ref("routes");
 
 class Realtime {
@@ -47,7 +49,7 @@ class Realtime {
             if(trip.currentDate.isAfter(rawDate)) {
               return Left(
                 LateReservationError(
-                  errorMessage: "You need to create this time slot before ${durationToTime(timeConstraints[durationToTime(trip.time)]!)}",
+                  errorMessage: "You need to create this trip before ${durationToTime(timeConstraints[durationToTime(trip.time)]!)}",
                 ),
               );
             }
@@ -55,9 +57,6 @@ class Realtime {
 
           // reserving successfully
           await driverTripsReference.child(uid).child(trip.id).set(trip.toJson());
-
-          // adding the trip to the closed trips
-          // await usersReference.child(uid).update({'reservedTrips': trip.tripDate});
 
           // Updating the users reference
 
@@ -92,8 +91,18 @@ class Realtime {
       },
       (right) async {
         try {
-          // canceling successfully
-          await driverTripsReference.child(uid).child(tripId).update({'status': 'canceled'});
+          // cancelling successfully
+          await driverTripsReference.child(uid).child(tripId).update({'tripStatus': 'canceled'});
+
+          // rejecting the users trips
+
+          final users = await driverTripsReference.child(uid).child(tripId).child("users").once().then((event) => event.snapshot.value);
+
+          final usersList = List<String>.from((users ?? []) as List);
+
+          for(int i = 0; i < usersList.length; i++) {
+            await userTripsReference.child(usersList[i]).child(tripId).update({"status": "rejected"});
+          }
           
           return const Right(true);
         }
@@ -109,7 +118,7 @@ class Realtime {
     );
   }
 
-  Future< Either<ErrorTypes, List<Trip>> > getDriverTrips() async {
+  Future< Either<ErrorTypes, List<Trip>> > getTrips() async {
     final connection = await LookUp.checkInternetConnection();
     return connection.fold(
       (error) {
@@ -145,7 +154,7 @@ class Realtime {
 
   Future< Either<ErrorTypes, bool> > checkTrip({required Trip trip}) async {
     
-    final tripsFuture = await getDriverTrips();
+    final tripsFuture = await getTrips();
 
     return tripsFuture.fold(
       (error) {

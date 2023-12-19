@@ -1,3 +1,4 @@
+import 'package:driver_car_pool_app/Widgets/sized_box.dart';
 import 'package:flutter/material.dart';
 
 import 'package:driver_car_pool_app/Model%20Classes/trip.dart';
@@ -28,17 +29,24 @@ class TrackingScreen extends StatelessWidget {
       body: Column(
         children: [
           TrackingColumn(
-            status: trip.status,
+            status: trip.tripStatus,
           ),
 
-          trip.status == TripStatus.pending ? CustomButton(
+          const HSizedBox(
+            height: 30,
+          ),
+
+          trip.tripStatus == TripStatus.open || trip.tripStatus == TripStatus.fullyReserved ? CustomButton(
+            width: 120,
+            hPadding: 10,
+            vPadding: 10,
             onTap: () async {
               final driver = await DriverStorage.readDriver();
               await Realtime(uid: driver.uid).cancelTrip(tripId: trip.id);
             },
             child: const CustomText(
               text: 'Cancel',
-              size: 20,
+              size: 25,
             ),
           ) : const SizedBox.shrink(),
         ],

@@ -164,22 +164,6 @@ class CheckoutScreen extends ConsumerWidget {
                       ),
                     ],
                   ),
-                  
-                  const HSizedBox(
-                    height: 10,
-                  ),
-
-                  const Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      CustomText(
-                        text: 'Discount',
-                      ),
-                      CustomText(
-                        text: '- EGP 0.00',
-                      ),
-                    ],
-                  ),
 
                   const HSizedBox(
                     height: 10,

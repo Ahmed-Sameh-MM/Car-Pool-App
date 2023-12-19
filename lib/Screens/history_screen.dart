@@ -23,7 +23,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
   Future< List<Trip> > initHistory() async {
     final driver = await DriverStorage.readDriver();
 
-    final temp = await Realtime(uid: driver.uid).getDriverTrips();
+    final temp = await Realtime(uid: driver.uid).getTrips();
 
     return temp.fold(
       (error) {
@@ -33,6 +33,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
         return Future< List<Trip> >.value(trips);
       },
     );
+  }
+
+  void refreshHistory() {
+    setState(() {
+      historyFuture = initHistory();
+    });
   }
 
   @override
@@ -59,12 +65,13 @@ class _HistoryScreenState extends State<HistoryScreen> {
               HistoryListView(
                 helper: HistoryHelper(
                   future: historyFuture,
-                  titleText: "Pending Trips",
-                  status: TripStatus.pending,
-                  emptyText: "No Pending Trips",
+                  titleText: "Open Trips",
+                  status: TripStatus.open,
+                  emptyText: "No Open Trips yet",
                   tapText: "Tap for details or cancellation!",
                   typeColor: Colors.grey,
-                  typeText: "PENDING",
+                  typeText: "OPEN",
+                  refreshFuture: refreshHistory,
                 ),
               ),
         
@@ -75,10 +82,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
               HistoryListView(
                 helper: HistoryHelper(
                   future: historyFuture,
-                  titleText: "Approved Trips",
-                  status: TripStatus.approved,
-                  emptyText: "No Previous Approved Trips",
-                  typeText: "APPROVED",
+                  titleText: "Fully Reserved Trips",
+                  status: TripStatus.fullyReserved,
+                  emptyText: "No Previous Fully Reserved Trips",
+                  typeText: "FULLY RESERVED",
+                  refreshFuture: refreshHistory,
                 ),
               ),
 
@@ -93,21 +101,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   status: TripStatus.completed,
                   emptyText: "No Previous Completed Trips",
                   typeText: "COMPLETED",
-                ),
-              ),
-
-              const HSizedBox(
-                height: 40,
-              ),
-        
-              HistoryListView(
-                helper: HistoryHelper(
-                  future: historyFuture,
-                  titleText: "Rejected Trips",
-                  status: TripStatus.rejected,
-                  emptyText: "No Previous Rejected Trips",
-                  typeColor: Colors.red,
-                  typeText: "REJECTED",
+                  refreshFuture: refreshHistory,
                 ),
               ),
 
@@ -123,6 +117,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   emptyText: "No Previous Canceled Trips",
                   typeColor: Colors.grey,
                   typeText: "CANCELED",
+                  refreshFuture: refreshHistory,
                 ),
               ),
             ],

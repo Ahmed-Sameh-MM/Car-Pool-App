@@ -11,6 +11,7 @@ class HistoryHelper {
 
   String typeText;
   Color typeColor;
+  VoidCallback refreshFuture;
 
   HistoryHelper({
     required this.future,
@@ -20,5 +21,6 @@ class HistoryHelper {
     this.tapText = "Tap For Details",
     required this.typeText,
     this.typeColor = Colors.green,
+    required this.refreshFuture,
   });
 }
