@@ -193,49 +193,6 @@ Future< Either<ErrorTypes, bool> > loginWithEmail({required String email, requir
   );
 }
 
-Future<void> resetPassword(String email) async
-{
-  final connection = await LookUp.checkInternetConnection();
-
-  connection.fold(
-    (error) {
-      return Left(error);
-    },
-    (right) {
-      
-    },
-  );
-  try{ // TODO error handling
-    auth.sendPasswordResetEmail(
-      email: email,
-    );
-  }
-  catch(e){
-    debugPrint('resetEmailError: $e');
-  }
-}
-
-Future<String> verifyEmail() async {
-  try {
-    await auth.currentUser?.sendEmailVerification();
-    return 'A verification Email has been sent successfully !';
-  }
-  on FirebaseAuthException catch(e) {
-    debugPrint('verifyEmailError: $e');
-    if(e.code == 'too-many-requests') return 'Too many Requests, Try again later !';
-    return 'Error';
-  }
-}
-
-// Future<void> finishedRegistration(RegistrationData registrationData, String password, BuildContext context) async
-// {
-//   debugPrint("START :::: ${getCurrentUser()}"); 
-//   await emailUser.updateDisplayName(registrationData.fName +' '+ registrationData.lName);
-  
-//   await getCurrentUser()?.reload();
-//   debugPrint("FINAL :::: ${getCurrentUser()}");
-// }
-
 User? getCurrentUser()
 {
   return auth.currentUser;

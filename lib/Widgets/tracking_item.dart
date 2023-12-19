@@ -11,14 +11,14 @@ class TrackingItem extends StatelessWidget {
     this.iconColor = Colors.white,
     required this.title,
     required this.message,
-    this.disabled = false,
+    this.enabled = false,
   });
 
   final IconData icon;
   final Color iconColor;
   final String title;
   final String message;
-  final bool disabled;
+  final bool enabled;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,7 @@ class TrackingItem extends StatelessWidget {
       child: Row(
         children: [
           Opacity(
-            opacity: disabled ? 0.5 : 1,
+            opacity: enabled ? 1 : 0.5,
             child: Icon(
               icon,
               color: iconColor,
@@ -47,7 +47,7 @@ class TrackingItem extends StatelessWidget {
                 text: title,
                 size: 18,
                 fontWeight: FontWeight.w500,
-                textColor: disabled ? const Color(0xFFBABABA) : Colors.white,
+                textColor: enabled ? Colors.white : const Color(0xFFBABABA),
               ),
 
               const HSizedBox(
@@ -57,7 +57,7 @@ class TrackingItem extends StatelessWidget {
               CustomText(
                 text: message,
                 size: 16,
-                textColor: disabled ? const Color(0xFFD5D5D5) : Colors.white,
+                textColor: enabled ? Colors.white : const Color(0xFFD5D5D5),
               ),
             ],
           ),

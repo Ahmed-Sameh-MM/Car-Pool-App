@@ -17,7 +17,9 @@ class TrackingColumn extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const PendingItem(),
+        PendingItem(
+          status: status,
+        ),
 
         status == OrderStatus.pending || status == OrderStatus.approved || status == OrderStatus.completed ? Column(
           children: [
@@ -40,26 +42,35 @@ class TrackingColumn extends StatelessWidget {
 }
 
 class PendingItem extends StatelessWidget {
-  const PendingItem({super.key});
+  const PendingItem({
+    super.key,
+    required this.status,
+  });
+
+  final OrderStatus status;
 
   @override
   Widget build(BuildContext context) {
+
+    final isPending = status == OrderStatus.pending;
+
     return TimelineTile(
       alignment: TimelineAlign.manual,
       lineXY: 0.1,
       isFirst: true,
-      indicatorStyle: const IndicatorStyle(
+      indicatorStyle: IndicatorStyle(
         width: 20,
-        color: Color(0xFF27AA69),
-        padding: EdgeInsets.all(6),
+        color: isPending ? const Color(0xFF2B619C) : const Color(0xFF27AA69),
+        padding: const EdgeInsets.all(6),
       ),
-      endChild: const TrackingItem(
+      endChild: TrackingItem(
         icon: Icons.pending,
         title: 'Pending',
         message: "Waiting for driver's confirmation",
+        enabled: isPending,
       ),
-      beforeLineStyle: const LineStyle(
-        color: Color(0xFF27AA69),
+      afterLineStyle: LineStyle(
+        color: isPending ? const Color(0xFFDADADA) : const Color(0xFF27AA69),
       ),
     );
   }
@@ -73,27 +84,61 @@ class ApprovedItem extends StatelessWidget {
 
   final OrderStatus status;
 
+  Color getIndicatorColor(bool isApproved, bool isCompleted) {
+    if(isApproved) {
+      return const Color(0xFF2B619C);
+    }
+    else {
+      if(isCompleted) {
+        return const Color(0xFF27AA69);
+      }
+    }
+
+    return Colors.grey;
+  }
+
+  Color getBeforeLineColor(bool isApproved, bool isCompleted) {
+    if(isApproved|| isCompleted) {
+      return const Color(0xFF27AA69);
+    }
+
+    return const Color(0xFFDADADA);
+  }
+
+  Color getAfterLineColor(bool isCompleted) {
+    if(isCompleted) {
+      return const Color(0xFF27AA69);
+    }
+
+    return const Color(0xFFDADADA);
+  }
+
   @override
   Widget build(BuildContext context) {
 
     final isApproved = status == OrderStatus.approved;
+
+    final isCompleted = status == OrderStatus.completed;
 
     return TimelineTile(
       alignment: TimelineAlign.manual,
       lineXY: 0.1,
       indicatorStyle: IndicatorStyle(
         width: 20,
-        color: isApproved ?const Color(0xFF2B619C) : const Color(0xFF27AA69),
+        color: getIndicatorColor(isApproved, isCompleted),
         padding: const EdgeInsets.all(6),
       ),
       endChild: TrackingItem(
-        disabled: isApproved,
+        enabled: isApproved,
         icon: Icons.check_circle,
         title: 'Approved',
         message: "Trip has been approved !",
       ),
       beforeLineStyle: LineStyle(
-        color: isApproved ? const Color(0xFF27AA69) : const Color(0xFFDADADA),
+        color: getBeforeLineColor(isApproved, isCompleted),
+      ),
+      afterLineStyle: LineStyle(
+        color: getAfterLineColor(isCompleted),
       ),
     );
   }
@@ -125,7 +170,7 @@ class CompletedItem extends StatelessWidget {
         icon: Icons.flag,
         title: 'Completed',
         message: "Trip's Done",
-        disabled: isCompleted,
+        enabled: isCompleted,
       ),
       beforeLineStyle: LineStyle(
         color: isCompleted ? const Color(0xFF27AA69) : const Color(0xFFDADADA),
@@ -152,7 +197,8 @@ class RejectedItem extends StatelessWidget {
         icon: Icons.cancel,
         iconColor: Colors.red,
         title: 'Rejected',
-        message: "Drived Rejected",
+        message: "Driver Canceled the Trip",
+        enabled: true,
       ),
       beforeLineStyle: const LineStyle(
         color: Color(0xFF27AA69),
@@ -180,6 +226,7 @@ class CanceledItem extends StatelessWidget {
         iconColor: Colors.grey,
         title: 'Canceled',
         message: "You've canceled Your Request",
+        enabled: true,
       ),
       beforeLineStyle: const LineStyle(
         color: Color(0xFF27AA69),
