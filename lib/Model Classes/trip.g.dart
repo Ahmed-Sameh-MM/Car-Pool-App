@@ -47,6 +47,7 @@ const _$OrderStatusEnumMap = {
 const _$TripStatusEnumMap = {
   TripStatus.open: 'open',
   TripStatus.fullyReserved: 'fullyReserved',
+  TripStatus.approved: 'approved',
   TripStatus.completed: 'completed',
   TripStatus.canceled: 'canceled',
 };

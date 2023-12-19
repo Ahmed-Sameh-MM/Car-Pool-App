@@ -9,6 +9,7 @@ part 'trip.g.dart';
 enum TripStatus {
   open,
   fullyReserved,
+  approved,
   completed,
   canceled,
 }
@@ -86,6 +87,7 @@ class Trip extends Order {
   static const tripStatusToJsonString = {
     TripStatus.open: 'open',
     TripStatus.fullyReserved: 'fullyReserved',
+    TripStatus.approved: 'approved',
     TripStatus.completed: 'completed',
     TripStatus.canceled: 'canceled',
   };
@@ -93,6 +95,7 @@ class Trip extends Order {
   static const tripStatusToString = {
     TripStatus.open: 'OPEN',
     TripStatus.fullyReserved: 'FULLY RESERVED',
+    TripStatus.approved: 'APPROVED',
     TripStatus.completed: 'COMPLETED',
     TripStatus.canceled: 'CANCELED',
   };
@@ -100,6 +103,7 @@ class Trip extends Order {
   static const tripStatusToColor = {
     TripStatus.open: Colors.green,
     TripStatus.fullyReserved: Colors.red,
+    TripStatus.approved: Colors.green,
     TripStatus.completed: Colors.green,
     TripStatus.canceled: Colors.grey,
   };

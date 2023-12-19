@@ -53,6 +53,7 @@ class TrackingScreen extends StatelessWidget {
             child: const CustomText(
               text: 'Cancel',
               size: 25,
+              textColor: Colors.red,
             ),
           ) : const SizedBox.shrink(),
         ],
