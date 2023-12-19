@@ -85,12 +85,20 @@ class Realtime {
 
           usersList.add(uid);
 
+          // checking the number of seats, to update the tripStatus accordingly
+
+          final numberOfSeats = await driverTripsReference.child(trip.driverUid!).child(trip.id).child("numberOfSeats").once().then((event) => event.snapshot.value) as int;
+
           // Updating the driver trips reference
 
           Map<String, dynamic> temp = {
             'numberOfSeats' : ServerValue.increment(-1),
             'users' : usersList,
           };
+
+          if(numberOfSeats == 1) {
+            temp['tripStatus'] = Trip.tripStatusToJsonString[TripStatus.fullyReserved];
+          }
 
           await driverTripsReference.child(trip.driverUid!).child(trip.id).update(temp);
           
@@ -129,12 +137,20 @@ class Realtime {
 
           usersList.removeWhere((element) => (element == uid));
 
+          // checking the number of seats, to update the tripStatus accordingly
+
+          final numberOfSeats = await driverTripsReference.child(trip.driverUid!).child(trip.id).child("numberOfSeats").once().then((event) => event.snapshot.value) as int;
+
           // Updating the drivers reference
 
           Map<String, dynamic> temp = {
             'numberOfSeats' : ServerValue.increment(1),
             'users' : usersList,
           };
+
+          if(numberOfSeats == 0) {
+            temp['tripStatus'] = Trip.tripStatusToJsonString[TripStatus.open];
+          }
 
           await driverTripsReference.child(trip.driverUid!).child(trip.id).update(temp);
           

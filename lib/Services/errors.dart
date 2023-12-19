@@ -114,15 +114,15 @@ class AlreadyReservedError extends ErrorTypes {
   );
 }
 
-class ExpiredCancellation extends ErrorTypes {
+class TripStatusError extends ErrorTypes {
 
-  static const _errorTitle = 'Expired Cancellation';
+  static const _errorTitle = 'Trip Status';
 
-  static const _errorMessage = 'Cancellation is Expired';
+  static const _errorMessage = "Can't Reserve Trip due to its status";
 
   static const _errorId = 40;
 
-  const ExpiredCancellation() : super(
+  const TripStatusError() : super(
     errorMessage: _errorMessage,
     errorTitle: _errorTitle,
     errorId: _errorId,

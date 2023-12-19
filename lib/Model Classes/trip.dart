@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 import 'package:car_pool_app/Model%20Classes/order.dart';
 
 import 'package:json_annotation/json_annotation.dart';
@@ -80,4 +82,25 @@ class Trip extends Order {
   factory Trip.fromJson(Map<dynamic, dynamic> json) => _$TripFromJson(json);
 
   Map<String, dynamic> toJson() => _$TripToJson(this);
+
+  static const tripStatusToJsonString = {
+    TripStatus.open: 'open',
+    TripStatus.fullyReserved: 'fullyReserved',
+    TripStatus.completed: 'completed',
+    TripStatus.canceled: 'canceled',
+  };
+
+  static const tripStatusToString = {
+    TripStatus.open: 'OPEN',
+    TripStatus.fullyReserved: 'FULLY RESERVED',
+    TripStatus.completed: 'COMPLETED',
+    TripStatus.canceled: 'CANCELED',
+  };
+
+  static const tripStatusToColor = {
+    TripStatus.open: Colors.green,
+    TripStatus.fullyReserved: Colors.red,
+    TripStatus.completed: Colors.green,
+    TripStatus.canceled: Colors.grey,
+  };
 }

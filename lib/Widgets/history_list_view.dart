@@ -1,3 +1,4 @@
+import 'package:car_pool_app/Services/errors.dart';
 import 'package:flutter/material.dart';
 
 import 'package:car_pool_app/Model%20Classes/history_helper.dart';
@@ -58,9 +59,11 @@ class HistoryListView extends StatelessWidget {
                   
                 case ConnectionState.done:
                   if(snapshot.hasError) {
+                    final error = snapshot.error as ErrorTypes;
+
                     return Center(
                       child: CustomText(
-                        text: snapshot.error.toString(),
+                        text: error.errorMessage,
                         size: 16,
                       ),
                     );
@@ -101,7 +104,9 @@ class HistoryListView extends StatelessWidget {
                               hPadding: 10,
                               vPadding: 10,
                               onTap: () {
-                              Navigator.pushNamed(context, TrackingScreen.routeName, arguments: trips[index]);
+                              Navigator.pushNamed(context, TrackingScreen.routeName, arguments: trips[index]).then((value) {
+                                helper.refreshFuture();
+                              });
                             },
                               child: Stack(
                                 children: [

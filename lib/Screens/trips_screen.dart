@@ -11,6 +11,8 @@ import 'package:car_pool_app/Services/general_functions.dart';
 import 'package:car_pool_app/Screens/payment_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:car_pool_app/State%20Management/providers.dart';
+import 'package:car_pool_app/Services/errors.dart';
+import 'package:car_pool_app/Widgets/custom_alert_dialog.dart';
 
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -103,9 +105,11 @@ class _TripsScreenState extends State<TripsScreen> {
                       
                     case ConnectionState.done:
                       if(snapshot.hasError) {
+                        final error = snapshot.error as ErrorTypes;
+
                         return Center(
                           child: CustomText(
-                            text: snapshot.error.toString(),
+                            text: error.errorMessage,
                             size: 16,
                           ),
                         );
@@ -142,13 +146,22 @@ class _TripsScreenState extends State<TripsScreen> {
                                       hPadding: 10,
                                       vPadding: 10,
                                       onTap: () {
-                                        ref.read(tripProvider).id = trips[index].id;
+                                        if(trips[index].tripStatus != TripStatus.open) {
+                                          CustomAlertDialog(
+                                            context: context,
+                                            error: const TripStatusError(),
+                                          );
+                                        }
 
-                                        ref.read(tripProvider).driverUid = trips[index].driverUid;
-                                        ref.read(tripProvider).numberOfSeats = trips[index].numberOfSeats;
-                                        ref.read(tripProvider).users = trips[index].users;
+                                        else {
+                                          ref.read(tripProvider).id = trips[index].id;
 
-                                        Navigator.pushNamed(context, PaymentScreen.routeName);
+                                          ref.read(tripProvider).driverUid = trips[index].driverUid;
+                                          ref.read(tripProvider).numberOfSeats = trips[index].numberOfSeats;
+                                          ref.read(tripProvider).users = trips[index].users;
+
+                                          Navigator.pushNamed(context, PaymentScreen.routeName);
+                                        }
                                       },
                                       child: Stack(
                                         children: [
@@ -253,9 +266,9 @@ class _TripsScreenState extends State<TripsScreen> {
                                               vpadding: 5,
                                               hpadding: 5,
                                               borderRadius: 5,
-                                              color: trips[index].numberOfSeats > 1 ? Colors.green : Colors.red,
+                                              color: Trip.tripStatusToColor[trips[index].tripStatus] ?? Colors.black,
                                               child: CustomText(
-                                                text: trips[index].numberOfSeats.toString(),
+                                                text: (Trip.tripStatusToString[trips[index].tripStatus] ?? "UNKNOWN") + (trips[index].tripStatus == TripStatus.open ? " (${trips[index].numberOfSeats})" : ""),
                                                 textColor: Colors.white,
                                               ),
                                             ),

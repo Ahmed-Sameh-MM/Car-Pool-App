@@ -36,6 +36,12 @@ class _HistoryScreenState extends State<HistoryScreen> {
     );
   }
 
+  void refreshHistory() {
+    setState(() {
+      historyFuture = initHistory();
+    });
+  }
+
   @override
   void initState() {
     historyFuture = initHistory();
@@ -66,6 +72,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   tapText: "Tap for details or cancellation!",
                   typeColor: Colors.grey,
                   typeText: "PENDING",
+                  refreshFuture: refreshHistory,
                 ),
               ),
         
@@ -80,6 +87,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   status: OrderStatus.approved,
                   emptyText: "No Previous Approved Trips",
                   typeText: "APPROVED",
+                  refreshFuture: refreshHistory,
                 ),
               ),
 
@@ -94,6 +102,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   status: OrderStatus.completed,
                   emptyText: "No Previous Completed Trips",
                   typeText: "COMPLETED",
+                  refreshFuture: refreshHistory,
                 ),
               ),
 
@@ -109,6 +118,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   emptyText: "No Previous Rejected Trips",
                   typeColor: Colors.red,
                   typeText: "REJECTED",
+                  refreshFuture: refreshHistory,
                 ),
               ),
 
@@ -124,6 +134,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   emptyText: "No Previous Canceled Trips",
                   typeColor: Colors.grey,
                   typeText: "CANCELED",
+                  refreshFuture: refreshHistory,
                 ),
               ),
             ],

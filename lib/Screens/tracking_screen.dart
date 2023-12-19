@@ -1,3 +1,4 @@
+import 'package:car_pool_app/Widgets/sized_box.dart';
 import 'package:flutter/material.dart';
 
 import 'package:car_pool_app/Model%20Classes/trip.dart';
@@ -32,7 +33,14 @@ class TrackingScreen extends StatelessWidget {
             status: trip.status,
           ),
 
+          const HSizedBox(
+            height: 30,
+          ),
+
           trip.status == OrderStatus.pending ? CustomButton(
+            width: 120,
+            hPadding: 10,
+            vPadding: 10,
             onTap: () async {
               final user = await UserStorage.readUser();
               
@@ -44,7 +52,7 @@ class TrackingScreen extends StatelessWidget {
             },
             child: const CustomText(
               text: 'Cancel',
-              size: 20,
+              size: 25,
             ),
           ) : const SizedBox.shrink(),
         ],

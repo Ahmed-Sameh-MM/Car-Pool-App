@@ -29,11 +29,16 @@ class _ProfileColumnState extends State<ProfileColumn> {
 
   late bool isLoaded;
 
+  late bool isError;
+
   Future initSwitchValue() async {
     final future = await getSwitchValue();
 
     future.fold(
       (error) {
+        setState(() {
+          isError = true;
+        });
         CustomAlertDialog(
           context: context,
           error: error,
@@ -51,6 +56,8 @@ class _ProfileColumnState extends State<ProfileColumn> {
   @override
   void initState() {
     isLoaded = false;
+    isError = false;
+
     disableValidation = false;
     
     initSwitchValue();
@@ -155,7 +162,9 @@ class _ProfileColumnState extends State<ProfileColumn> {
                   activeColor: Colors.red,
                 ),
               ],
-            ) : const CircularProgressIndicator(),
+            ) : isError ? const CustomText(text: "Connection Error, Try Again Later", size: 20,) : const CircularProgressIndicator(
+              color: Colors.white,
+            ),
 
             const HSizedBox(
               height: 110,

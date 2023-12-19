@@ -75,7 +75,7 @@ class _ChosenRouteScreenState extends State<ChosenRouteScreen> {
   }
 
   Widget bookNowSheet() {
-    if(selectedTimeSlot != null) {
+    if(selectedTimeSlot != null && currentDate != null) {
       return Container(
         height: bottomSheetHeight,
         color: primaryColor,

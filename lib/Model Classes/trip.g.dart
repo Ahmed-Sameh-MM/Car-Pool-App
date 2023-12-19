@@ -14,7 +14,7 @@ Trip _$TripFromJson(Map<dynamic, dynamic> json) => Trip(
       currentDate: DateTime.parse(json['currentDate'] as String),
       tripDate: DateTime.parse(json['tripDate'] as String),
       time: Duration(microseconds: json['time'] as int),
-      status: $enumDecode(_$OrderStatusEnumMap, json['status']),
+      status: OrderStatus.pending,
       numberOfSeats: json['numberOfSeats'] as int,
       users:
           (json['users'] as List<dynamic>?)?.map((e) => e as String).toList(),
