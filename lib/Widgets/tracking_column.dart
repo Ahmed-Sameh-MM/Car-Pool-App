@@ -17,43 +17,56 @@ class TrackingColumn extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const OpenItem(),
+        OpenItem(
+          status: status,
+        ),
 
-        status == TripStatus.open || status == TripStatus.fullyReserved || status == TripStatus.completed ? Column(
+        status == TripStatus.canceled ? const CanceledItem() : Column(
           children: [
+            ApprovedItem(
+              status: status,
+            ),
+            
             CompletedItem(
               status: status,
             ),
           ],
-        ) : const SizedBox.shrink(),
-
-        status == TripStatus.canceled ? const CanceledItem() : const SizedBox.shrink(),
+        ),
       ],
     );
   }
 }
 
 class OpenItem extends StatelessWidget {
-  const OpenItem({super.key});
+  const OpenItem({
+    super.key,
+    required this.status,
+  });
+
+  final TripStatus status;
 
   @override
   Widget build(BuildContext context) {
+
+    final isOpen = status == TripStatus.open;
+
     return TimelineTile(
       alignment: TimelineAlign.manual,
       lineXY: 0.1,
       isFirst: true,
-      indicatorStyle: const IndicatorStyle(
+      indicatorStyle: IndicatorStyle(
         width: 20,
-        color: Color(0xFF27AA69),
-        padding: EdgeInsets.all(6),
+        color: isOpen ? const Color(0xFF2B619C) :const Color(0xFF27AA69),
+        padding: const EdgeInsets.all(6),
       ),
-      endChild: const TrackingItem(
+      endChild: TrackingItem(
         icon: Icons.pending,
         title: 'Open',
         message: "Open for Any User",
+        enabled: isOpen,
       ),
-      beforeLineStyle: const LineStyle(
-        color: Color(0xFF27AA69),
+      afterLineStyle: LineStyle(
+        color: isOpen ? const Color(0xFFDADADA) : const Color(0xFF27AA69),
       ),
     );
   }
@@ -78,14 +91,14 @@ class CompletedItem extends StatelessWidget {
       isLast: true,
       indicatorStyle: IndicatorStyle(
         width: 20,
-        color: isCompleted ?const Color(0xFF27AA69) : const Color(0xFF2718278),
+        color: isCompleted ?const Color(0xFF27AA69) : Colors.grey,
         padding: const EdgeInsets.all(6),
       ),
       endChild: TrackingItem(
         icon: Icons.flag,
         title: 'Completed',
         message: "Trip's Done",
-        disabled: isCompleted,
+        enabled: isCompleted,
       ),
       beforeLineStyle: LineStyle(
         color: isCompleted ? const Color(0xFF27AA69) : const Color(0xFFDADADA),
@@ -94,28 +107,70 @@ class CompletedItem extends StatelessWidget {
   }
 }
 
-class RejectedItem extends StatelessWidget {
-  const RejectedItem({super.key});
+class ApprovedItem extends StatelessWidget {
+  const ApprovedItem({
+    super.key,
+    required this.status,
+  });
+
+  final TripStatus status;
+
+  Color getIndicatorColor(bool isApproved, bool isCompleted) {
+    if(isApproved) {
+      return const Color(0xFF2B619C);
+    }
+    else {
+      if(isCompleted) {
+        return const Color(0xFF27AA69);
+      }
+    }
+
+    return Colors.grey;
+  }
+
+  Color getBeforeLineColor(bool isApproved, bool isCompleted) {
+    if(isApproved || isCompleted) {
+      return const Color(0xFF27AA69);
+    }
+
+    return const Color(0xFFDADADA);
+  }
+
+  Color getAfterLineColor(bool isCompleted) {
+    if(isCompleted) {
+      return const Color(0xFF27AA69);
+    }
+
+    return const Color(0xFFDADADA);
+  }
 
   @override
   Widget build(BuildContext context) {
+
+    final isApproved = status == TripStatus.approved;
+
+    final isCompleted = status == TripStatus.completed;
+
     return TimelineTile(
       alignment: TimelineAlign.manual,
       lineXY: 0.1,
-      isLast: true,
-      indicatorStyle: const IndicatorStyle(
+      indicatorStyle: IndicatorStyle(
         width: 20,
-        color: Color(0xFF27AA69),
-        padding: EdgeInsets.all(6),
+        color: getIndicatorColor(isApproved, isCompleted),
+        padding: const EdgeInsets.all(6),
       ),
-      endChild: const TrackingItem(
-        icon: Icons.cancel,
-        iconColor: Colors.red,
-        title: 'Rejected',
-        message: "Drived Rejected",
+      endChild: TrackingItem(
+        icon: Icons.check_circle,
+        iconColor: Colors.green,
+        title: 'Approved',
+        message: "Drived Approved the Trip",
+        enabled: isApproved,
       ),
-      beforeLineStyle: const LineStyle(
-        color: Color(0xFF27AA69),
+      beforeLineStyle: LineStyle(
+        color: getBeforeLineColor(isApproved, isCompleted),
+      ),
+      afterLineStyle: LineStyle(
+        color: getAfterLineColor(isCompleted),
       ),
     );
   }
@@ -139,7 +194,8 @@ class CanceledItem extends StatelessWidget {
         icon: Icons.cancel,
         iconColor: Colors.grey,
         title: 'Canceled',
-        message: "You've canceled Your Trip",
+        message: "You've canceled The Trip",
+        enabled: true,
       ),
       beforeLineStyle: const LineStyle(
         color: Color(0xFF27AA69),

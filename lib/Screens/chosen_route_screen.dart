@@ -96,11 +96,9 @@ class _ChosenRouteScreenState extends State<ChosenRouteScreen> {
                     children: [
                       CustomText(
                         text: formatDate(currentDate!.add(Duration(days: selectedDateSlot))),
-                        textColor: Colors.black,
                       ),
                       CustomText(
                         text: durationToTime(timeSlots[selectedTimeSlot!]),
-                        textColor: Colors.black,
                       ),
                     ],
                   ),

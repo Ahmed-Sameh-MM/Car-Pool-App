@@ -1,4 +1,3 @@
-import 'package:driver_car_pool_app/Widgets/sized_box.dart';
 import 'package:flutter/material.dart';
 
 import 'package:driver_car_pool_app/Model%20Classes/trip.dart';
@@ -7,6 +6,7 @@ import 'package:driver_car_pool_app/Services/realtime_db.dart';
 import 'package:driver_car_pool_app/Widgets/custom_button.dart';
 import 'package:driver_car_pool_app/Widgets/custom_text.dart';
 import 'package:driver_car_pool_app/Offline%20Storage/storage.dart';
+import 'package:driver_car_pool_app/Widgets/sized_box.dart';
 
 class TrackingScreen extends StatelessWidget {
   const TrackingScreen({
@@ -17,6 +17,78 @@ class TrackingScreen extends StatelessWidget {
   final Trip trip;
 
   static const routeName = '/tracking';
+
+  Widget buttons(BuildContext context) {
+    if(trip.tripStatus == TripStatus.open || trip.tripStatus == TripStatus.fullyReserved) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          CustomButton(
+            width: 120,
+            hPadding: 10,
+            vPadding: 10,
+            onTap: () async {
+              final driver = await DriverStorage.readDriver();
+
+              await Realtime(uid: driver.uid).cancelTrip(tripId: trip.id);
+
+              if(context.mounted) {
+                Navigator.pop(context);
+              }
+            },
+            child: const CustomText(
+              text: 'Cancel',
+              size: 25,
+              textColor: Colors.red,
+            ),
+          ),
+
+          CustomButton(
+            width: 130,
+            hPadding: 10,
+            vPadding: 10,
+            onTap: () async {
+              final driver = await DriverStorage.readDriver();
+
+              await Realtime(uid: driver.uid).approveTrip(tripId: trip.id);
+
+              if(context.mounted) {
+                Navigator.pop(context);
+              }
+            },
+            child: const CustomText(
+              text: 'Approve',
+              size: 25,
+              textColor: Colors.green,
+            ),
+          ),
+        ],
+      );
+    }
+
+    else if(trip.tripStatus == TripStatus.approved) {
+      return CustomButton(
+        width: 150,
+        hPadding: 10,
+        vPadding: 10,
+        onTap: () async {
+          final driver = await DriverStorage.readDriver();
+
+          await Realtime(uid: driver.uid).completeTrip(tripId: trip.id);
+
+          if(context.mounted) {
+            Navigator.pop(context);
+          }
+        },
+        child: const CustomText(
+          text: 'Complete',
+          size: 25,
+        ),
+      );
+    }
+
+    return const SizedBox.shrink();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,19 +108,7 @@ class TrackingScreen extends StatelessWidget {
             height: 30,
           ),
 
-          trip.tripStatus == TripStatus.open || trip.tripStatus == TripStatus.fullyReserved ? CustomButton(
-            width: 120,
-            hPadding: 10,
-            vPadding: 10,
-            onTap: () async {
-              final driver = await DriverStorage.readDriver();
-              await Realtime(uid: driver.uid).cancelTrip(tripId: trip.id);
-            },
-            child: const CustomText(
-              text: 'Cancel',
-              size: 25,
-            ),
-          ) : const SizedBox.shrink(),
+          buttons(context),
         ],
       ),
     );

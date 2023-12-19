@@ -67,25 +67,25 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   future: historyFuture,
                   titleText: "Open Trips",
                   status: TripStatus.open,
-                  emptyText: "No Open Trips yet",
+                  emptyText: "No Open Trips Yet",
                   tapText: "Tap for details or cancellation!",
                   typeColor: Colors.grey,
                   typeText: "OPEN",
                   refreshFuture: refreshHistory,
                 ),
               ),
-        
+
               const HSizedBox(
                 height: 40,
               ),
-        
+
               HistoryListView(
                 helper: HistoryHelper(
                   future: historyFuture,
-                  titleText: "Fully Reserved Trips",
-                  status: TripStatus.fullyReserved,
-                  emptyText: "No Previous Fully Reserved Trips",
-                  typeText: "FULLY RESERVED",
+                  titleText: "Approved Trips",
+                  status: TripStatus.approved,
+                  emptyText: "No Approved Trips Yet",
+                  typeText: "APPROVED",
                   refreshFuture: refreshHistory,
                 ),
               ),

@@ -16,6 +16,8 @@ final userTripsReference = FirebaseDatabase.instance.ref("trips");
 
 final routesReference = FirebaseDatabase.instance.ref("routes");
 
+final usersReference = FirebaseDatabase.instance.ref("users");
+
 class Realtime {
 
   final String uid;
@@ -57,15 +59,6 @@ class Realtime {
 
           // reserving successfully
           await driverTripsReference.child(uid).child(trip.id).set(trip.toJson());
-
-          // Updating the users reference
-
-          // Map<String, dynamic> temp = {
-          //   'tripsCount' : ServerValue.increment(1),
-          //   'points' : ServerValue.increment(5),
-          // };
-
-          // await usersReference.child(uid).update(temp);
           
           return const Right(true);
         }
@@ -118,6 +111,91 @@ class Realtime {
     );
   }
 
+  Future< Either<ErrorTypes, bool> > approveTrip({required String tripId}) async {
+
+    final connection = await LookUp.checkInternetConnection();
+
+    return connection.fold(
+      (error) {
+        return Left(error);
+      },
+      (right) async {
+        try {
+          // approving successfully
+          await driverTripsReference.child(uid).child(tripId).update({'tripStatus': 'approved'});
+
+          // approving the users trips
+
+          final users = await driverTripsReference.child(uid).child(tripId).child("users").once().then((event) => event.snapshot.value);
+
+          final usersList = List<String>.from((users ?? []) as List);
+
+          for(int i = 0; i < usersList.length; i++) {
+            await userTripsReference.child(usersList[i]).child(tripId).update({"status": "approved"});
+          }
+          
+          return const Right(true);
+        }
+        catch(e) {
+          return Left(
+            FirebaseError(
+              errorMessage: 'Server Error: $e',
+              errorId: 102,
+            ),
+          );
+        }
+      },
+    );
+  }
+
+  Future< Either<ErrorTypes, bool> > completeTrip({required String tripId}) async {
+
+    Map<String, dynamic> temp = {
+      'tripsCount' : ServerValue.increment(1),
+      'points' : ServerValue.increment(5),
+    };
+
+    final connection = await LookUp.checkInternetConnection();
+
+    return connection.fold(
+      (error) {
+        return Left(error);
+      },
+      (right) async {
+        try {
+          // completing successfully
+          await driverTripsReference.child(uid).child(tripId).update({'tripStatus': 'completed'});
+
+          // giving bonus to the drivers
+          await driversReference.child(uid).update(temp);
+
+
+          final users = await driverTripsReference.child(uid).child(tripId).child("users").once().then((event) => event.snapshot.value);
+
+          final usersList = List<String>.from((users ?? []) as List);
+
+          for(int i = 0; i < usersList.length; i++) {
+            // completing the users trips
+            await userTripsReference.child(usersList[i]).child(tripId).update({"status": "completed"});
+
+            // giving bonus to the users
+            await usersReference.child(usersList[i]).update(temp);
+          }
+          
+          return const Right(true);
+        }
+        catch(e) {
+          return Left(
+            FirebaseError(
+              errorMessage: 'Server Error: $e',
+              errorId: 103,
+            ),
+          );
+        }
+      },
+    );
+  }
+
   Future< Either<ErrorTypes, List<Trip>> > getTrips() async {
     final connection = await LookUp.checkInternetConnection();
     return connection.fold(
@@ -144,7 +222,7 @@ class Realtime {
           return Left(
             FirebaseError(
               errorMessage: 'Server Error: $e',
-              errorId: 102,
+              errorId: 104,
             ),
           );
         }
@@ -193,7 +271,7 @@ class Realtime {
           return Left(
             FirebaseError(
               errorMessage: 'Server Error: $e',
-              errorId: 104,
+              errorId: 105,
             ),
           );
         }
@@ -216,7 +294,7 @@ class Realtime {
           return Left(
             FirebaseError(
               errorMessage: 'Server Error: $e',
-              errorId: 105,
+              errorId: 106,
             ),
           );
         }
@@ -246,7 +324,7 @@ Future< Either<ErrorTypes, bool> > getSwitchValue() async {
         return Left(
           FirebaseError(
             errorMessage: 'Server Error: $e',
-            errorId: 106,
+            errorId: 107,
           ),
         );
       }
@@ -271,7 +349,7 @@ Future< Either<ErrorTypes, bool> > setSwitchValue(bool value) async {
           return Left(
             FirebaseError(
               errorMessage: 'Server Error: $e',
-              errorId: 107,
+              errorId: 108,
             ),
           );
         }
@@ -280,29 +358,6 @@ Future< Either<ErrorTypes, bool> > setSwitchValue(bool value) async {
   }
 
   // CustomRoute Methods
-
-  Future< Either<ErrorTypes, bool> > addRoute(CustomRoute route) async {
-    final connection = await LookUp.checkInternetConnection();
-    return connection.fold(
-      (error) {
-        return Left(error);
-      },
-      (right) async {
-        try {
-          await routesReference.child('10').set(route.toJson());
-          return const Right(true);
-        }
-        catch(e) {
-          return Left(
-            FirebaseError(
-              errorMessage: 'Server Error: $e',
-              errorId: 108,
-            ),
-          );
-        }
-      },
-    );
-  }
 
   Future< Either<ErrorTypes, List<CustomRoute>> > getRoutes() async {
     final connection = await LookUp.checkInternetConnection();

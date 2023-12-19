@@ -1,4 +1,3 @@
-import 'package:driver_car_pool_app/Services/errors.dart';
 import 'package:flutter/material.dart';
 
 import 'package:driver_car_pool_app/Model%20Classes/history_helper.dart';
@@ -9,6 +8,7 @@ import 'package:driver_car_pool_app/Widgets/custom_button.dart';
 import 'package:driver_car_pool_app/Widgets/custom_container.dart';
 import 'package:driver_car_pool_app/Widgets/custom_text.dart';
 import 'package:driver_car_pool_app/Widgets/sized_box.dart';
+import 'package:driver_car_pool_app/Services/errors.dart';
 
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -73,8 +73,16 @@ class HistoryListView extends StatelessWidget {
                     List<Trip> trips = [];
   
                     for(int i = 0; i < snapshot.data.length; i++) {
-                      if(snapshot.data[i].tripStatus == helper.status) {
-                        trips.add(snapshot.data[i]);
+                      if(helper.status == TripStatus.open) {
+                        if(snapshot.data[i].tripStatus == helper.status || snapshot.data[i].tripStatus == TripStatus.fullyReserved) {
+                          trips.add(snapshot.data[i]);
+                        }
+                      }
+
+                      else {
+                        if(snapshot.data[i].tripStatus == helper.status) {
+                          trips.add(snapshot.data[i]);
+                        }
                       }
                     }
   
@@ -100,6 +108,18 @@ class HistoryListView extends StatelessWidget {
                             );
                           },
                           itemBuilder: (context, index) {
+                            final isOpen = trips[index].tripStatus == TripStatus.open;
+                            final isFullyReserved = trips[index].tripStatus == TripStatus.fullyReserved;
+
+                            if(isFullyReserved) {
+                              helper.typeText = "FULLY RESERVED";
+                              helper.typeColor = Colors.red;
+                            }
+
+                            else if(isOpen) {
+                              helper.typeText += " (${trips[index].numberOfSeats})";
+                            }
+
                             return CustomButton(
                               hPadding: 10,
                               vPadding: 10,

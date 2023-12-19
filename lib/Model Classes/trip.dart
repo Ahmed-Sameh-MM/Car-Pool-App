@@ -5,6 +5,7 @@ part 'trip.g.dart';
 enum TripStatus {
   open,
   fullyReserved,
+  approved,
   completed,
   canceled,
 }

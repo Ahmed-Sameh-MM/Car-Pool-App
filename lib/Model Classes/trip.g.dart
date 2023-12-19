@@ -36,6 +36,7 @@ Map<String, dynamic> _$TripToJson(Trip instance) => <String, dynamic>{
 const _$TripStatusEnumMap = {
   TripStatus.open: 'open',
   TripStatus.fullyReserved: 'fullyReserved',
+  TripStatus.approved: 'approved',
   TripStatus.completed: 'completed',
   TripStatus.canceled: 'canceled',
 };
