@@ -163,7 +163,7 @@ class CompletedItem extends StatelessWidget {
       isLast: true,
       indicatorStyle: IndicatorStyle(
         width: 20,
-        color: isCompleted ?const Color(0xFF27AA69) : const Color(0xFF2718278),
+        color: isCompleted ?const Color(0xFF27AA69) : Colors.grey,
         padding: const EdgeInsets.all(6),
       ),
       endChild: TrackingItem(

@@ -1,4 +1,3 @@
-import 'package:car_pool_app/Services/errors.dart';
 import 'package:flutter/material.dart';
 
 import 'package:car_pool_app/Widgets/custom_text.dart';
@@ -8,6 +7,7 @@ import 'package:car_pool_app/Services/realtime_db.dart';
 import 'package:car_pool_app/Widgets/routes_list_view.dart';
 import 'package:car_pool_app/Widgets/search.dart';
 import 'package:car_pool_app/Screens/chosen_route_screen.dart';
+import 'package:car_pool_app/Services/errors.dart';
 
 class RoutesScreen extends StatefulWidget {
   const RoutesScreen({ super.key });
@@ -254,12 +254,14 @@ class _RoutesScreenState extends State<RoutesScreen> {
 
                   return CustomText(
                     text: error.errorMessage,
-                    size: 20,
+                    size: 18,
                   );
                 }
       
                 else if(snapshot.hasData) {
                   routes = snapshot.data as List<CustomRoute>;
+                  sorting();
+                  
                   return RoutesListView(
                     routes: routes,
                   );

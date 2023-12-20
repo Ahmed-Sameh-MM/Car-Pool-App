@@ -157,7 +157,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
         
                   const HSizedBox(
-                    height: 20,
+                    height: 30,
                   ),
         
                   CustomButton(

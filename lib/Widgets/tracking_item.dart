@@ -27,7 +27,7 @@ class TrackingItem extends StatelessWidget {
       child: Row(
         children: [
           Opacity(
-            opacity: enabled ? 1 : 0.5,
+            opacity: enabled ? 1 : 0.3,
             child: Icon(
               icon,
               color: iconColor,

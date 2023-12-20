@@ -31,3 +31,15 @@ const Map<String, Duration> timeConstraints = {
     minutes: 00,
   ),
 };
+
+Map<Duration, String> timeConstraintsErrorMessages = {
+  const Duration(
+    hours: 7,
+    minutes: 30,
+  ): "10:00 PM Yesterday",
+
+  const Duration(
+    hours: 17,
+    minutes: 30,
+  ): "1:00 PM Today",
+};

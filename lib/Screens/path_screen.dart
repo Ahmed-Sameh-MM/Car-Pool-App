@@ -1,5 +1,3 @@
-import 'package:car_pool_app/State%20Management/providers.dart';
-import 'package:car_pool_app/Static%20Data/constants.dart';
 import 'package:flutter/material.dart';
 
 import 'package:car_pool_app/Screens/gates_screen.dart';
@@ -7,6 +5,9 @@ import 'package:car_pool_app/Screens/routes_screen.dart';
 import 'package:car_pool_app/Widgets/custom_button.dart';
 import 'package:car_pool_app/Widgets/custom_text.dart';
 import 'package:car_pool_app/Widgets/sized_box.dart';
+import 'package:car_pool_app/State%20Management/providers.dart';
+import 'package:car_pool_app/Static%20Data/constants.dart';
+import 'package:car_pool_app/Services/general_functions.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -31,24 +32,35 @@ class PathScreen extends ConsumerWidget {
               shadow: false,
               onTap: () {
                 ref.read(routeTypeProvider.notifier).state = RouteType.anyToAinshams;
+                ref.read(tripProvider).time = timeSlots[0];
+
                 Navigator.pushNamed(context, RoutesScreen.routeName);
               },
-              child: const Padding(
-                padding: EdgeInsets.all(10),
+              child: Padding(
+                padding: const EdgeInsets.all(10),
                 child: Column(
                   children: [
-                    CustomText(
+                    const CustomText(
                       text: 'From: Any Location',
                       size: 20,
                     ),
               
-                    HSizedBox(
+                    const HSizedBox(
                       height: 30,
                     ),
               
-                    CustomText(
+                    const CustomText(
                       text: 'To: Ain Shams',
                       size: 20,
+                    ),
+
+                    const HSizedBox(
+                      height: 10,
+                    ),
+              
+                    CustomText(
+                      text: "(${durationToTime(timeSlots[0])})",
+                      size: 16,
                     ),
                   ],
                 ),
@@ -62,25 +74,36 @@ class PathScreen extends ConsumerWidget {
             CustomButton(
               shadow: false,
               onTap: () {
-              ref.read(routeTypeProvider.notifier).state = RouteType.ainshamsToAny;
+                ref.read(routeTypeProvider.notifier).state = RouteType.ainshamsToAny;
+                ref.read(tripProvider).time = timeSlots[1];
+
                 Navigator.pushNamed(context, GatesScreen.routeName);
               },
-              child: const Padding(
-                padding: EdgeInsets.all(10),
+              child: Padding(
+                padding: const EdgeInsets.all(10),
                 child: Column(
                   children: [
-                    CustomText(
+                    const CustomText(
                       text: 'From: Ain Shams',
                       size: 20,
                     ),
               
-                    HSizedBox(
+                    const HSizedBox(
                       height: 30,
                     ),
               
-                    CustomText(
+                    const CustomText(
                       text: 'To: Any Location',
                       size: 20,
+                    ),
+
+                    const HSizedBox(
+                      height: 10,
+                    ),
+              
+                    CustomText(
+                      text: "(${durationToTime(timeSlots[1])})",
+                      size: 16,
                     ),
                   ],
                 ),

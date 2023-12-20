@@ -72,7 +72,7 @@ class Realtime {
             if(trip.currentDate.isAfter(rawDate)) {
               return Left(
                 LateReservationError(
-                  errorMessage: "You need to reserve this time slot before ${durationToTime(timeConstraints[durationToTime(trip.time)]!)}",
+                  errorMessage: "You need to reserve this trip before ${timeConstraintsErrorMessages[trip.time]!}",
                 ),
               );
             }

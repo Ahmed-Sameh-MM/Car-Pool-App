@@ -5,7 +5,7 @@ class CustomButton extends StatelessWidget {
 
   final Widget child;
 
-  final Function() onTap;
+  final Function()? onTap;
 
   final double? width;
   final double? height;
