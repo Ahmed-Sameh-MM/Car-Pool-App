@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:driver_car_pool_app/Screens/path_screen.dart';
 import 'package:driver_car_pool_app/Screens/history_screen.dart';
 import 'package:driver_car_pool_app/Screens/profile_screen.dart';
+import 'package:driver_car_pool_app/Offline%20Storage/storage.dart';
+import 'package:driver_car_pool_app/Services/realtime_db.dart';
+
+import 'package:firebase_auth/firebase_auth.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -22,9 +26,25 @@ class _MainScreenState extends State<MainScreen> {
     return screens[_selectedNavIndex];
   }
 
+  Future initProfile() async {
+    final driverDataFuture = await Realtime(uid: FirebaseAuth.instance.currentUser!.uid).getDriverData();
+
+    return driverDataFuture.fold(
+      (error) {},
+      
+      (driverData) async {
+        await DriverStorage.addDriver(driverData);
+        debugPrint('Updated the Profile Data !');
+      },
+    );
+  }
+
   @override
   void initState() {
     _selectedNavIndex = 0;
+
+    initProfile();
+
     super.initState();
   }
 

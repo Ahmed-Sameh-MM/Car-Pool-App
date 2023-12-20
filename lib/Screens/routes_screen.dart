@@ -254,12 +254,14 @@ class _RoutesScreenState extends State<RoutesScreen> {
                   
                   return CustomText(
                     text: error.errorMessage,
-                    size: 20,
+                    size: 18,
                   );
                 }
       
                 else if(snapshot.hasData) {
                   routes = snapshot.data as List<CustomRoute>;
+                  sorting();
+                  
                   return RoutesListView(
                     routes: routes,
                   );

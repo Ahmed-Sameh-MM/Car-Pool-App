@@ -34,7 +34,7 @@ class ChosenRouteScreen extends StatefulWidget {
 
 class _ChosenRouteScreenState extends State<ChosenRouteScreen> {
 
-  int? selectedTimeSlot;
+  late int selectedTimeSlot;
   int selectedDateSlot = 0; // currently selected date slot
 
   late final CustomRoute chosenRouteData;
@@ -75,7 +75,7 @@ class _ChosenRouteScreenState extends State<ChosenRouteScreen> {
   }
 
   Widget bookNowSheet() {
-    if(selectedTimeSlot != null && currentDate != null) {
+    if(currentDate != null) {
       return Container(
         height: bottomSheetHeight,
         color: primaryColor,
@@ -98,7 +98,7 @@ class _ChosenRouteScreenState extends State<ChosenRouteScreen> {
                         text: formatDate(currentDate!.add(Duration(days: selectedDateSlot))),
                       ),
                       CustomText(
-                        text: durationToTime(timeSlots[selectedTimeSlot!]),
+                        text: durationToTime(timeSlots[selectedTimeSlot]),
                       ),
                     ],
                   ),
@@ -129,8 +129,6 @@ class _ChosenRouteScreenState extends State<ChosenRouteScreen> {
                         days: selectedDateSlot,
                       ));
                       ref.read(tripProvider).tripDate = DateTime(tripDate.year, tripDate.month, tripDate.day);
-
-                      ref.read(tripProvider).time = timeSlots[selectedTimeSlot!];
                       
                       Navigator.pushNamed(context, CheckoutScreen.routeName);
                     },
@@ -160,7 +158,7 @@ class _ChosenRouteScreenState extends State<ChosenRouteScreen> {
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 8.0),
             child: CustomText(
-              text: 'Choose Time & Date',
+              text: 'Choose Date',
               size: 20,
               fontWeight: FontWeight.bold,
             ),
@@ -196,197 +194,200 @@ class _ChosenRouteScreenState extends State<ChosenRouteScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      bottomSheet: bookNowSheet(),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Image(
-              image: AssetImage('assets/images/${chosenRouteData.name}.jpg'),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(15, 20, 15, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CustomText(
-                    text: chosenRouteData.name,
-                    size: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
+    return Consumer(
+      builder: (context, ref, child) {
 
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        selectedTimeSlot = (ref.watch(tripProvider).time == timeSlots[0]) ? 0 : 1;
+        
+        return Scaffold(
+          bottomSheet: bookNowSheet(),
+          body: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Image(
+                  image: AssetImage('assets/images/${chosenRouteData.name}.jpg'),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(15, 20, 15, 0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      CustomText(
+                        text: chosenRouteData.name,
+                        size: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Icon(
-                            Icons.location_pin,
-                            color: Colors.white,
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.location_pin,
+                                color: Colors.white,
+                              ),
+                              CustomText(
+                                text: chosenRouteData.address,
+                              ),
+                            ],
                           ),
-                          CustomText(
-                            text: chosenRouteData.address,
+                          Column(
+                            children: [
+                              const CustomText(
+                                text: 'Location',
+                                size: 13,
+                              ),
+
+                              const HSizedBox(
+                                height: 5,
+                              ),
+
+                              CustomButton(
+                                onTap: () async {
+
+                                  final url = Uri.parse(chosenRouteData.location);
+
+                                  if(await canLaunchUrl(url)) {
+                                    await launchUrl(url);
+                                  }
+
+                                  else {
+                                    if(context.mounted) {
+                                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Can't launch this URL, please check your browser")));
+                                    }
+                                  }
+                                },
+                                height: 32,
+                                width: 55,
+                                borderRadius: 3,
+                                color: Colors.black,
+                                child: const Icon(
+                                  Icons.location_pin,
+                                  color: Colors.greenAccent,
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                      Column(
-                        children: [
-                          const CustomText(
-                            text: 'Location',
-                            size: 13,
-                          ),
 
-                          const HSizedBox(
-                            height: 5,
-                          ),
+                      const HSizedBox(
+                        height: 20,
+                      ),
 
-                          CustomButton(
-                            onTap: () async {
+                      const CustomText(
+                        text: 'Chosen Time',
+                        size: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
 
-                              final url = Uri.parse(chosenRouteData.location);
+                      const HSizedBox(
+                        height: 10,
+                      ),
+                      
+                      SizedBox(
+                        height: 50,
+                        child: ListView.builder(
+                          itemCount: timeSlots.length,
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, index) {
+                            return Container(
+                              margin: const EdgeInsets.only(right: 20,),
+                              width: 100,
+                              height: 100,
+                              child: CustomButton(
+                                shadow: false,
+                                borderRadius: 8,
+                                color: primaryColor,
+                                selectedColor: const Color(0xFF4967FF),
+                                selectedChildrenColor: Colors.black,
+                                onTap: null,
+                                selected: (index == selectedTimeSlot),
+                                child: Center(
+                                  child: Text(durationToTime(timeSlots[index])),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
 
-                              if(await canLaunchUrl(url)) {
-                                await launchUrl(url);
-                              }
+                      const HSizedBox(
+                        height: 40,
+                      ),
 
-                              else {
-                                if(context.mounted) {
-                                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Can't launch this URL, please check your browser")));
-                                }
-                              }
-                            },
-                            height: 32,
-                            width: 55,
-                            borderRadius: 3,
-                            color: Colors.black,
-                            child: const Icon(
-                              Icons.location_pin,
-                              color: Colors.greenAccent,
-                            ),
-                          ),
-                        ],
+                      const CustomText(
+                        text: 'Select a Date',
+                        size: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+
+                      const HSizedBox(
+                        height: 10,
+                      ),
+
+                      SizedBox(
+                        height: 50,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: 7,
+                          itemBuilder: (context, index) {
+
+                            if(currentDate == null) {
+                              return const ShimmerTemplate(
+                                width: 65,
+                                height: 100,
+                                margin: EdgeInsets.only(right: 10,),
+                              );
+                            }
+                            
+                            return Container(
+                              margin: const EdgeInsets.only(right: 10,),
+                              width: 65,
+                              height: 100,
+                              child: ListTileTheme(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                tileColor: primaryColor,
+                                
+                                selectedColor: Colors.black,
+                                selectedTileColor: const Color(0xFF7323FF),
+                                
+                                child: ListTile(
+                                  title: Column(
+                                    children: [
+                                      Text( dayNames[index].substring(0,3) ),
+                                      Text( dayDates[index] ),
+                                    ],
+                                  ),
+                                  onTap: () {
+                                    setState(() {
+                                      selectedDateSlot = index;
+                                    });
+                                  },
+                                  selected: ( index == selectedDateSlot ),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 30,),
+                      
+                      HSizedBox(
+                        height: bottomSheetHeight + 10,
                       ),
                     ],
                   ),
-
-                  const HSizedBox(
-                    height: 20,
-                  ),
-
-                  const CustomText(
-                    text: 'Choose Time',
-                    size: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-
-                  const HSizedBox(
-                    height: 10,
-                  ),
-                  
-                  SizedBox(
-                    height: 50,
-                    child: ListView.builder(
-                      itemCount: timeSlots.length,
-                      scrollDirection: Axis.horizontal,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          margin: const EdgeInsets.only(right: 20,),
-                          width: 100,
-                          height: 100,
-                          child: CustomButton(
-                            shadow: false,
-                            borderRadius: 8,
-                            color: primaryColor,
-                            selectedColor: const Color(0xFF4967FF),
-                            selectedChildrenColor: Colors.black,
-                            onTap: () {
-                              setState(() {
-                                selectedTimeSlot = index;
-                              });
-                            },
-                            selected: (index == selectedTimeSlot),
-                            child: Center(
-                              child: Text(durationToTime(timeSlots[index])),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-
-                  const HSizedBox(
-                    height: 40,
-                  ),
-
-                  const CustomText(
-                    text: 'Select a Date',
-                    size: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-
-                  const HSizedBox(
-                    height: 10,
-                  ),
-
-                  SizedBox(
-                    height: 50,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: 7,
-                      itemBuilder: (context, index) {
-
-                        if(currentDate == null) {
-                          return const ShimmerTemplate(
-                            width: 65,
-                            height: 100,
-                            margin: EdgeInsets.only(right: 10,),
-                          );
-                        }
-                        
-                        return Container(
-                          margin: const EdgeInsets.only(right: 10,),
-                          width: 65,
-                          height: 100,
-                          child: ListTileTheme(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            tileColor: primaryColor,
-                            
-                            selectedColor: Colors.black,
-                            selectedTileColor: const Color(0xFF7323FF),
-                            
-                            child: ListTile(
-                              title: Column(
-                                children: [
-                                  Text( dayNames[index].substring(0,3) ),
-                                  Text( dayDates[index] ),
-                                ],
-                              ),
-                              onTap: () {
-                                setState(() {
-                                  selectedDateSlot = index;
-                                });
-                              },
-                              selected: ( index == selectedDateSlot ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 30,),
-                  
-                  HSizedBox(
-                    height: bottomSheetHeight + 10,
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      }
     );
   }
 }

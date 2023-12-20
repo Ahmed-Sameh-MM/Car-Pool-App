@@ -130,7 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
 
               const HSizedBox(
-                height: 20,
+                height: 30,
               ),
 
               CustomButton(
