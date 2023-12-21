@@ -74,10 +74,11 @@ class Trip extends Order {
     tripDate: DateTime.parse(json['tripDate'] as String),
     time: Duration(microseconds: json['time'] as int),
     status: $enumDecode(_$OrderStatusEnumMap, json['status']),
-    numberOfSeats: json['numberOfSeats'] as int,
-    users: (json['users'] as List<dynamic>?)?.map((e) => e as String).toList(),
     driverUid: json['driverUid'] as String,
-    tripStatus: $enumDecode(_$TripStatusEnumMap, json['tripStatus']),
+
+    numberOfSeats: 0,
+    users: [],
+    tripStatus: TripStatus.open,
   );
 
   factory Trip.fromJson(Map<dynamic, dynamic> json) => _$TripFromJson(json);

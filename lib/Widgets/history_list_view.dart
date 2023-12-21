@@ -1,4 +1,3 @@
-import 'package:car_pool_app/Services/errors.dart';
 import 'package:flutter/material.dart';
 
 import 'package:car_pool_app/Model%20Classes/history_helper.dart';
@@ -9,6 +8,7 @@ import 'package:car_pool_app/Widgets/custom_container.dart';
 import 'package:car_pool_app/Widgets/custom_text.dart';
 import 'package:car_pool_app/Widgets/sized_box.dart';
 import 'package:car_pool_app/Model%20Classes/trip.dart';
+import 'package:car_pool_app/Services/errors.dart';
 
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';

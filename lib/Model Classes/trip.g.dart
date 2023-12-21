@@ -31,9 +31,6 @@ Map<String, dynamic> _$TripToJson(Trip instance) => <String, dynamic>{
       'time': instance.time.inMicroseconds,
       'status': _$OrderStatusEnumMap[instance.status]!,
       'driverUid': instance.driverUid,
-      'numberOfSeats': instance.numberOfSeats,
-      'users': instance.users,
-      'tripStatus': _$TripStatusEnumMap[instance.tripStatus]!,
     };
 
 const _$OrderStatusEnumMap = {
