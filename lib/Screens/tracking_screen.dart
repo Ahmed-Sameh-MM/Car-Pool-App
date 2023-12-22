@@ -7,6 +7,7 @@ import 'package:driver_car_pool_app/Widgets/custom_button.dart';
 import 'package:driver_car_pool_app/Widgets/custom_text.dart';
 import 'package:driver_car_pool_app/Offline%20Storage/storage.dart';
 import 'package:driver_car_pool_app/Widgets/sized_box.dart';
+import 'package:driver_car_pool_app/Widgets/custom_alert_dialog.dart';
 
 class TrackingScreen extends StatelessWidget {
   const TrackingScreen({
@@ -50,11 +51,25 @@ class TrackingScreen extends StatelessWidget {
             onTap: () async {
               final driver = await DriverStorage.readDriver();
 
-              await Realtime(uid: driver.uid).approveTrip(tripId: trip.id);
+              final tripApproval = await Realtime(uid: driver.uid).approveTrip(trip: trip);
 
-              if(context.mounted) {
-                Navigator.pop(context);
-              }
+              tripApproval.fold(
+                (error) {
+                  CustomAlertDialog(
+                    context: context,
+                    error: error,
+                    isDismissible: false,
+                    onPressed: () {
+                      Navigator.pop(context);
+                    }
+                  );
+                },
+                (approved) {
+                  if(context.mounted) {
+                    Navigator.pop(context);
+                  }
+                },
+              );
             },
             child: const CustomText(
               text: 'Approve',

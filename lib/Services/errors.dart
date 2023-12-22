@@ -55,6 +55,21 @@ class LateReservationError extends ErrorTypes {
   );
 }
 
+class LateApprovalError extends ErrorTypes {
+
+  static const _errorTitle = 'Late Approval';
+
+  static const _errorId = 120;
+
+  const LateApprovalError({
+    required String errorMessage,
+  }) : super(
+    errorMessage: errorMessage,
+    errorTitle: _errorTitle,
+    errorId: _errorId,
+  );
+}
+
 class AlreadyReservedError extends ErrorTypes {
 
   static const _errorTitle = "Already Reserved Trip";

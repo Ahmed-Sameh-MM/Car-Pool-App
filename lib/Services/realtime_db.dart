@@ -1,3 +1,4 @@
+import 'package:driver_car_pool_app/Services/date.dart';
 import 'package:driver_car_pool_app/Services/lookup.dart';
 import 'package:driver_car_pool_app/Services/errors.dart';
 import 'package:driver_car_pool_app/Model%20Classes/custom_route.dart';
@@ -111,7 +112,7 @@ class Realtime {
     );
   }
 
-  Future< Either<ErrorTypes, bool> > approveTrip({required String tripId}) async {
+  Future< Either<ErrorTypes, bool> > approveTrip({required Trip trip}) async {
 
     final connection = await LookUp.checkInternetConnection();
 
@@ -121,17 +122,62 @@ class Realtime {
       },
       (right) async {
         try {
+          final disableApproval = await FirebaseDatabase.instance.ref().child('disable_approval_driver').once().then((event) => event.snapshot.value as bool);
+
+          if(! disableApproval) {
+            // checking the time constraints
+            DateTime rawDate = DateTime(trip.tripDate.year, trip.tripDate.month, trip.tripDate.day);
+
+            rawDate = rawDate.add(approvalTimeConstraints[durationToTime(trip.time)]!);
+
+            final currentDateFuture = await Date.fetchDate();
+
+            return currentDateFuture.fold(
+              (error) {
+                return Left(error);
+              },
+              (currentDate) async {
+                if(currentDate.isAfter(rawDate)) {
+                  await cancelTrip(
+                    tripId: trip.id,
+                  );
+                  
+                  return Left(
+                    LateApprovalError(
+                      errorMessage: "You need to approve this trip before ${approvalErrorMessages[trip.time]!}",
+                    ),
+                  );
+                }
+
+                // approving successfully
+                await driverTripsReference.child(uid).child(trip.id).update({'tripStatus': 'approved'});
+
+                // approving the users trips
+
+                final users = await driverTripsReference.child(uid).child(trip.id).child("users").once().then((event) => event.snapshot.value);
+
+                final usersList = List<String>.from((users ?? []) as List);
+
+                for(int i = 0; i < usersList.length; i++) {
+                  await userTripsReference.child(usersList[i]).child(trip.id).update({"status": "approved"});
+                }
+                
+                return const Right(true);
+              },
+            );
+          }
+
           // approving successfully
-          await driverTripsReference.child(uid).child(tripId).update({'tripStatus': 'approved'});
+          await driverTripsReference.child(uid).child(trip.id).update({'tripStatus': 'approved'});
 
           // approving the users trips
 
-          final users = await driverTripsReference.child(uid).child(tripId).child("users").once().then((event) => event.snapshot.value);
+          final users = await driverTripsReference.child(uid).child(trip.id).child("users").once().then((event) => event.snapshot.value);
 
           final usersList = List<String>.from((users ?? []) as List);
 
           for(int i = 0; i < usersList.length; i++) {
-            await userTripsReference.child(usersList[i]).child(tripId).update({"status": "approved"});
+            await userTripsReference.child(usersList[i]).child(trip.id).update({"status": "approved"});
           }
           
           return const Right(true);
@@ -307,7 +353,7 @@ class Realtime {
 
 // Switch Value Methods
 
-Future< Either<ErrorTypes, bool> > getSwitchValue() async {
+Future< Either<ErrorTypes, bool> > getValidationSwitchValue() async {
   final connection = await LookUp.checkInternetConnection();
 
   return connection.fold(
@@ -332,7 +378,7 @@ Future< Either<ErrorTypes, bool> > getSwitchValue() async {
   );
 }
 
-Future< Either<ErrorTypes, bool> > setSwitchValue(bool value) async {
+Future< Either<ErrorTypes, bool> > setValidationSwitchValue(bool value) async {
     final connection = await LookUp.checkInternetConnection();
 
     return connection.fold(
@@ -350,6 +396,56 @@ Future< Either<ErrorTypes, bool> > setSwitchValue(bool value) async {
             FirebaseError(
               errorMessage: 'Server Error: $e',
               errorId: 108,
+            ),
+          );
+        }
+      },
+    );
+  }
+
+  Future< Either<ErrorTypes, bool> > getApprovalSwitchValue() async {
+  final connection = await LookUp.checkInternetConnection();
+
+  return connection.fold(
+    (error) {
+      return Left(error);
+    },
+    (right) async {
+      try {
+        final disableValidation = await FirebaseDatabase.instance.ref().child('disable_approval_driver').once().then((event) => event.snapshot.value as bool);
+        
+        return Right(disableValidation);
+      }
+      catch(e) {
+        return Left(
+          FirebaseError(
+            errorMessage: 'Server Error: $e',
+            errorId: 117,
+          ),
+        );
+      }
+    },
+  );
+}
+
+Future< Either<ErrorTypes, bool> > setApprovalSwitchValue(bool value) async {
+    final connection = await LookUp.checkInternetConnection();
+
+    return connection.fold(
+      (error) {
+        return Left(error);
+      },
+      (right) async {
+        try {
+          await FirebaseDatabase.instance.ref().child('disable_approval_driver').set(value);
+          
+          return const Right(true);
+        }
+        catch(e) {
+          return Left(
+            FirebaseError(
+              errorMessage: 'Server Error: $e',
+              errorId: 118,
             ),
           );
         }

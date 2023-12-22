@@ -26,12 +26,13 @@ class ProfileColumn extends StatefulWidget {
 class _ProfileColumnState extends State<ProfileColumn> {
 
   late bool disableValidation;
+  late bool disableApproval;
 
   late bool isLoaded;
   late bool isError;
 
   Future initSwitchValue() async {
-    final future = await getSwitchValue();
+    final future = await getValidationSwitchValue();
 
     future.fold(
       (error) {
@@ -44,11 +45,28 @@ class _ProfileColumnState extends State<ProfileColumn> {
           error: error,
         );
       },
-      (switchValue) {
-        setState(() {
-          isLoaded = true;
-          disableValidation = switchValue;
-        });
+      (validationValue) async {
+        final approvalFuture = await getApprovalSwitchValue();
+
+        approvalFuture.fold(
+          (error) {
+            setState(() {
+              isError = true;
+            });
+
+            CustomAlertDialog(
+              context: context,
+              error: error,
+            );
+          },
+          (approvalValue) {
+            setState(() {
+              isLoaded = true;
+              disableValidation = validationValue;
+              disableApproval = approvalValue;
+            });
+          },
+        );
       },
     );
   }
@@ -59,6 +77,7 @@ class _ProfileColumnState extends State<ProfileColumn> {
     isError = false;
 
     disableValidation = false;
+    disableApproval = false;
     
     initSwitchValue();
 
@@ -126,40 +145,82 @@ class _ProfileColumnState extends State<ProfileColumn> {
               height: 30,
             ),
 
-            isLoaded ? Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            isLoaded ? Column(
               children: [
-                const CustomText(
-                  text: 'Disable Validation:',
-                  size: 20,
-                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const CustomText(
+                      text: 'Disable Time Validation:',
+                      size: 20,
+                    ),
 
-                const WSizedBox(
-                  width: 10,
-                ),
+                    const WSizedBox(
+                      width: 10,
+                    ),
 
-                Switch(
-                  value: disableValidation,
-                  onChanged: (value) async {
-                    final future = await setSwitchValue(value);
-                    
-                    future.fold(
-                      (error) {
-                        CustomAlertDialog(
-                          context: context,
-                          error: error,
+                    Switch(
+                      value: disableValidation,
+                      onChanged: (value) async {
+                        final future = await setValidationSwitchValue(value);
+                        
+                        future.fold(
+                          (error) {
+                            CustomAlertDialog(
+                              context: context,
+                              error: error,
+                            );
+                          },
+                          (success) {
+                            setState(() {
+                              disableValidation = value;
+                            });
+                          },
                         );
                       },
-                      (success) {
-                        setState(() {
-                          disableValidation = value;
-                        });
+                      trackColor: MaterialStateProperty.all<Color>(Colors.white),
+                      thumbColor: MaterialStateProperty.all<Color>(Colors.red),
+                      activeColor: Colors.red,
+                    ),
+                  ],
+                ),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const CustomText(
+                      text: 'Disable Approval Validation:',
+                      size: 20,
+                    ),
+
+                    const WSizedBox(
+                      width: 10,
+                    ),
+
+                    Switch(
+                      value: disableApproval,
+                      onChanged: (value) async {
+                        final future = await setApprovalSwitchValue(value);
+                        
+                        future.fold(
+                          (error) {
+                            CustomAlertDialog(
+                              context: context,
+                              error: error,
+                            );
+                          },
+                          (success) {
+                            setState(() {
+                              disableApproval = value;
+                            });
+                          },
+                        );
                       },
-                    );
-                  },
-                  trackColor: MaterialStateProperty.all<Color>(Colors.white),
-                  thumbColor: MaterialStateProperty.all<Color>(Colors.red),
-                  activeColor: Colors.red,
+                      trackColor: MaterialStateProperty.all<Color>(Colors.white),
+                      thumbColor: MaterialStateProperty.all<Color>(Colors.red),
+                      activeColor: Colors.red,
+                    ),
+                  ],
                 ),
               ],
             ) : isError ? const CustomText(text: "Connection Error, Try Again Later", size: 20,) : const CircularProgressIndicator(
@@ -167,7 +228,7 @@ class _ProfileColumnState extends State<ProfileColumn> {
             ),
 
             const HSizedBox(
-              height: 110,
+              height: 80,
             ),
 
             CustomButton(

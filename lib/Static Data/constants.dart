@@ -43,3 +43,27 @@ Map<Duration, String> timeConstraintsErrorMessages = {
     minutes: 30,
   ): "1:00 PM Today",
 };
+
+const Map<String, Duration> approvalTimeConstraints = {
+  "7:30 AM": Duration(
+    hours: -24 + 23,
+    minutes: 30,
+  ),
+
+  "5:30 PM": Duration(
+    hours: 16,
+    minutes: 30,
+  ),
+};
+
+Map<Duration, String> approvalErrorMessages = {
+  const Duration(
+    hours: 7,
+    minutes: 30,
+  ): "11:30 PM Yesterday",
+
+  const Duration(
+    hours: 17,
+    minutes: 30,
+  ): "4:30 PM Today",
+};
