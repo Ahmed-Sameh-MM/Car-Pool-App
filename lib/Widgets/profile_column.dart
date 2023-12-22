@@ -130,7 +130,7 @@ class _ProfileColumnState extends State<ProfileColumn> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const CustomText(
-                  text: 'Disable Validation:',
+                  text: 'Disable Time Validation:',
                   size: 20,
                 ),
 
