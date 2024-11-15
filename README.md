@@ -25,15 +25,15 @@ This repository hosts a dual-application carpooling solution tailored specifical
    ```
 
 2. Checkout the appropriate branch for the desired app:
-  - Customer App: The main branch contains the Customer App.
-  ```bash
-  git checkout master
-  ```
+    - Customer App: The main branch contains the Customer App.
+    ```bash
+    git checkout master
+    ```
 
-  - Driver App: The driver branch contains the Driver App.
-  ```bash
-  git checkout driver
-  ```
+    - Driver App: The driver branch contains the Driver App.
+    ```bash
+    git checkout driver
+    ```
 
 3. Run both apps locally or deploy to your preferred platform.
 
