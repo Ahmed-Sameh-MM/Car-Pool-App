@@ -25,7 +25,7 @@ This repository hosts a dual-application carpooling solution tailored specifical
    ```
 
 2. Checkout the appropriate branch for the desired app:
-    - Customer App: The main branch contains the Customer App.
+    - Customer App: The master branch contains the Customer App.
     ```bash
     git checkout master
     ```
