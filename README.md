@@ -21,7 +21,7 @@ This repository hosts a dual-application carpooling solution tailored specifical
 ## Getting Started 🚀
 1. Clone the repository:
    ```bash
-   [git clone https://github.com/Ahmed-Sameh-MM/university-car-pool-app.git](https://github.com/Ahmed-Sameh-MM/Car-Pool-App.git)
+   git clone https://github.com/Ahmed-Sameh-MM/university-car-pool-app.git
    ```
 
 2. Run both apps locally or deploy to your preferred platform.
