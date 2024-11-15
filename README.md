@@ -24,7 +24,18 @@ This repository hosts a dual-application carpooling solution tailored specifical
    git clone https://github.com/Ahmed-Sameh-MM/university-car-pool-app.git
    ```
 
-2. Run both apps locally or deploy to your preferred platform.
+2. Checkout the appropriate branch for the desired app:
+- Customer App: The main branch contains the Customer App.
+```bash
+git checkout master
+```
+
+- Driver App: The driver branch contains the Driver App.
+```bash
+git checkout driver
+```
+
+3. Run both apps locally or deploy to your preferred platform.
 
 
 Whether you're a driver or a passenger, this app is your go-to solution for efficient and sustainable transport within the university community. 🎓🏛️
